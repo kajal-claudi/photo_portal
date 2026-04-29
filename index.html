@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>99acres Photo Penetration Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --red:#E24B4A;--red-light:#FCEBEB;--red-dark:#A32D2D;
+  --green:#3B6D11;--green-mid:#639922;--green-light:#EAF3DE;
+  --amber:#BA7517;--amber-light:#FAEEDA;
+  --blue:#185FA5;--blue-light:#E6F1FB;--blue-border:#B5D4F4;
+  --gray:#5F5E5A;--gray-light:#F1EFE8;--gray-mid:#B4B2A9;
+  --bg:#F7F6F2;--surface:#FFFFFF;--surface2:#F1EFE8;
+  --border:#e0ddd6;--border2:#ccc9c0;
+  --text:#1a1a18;--text2:#5F5E5A;--text3:#888780;
+  --radius:8px;--radius-lg:12px;
+}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height:100vh;color:var(--text);font-size:14px}
+
+/* TOPBAR */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 1px 3px rgba(0,0,0,.04)}
+.logo{font-size:15px;font-weight:600;color:var(--text);display:flex;align-items:center;gap:8px}
+.logo-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:10px;letter-spacing:.04em}
+.tabs{display:flex;gap:2px;background:var(--surface2);border-radius:var(--radius);padding:3px;border:1px solid var(--border)}
+.tab{padding:5px 16px;border-radius:6px;font-size:13px;cursor:pointer;color:var(--text2);border:none;background:transparent;transition:all .15s;font-weight:500}
+.tab.active{background:var(--surface);color:var(--text);box-shadow:0 1px 3px rgba(0,0,0,.08);border:1px solid var(--border)}
+.tab:hover:not(.active){color:var(--text);background:rgba(255,255,255,.6)}
+.version{font-size:11px;color:var(--text3);background:var(--surface2);padding:3px 10px;border-radius:20px;border:1px solid var(--border)}
+
+/* PAGES */
+.page{display:none;padding:1.5rem;max-width:1200px;margin:0 auto;width:100%}
+.page.active{display:block}
+.section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+
+/* UPLOAD */
+.upload-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:2.5rem 2rem;text-align:center;cursor:pointer;transition:all .2s;margin-bottom:1.5rem;background:var(--surface)}
+.upload-zone:hover{border-color:var(--blue);background:var(--blue-light)}
+.upload-icon{font-size:36px;margin-bottom:10px}
+.upload-title{font-size:15px;font-weight:600;color:var(--text);margin-bottom:4px}
+.upload-sub{font-size:12px;color:var(--text3)}
+#file-input{display:none}
+.info-bar{background:var(--blue-light);border:1px solid var(--blue-border);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--blue);margin-bottom:1rem;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;border-radius:var(--radius-lg);border:1px solid var(--border);background:var(--surface)}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:var(--surface2);padding:9px 12px;text-align:left;font-weight:600;color:var(--text2);font-size:11px;border-bottom:1px solid var(--border);white-space:nowrap}
+td{padding:8px 12px;border-bottom:1px solid var(--border);color:var(--text);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:160px}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:var(--surface2)}
+
+/* BUTTONS */
+.btn{padding:7px 14px;border-radius:var(--radius);font-size:13px;font-weight:500;cursor:pointer;border:1px solid var(--border2);background:var(--surface);color:var(--text);transition:all .15s}
+.btn:hover{background:var(--surface2);border-color:var(--border2)}
+.btn:active{transform:scale(.98)}
+.btn-primary{background:var(--red);color:#fff;border-color:var(--red-dark)}
+.btn-primary:hover{background:var(--red-dark)}
+.btn-green{background:var(--green);color:#fff;border-color:var(--green)}
+.btn-green:hover{background:#27500A}
+.btn-sm{padding:4px 10px;font-size:12px}
+.btn-xs{padding:3px 8px;font-size:11px}
+
+/* FILTER BAR */
+.filter-bar{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px;margin-bottom:1rem;display:flex;flex-wrap:wrap;gap:8px;align-items:flex-end}
+.filter-group{display:flex;flex-direction:column;gap:4px}
+.filter-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em}
+input[type=text],select{padding:6px 10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:13px;color:var(--text);transition:all .15s}
+input[type=text]:focus,select:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(24,95,165,.15)}
+.filter-actions{display:flex;gap:6px;margin-left:auto;align-self:flex-end}
+
+/* MOBILE LIST */
+.mobile-list{display:flex;flex-direction:column;gap:6px}
+.mobile-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:11px 14px;cursor:pointer;transition:all .15s;display:flex;align-items:center;justify-content:space-between}
+.mobile-card:hover{border-color:var(--border2);background:var(--surface2);transform:translateX(2px)}
+.mobile-card.untouched{border-left:3px solid var(--amber)}
+.mobile-card.partial{border-left:3px solid var(--blue)}
+.mobile-card.done{border-left:3px solid var(--green-mid);opacity:.75}
+.mobile-num{font-size:14px;font-weight:600;color:var(--text)}
+.mobile-sub{font-size:11px;color:var(--text3);margin-top:2px;display:flex;gap:8px;flex-wrap:wrap}
+.mobile-sub span{display:flex;align-items:center;gap:3px}
+.tag{display:inline-flex;align-items:center;font-size:10px;padding:1px 7px;border-radius:10px;font-weight:500;white-space:nowrap}
+.tag-amber{background:var(--amber-light);color:#7a4a00}
+.tag-blue{background:var(--blue-light);color:var(--blue)}
+.tag-green{background:var(--green-light);color:var(--green)}
+.tag-red{background:var(--red-light);color:var(--red-dark)}
+.tag-gray{background:var(--gray-light);color:var(--gray)}
+.tag-white{background:var(--surface2);color:var(--text2);border:1px solid var(--border)}
+.priority-tag{font-size:10px;font-weight:700;padding:1px 6px;border-radius:4px}
+.priority-hot{background:#FFF3CD;color:#7a4a00}
+
+.mobile-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.prop-pill{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600}
+.prop-pill-untouched{background:var(--amber-light);color:#7a4a00}
+.prop-pill-partial{background:var(--blue-light);color:var(--blue)}
+.prop-pill-done{background:var(--green-light);color:var(--green)}
+
+/* SPLIT LAYOUT */
+.split-layout{display:grid;grid-template-columns:300px 1fr;gap:12px;align-items:start}
+
+/* PROP PANEL */
+.prop-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden;position:sticky;top:64px}
+.panel-header{padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border);font-size:12px;font-weight:600;color:var(--text2);display:flex;justify-content:space-between;align-items:center}
+.prop-item{padding:10px 14px;border-bottom:1px solid var(--border);cursor:pointer;transition:all .1s}
+.prop-item:last-child{border-bottom:none}
+.prop-item:hover{background:var(--surface2)}
+.prop-item.active{background:var(--blue-light);border-left:3px solid var(--blue)}
+.prop-id{font-size:13px;font-weight:600;color:var(--text)}
+.prop-sub{font-size:11px;color:var(--text3);margin-top:2px}
+.prop-tags{margin-top:5px;display:flex;gap:4px;flex-wrap:wrap}
+
+/* CALL FORM */
+.call-form{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:1.25rem}
+.call-header{padding-bottom:1rem;margin-bottom:1rem;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start}
+.call-prop-id{font-size:20px;font-weight:700;color:var(--text)}
+.call-prop-meta{font-size:12px;color:var(--text3);margin-top:3px}
+.client-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;background:var(--surface2);border-radius:var(--radius);padding:10px 12px;margin-bottom:14px;border:1px solid var(--border)}
+.ci-item{display:flex;flex-direction:column;gap:1px}
+.ci-label{font-size:10px;color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.ci-val{font-size:12px;font-weight:600;color:var(--text)}
+
+.form-label{font-size:11px;font-weight:600;color:var(--text2);margin-bottom:6px;display:block;text-transform:uppercase;letter-spacing:.04em}
+.form-group{margin-bottom:14px}
+.disp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:14px}
+.disp-btn{padding:8px 6px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface2);font-size:11px;cursor:pointer;text-align:center;color:var(--text2);transition:all .15s;line-height:1.3;font-weight:500}
+.disp-btn:hover{border-color:var(--border2);background:var(--surface)}
+.disp-btn.sel-red{border-color:var(--red);background:var(--red-light);color:var(--red-dark);font-weight:700}
+.disp-btn.sel-green{border-color:var(--green-mid);background:var(--green-light);color:var(--green);font-weight:700}
+.disp-btn.sel-amber{border-color:var(--amber);background:var(--amber-light);color:#7a4a00;font-weight:700}
+.disp-btn.sel-blue{border-color:var(--blue);background:var(--blue-light);color:var(--blue);font-weight:700}
+.subdisp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px}
+
+.history-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;max-height:160px;overflow-y:auto;margin-bottom:14px}
+.history-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
+.history-item:last-child{border-bottom:none}
+.hdot{width:8px;height:8px;border-radius:50%;margin-top:4px;flex-shrink:0}
+.hdot-g{background:var(--green-mid)} .hdot-a{background:var(--amber)} .hdot-r{background:var(--red)} .hdot-n{background:var(--gray-mid)}
+.h-text{font-size:12px;color:var(--text);line-height:1.4}
+.h-meta{font-size:10px;color:var(--text3);margin-top:1px}
+
+/* REPORT */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
+.stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px}
+.stat-card.accent-green{border-top:3px solid var(--green-mid)}
+.stat-card.accent-amber{border-top:3px solid var(--amber)}
+.stat-card.accent-blue{border-top:3px solid var(--blue)}
+.stat-card.accent-red{border-top:3px solid var(--red)}
+.stat-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.stat-val{font-size:24px;font-weight:700;color:var(--text)}
+.stat-pct{font-size:11px;color:var(--text3);margin-top:2px}
+.progress-bar{height:4px;background:var(--surface2);border-radius:2px;overflow:hidden;margin-top:5px}
+.pb-fill{height:100%;border-radius:2px;transition:width .4s}
+
+/* EMPTY / TOAST */
+.empty-state{text-align:center;padding:3rem 1rem;color:var(--text3);font-size:14px}
+.empty-icon{font-size:36px;margin-bottom:8px;opacity:.5}
+.toast{position:fixed;bottom:24px;right:24px;background:#1a1a18;color:#fff;padding:10px 16px;border-radius:var(--radius);font-size:13px;opacity:0;transform:translateY(8px);transition:all .25s;pointer-events:none;z-index:9999;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.toast.show{opacity:1;transform:translateY(0)}
+.att-badge{display:inline-flex;align-items:center;font-size:10px;background:var(--surface2);color:var(--text3);padding:2px 7px;border-radius:10px;border:1px solid var(--border);font-weight:600}
+.results-count{font-size:12px;color:var(--text3);padding:6px 0 2px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">
+    <div class="logo-badge">99A</div>
+    Photo Penetration Portal
+  </div>
+  <div class="tabs">
+    <button class="tab active" onclick="showPage('upload')">📂 Upload Data</button>
+    <button class="tab" onclick="showPage('calling')">📞 Calling</button>
+    <button class="tab" onclick="showPage('report')">📊 Reports</button>
+  </div>
+  <div class="version">v1.1</div>
+</div>
+
+<!-- ====== UPLOAD PAGE ====== -->
+<div id="page-upload" class="page active">
+  <div class="upload-zone" onclick="document.getElementById('file-input').click()" id="drop-zone">
+    <div class="upload-icon">📂</div>
+    <div class="upload-title">Excel ya CSV file upload karein</div>
+    <div class="upload-sub">Click karein ya yahan drag & drop karein · Supported: .xlsx, .xls, .csv</div>
+  </div>
+  <input type="file" id="file-input" accept=".xlsx,.xls,.csv" onchange="handleFile(event)">
+
+  <div class="info-bar">
+    <span>ℹ</span>
+    <span>Expected columns: <strong>Acquired Date, Caller Name, Property ID, Mobile, Source, Called By Source, Property Type, Preference, Res/Com, City</strong> — column names exact match hongi toh auto-map ho jaayengi</span>
+  </div>
+
+  <div id="upload-preview" style="display:none">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+      <p class="section-label" style="margin:0" id="preview-count">0 records</p>
+      <div style="display:flex;gap:8px">
+        <button class="btn btn-sm" onclick="clearData()">Clear</button>
+        <button class="btn btn-sm btn-primary" onclick="confirmUpload()" id="confirm-btn">Confirm & Load →</button>
+      </div>
+    </div>
+    <div class="table-wrap">
+      <table id="preview-table"></table>
+    </div>
+  </div>
+
+  <div id="upload-guide">
+    <p class="section-label" style="margin-top:1.5rem">Column Mapping Guide</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>Column Name</th><th>Description</th><th>Example</th></tr></thead>
+        <tbody>
+          <tr><td>Acquired Date</td><td>Property acquire date</td><td>01-Apr-2025</td></tr>
+          <tr><td>Caller Name</td><td>Caller ka naam</td><td>Rahul Sharma</td></tr>
+          <tr><td>Property ID</td><td>99acres listing ID</td><td>P123456789</td></tr>
+          <tr><td>Mobile</td><td>Owner mobile</td><td>9876543210</td></tr>
+          <tr><td>Source</td><td>Lead source</td><td>99acres / MagicBricks</td></tr>
+          <tr><td>Called By Source</td><td>Caller type</td><td>Internal / Agency</td></tr>
+          <tr><td>Property Type</td><td>Property type</td><td>2BHK Flat / Shop</td></tr>
+          <tr><td>Preference</td><td>Sale ya rent</td><td>Sale / Rent</td></tr>
+          <tr><td>Res/Com</td><td>Residential ya Commercial</td><td>Residential</td></tr>
+          <tr><td>City</td><td>Property city</td><td>Mumbai</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ====== CALLING PAGE ====== -->
+<div id="page-calling" class="page">
+
+  <!-- SEARCH VIEW -->
+  <div id="calling-search-view">
+    <div class="filter-bar">
+      <div class="filter-group">
+        <span class="filter-label">Mobile</span>
+        <input type="text" id="f-mobile" placeholder="9876..." oninput="applyFilters()" style="width:130px">
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Property ID</span>
+        <input type="text" id="f-propid" placeholder="P123..." oninput="applyFilters()" style="width:120px">
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Source</span>
+        <select id="f-source" onchange="applyFilters()" style="width:130px">
+          <option value="">All Sources</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Caller</span>
+        <select id="f-caller" onchange="applyFilters()" style="width:130px">
+          <option value="">All Callers</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Disposition</span>
+        <select id="f-disp" onchange="applyFilters()" style="width:140px">
+          <option value="">All Dispositions</option>
+          <option value="untouched">🔴 Untouched</option>
+          <option value="Ringing">Ringing</option>
+          <option value="Switch Off">Switch Off</option>
+          <option value="Call Later">Call Later</option>
+          <option value="Interested">Interested</option>
+          <option value="Call Disconnected">Call Disconnected</option>
+          <option value="Language Issue">Language Issue</option>
+          <option value="Not Interested">Not Interested</option>
+          <option value="Rented Out">Rented Out</option>
+          <option value="Sold Out">Sold Out</option>
+        </select>
+      </div>
+      <div class="filter-group">
+        <span class="filter-label">Status</span>
+        <select id="f-status" onchange="applyFilters()" style="width:120px">
+          <option value="">All</option>
+          <option value="untouched" selected>Untouched First</option>
+          <option value="partial">Partial</option>
+          <option value="done">Fully Called</option>
+        </select>
+      </div>
+      <div class="filter-actions">
+        <button class="btn btn-sm" onclick="clearFilters()">Clear Filters</button>
+      </div>
+    </div>
+
+    <div id="results-count" class="results-count"></div>
+    <div id="mobile-list" class="mobile-list">
+      <div class="empty-state"><div class="empty-icon">📱</div>Pehle Upload Data tab mein data load karein</div>
+    </div>
+  </div>
+
+  <!-- DETAIL VIEW -->
+  <div id="calling-detail-view" style="display:none">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:1rem">
+      <button class="btn btn-sm" onclick="backToList()">← Back</button>
+      <div>
+        <div style="font-size:16px;font-weight:700" id="detail-mobile"></div>
+        <div style="font-size:12px;color:var(--text3)" id="detail-owner"></div>
+      </div>
+    </div>
+    <div class="split-layout">
+      <div>
+        <p class="section-label">Properties (<span id="prop-count-label">0</span>)</p>
+        <div class="prop-panel" id="prop-list"></div>
+      </div>
+      <div id="call-form-area">
+        <div class="empty-state"><div class="empty-icon">🏠</div>Left se property select karein</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ====== REPORT PAGE ====== -->
+<div id="page-report" class="page">
+  <div class="filter-bar">
+    <div class="filter-group">
+      <span class="filter-label">Caller</span>
+      <select id="report-caller" onchange="renderReport()" style="width:140px"><option value="">All Callers</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">City</span>
+      <select id="report-city" onchange="renderReport()" style="width:130px"><option value="">All Cities</option></select>
+    </div>
+    <div class="filter-group">
+      <span class="filter-label">Period</span>
+      <select id="report-date" onchange="renderReport()" style="width:130px">
+        <option value="all">All Time</option>
+        <option value="today">Today</option>
+        <option value="week">This Week</option>
+        <option value="month">This Month</option>
+      </select>
+    </div>
+    <div class="filter-actions">
+      <button class="btn btn-sm btn-green" onclick="exportReport()">⬇ Export Excel</button>
+    </div>
+  </div>
+
+  <div id="report-stats" class="stat-grid"></div>
+
+  <p class="section-label">Date-wise Summary</p>
+  <div class="table-wrap" style="margin-bottom:1.5rem"><table id="report-table"></table></div>
+
+  <p class="section-label">Caller-wise Performance</p>
+  <div class="table-wrap" style="margin-bottom:1.5rem"><table id="caller-table"></table></div>
+
+  <p class="section-label">Disposition Breakdown</p>
+  <div class="table-wrap"><table id="disp-table"></table></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============================================================
+// STATE
+// ============================================================
+let allData = [];
+let callLog = {};
+let currentMobile = null;
+let currentPropId = null;
+let previewData = [];
+let selectedDisp = null;
+let selectedSubDisp = null;
+
+const DISPOSITIONS = [
+  {label:'Ringing',color:'amber'},
+  {label:'Switch Off',color:'red'},
+  {label:'Call Later',color:'amber'},
+  {label:'Interested',color:'green'},
+  {label:'Call Disconnected',color:'red'},
+  {label:'Language Issue',color:'red'},
+  {label:'Not Interested',color:'red'},
+  {label:'Rented Out',color:'blue'},
+  {label:'Sold Out',color:'blue'}
+];
+
+const SUB_DISPOSITIONS = {
+  'Interested':['Photos Available','Photos Not Available','Sharing on WhatsApp','Client Will Upload'],
+  'Call Later':['Requested Callback','Will Call Back','Best Time Given'],
+  'Not Interested':['Already Has Photos','Property Sold/Rented','Doesn\'t Want to Share'],
+  'Rented Out':['Photos Not Required'],
+  'Sold Out':['Photos Not Required'],
+  'Ringing':['No Answer','Voicemail Left'],
+  'Switch Off':['Try Later','Permanently Off'],
+  'Call Disconnected':['Network Issue','Hung Up','Called Back Later'],
+  'Language Issue':['Hindi','Regional Language','Other']
+};
+
+// ============================================================
+// PAGE NAVIGATION
+// ============================================================
+function showPage(p) {
+  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
+  document.getElementById('page-' + p).classList.add('active');
+  const idx = ['upload','calling','report'].indexOf(p);
+  document.querySelectorAll('.tab')[idx].classList.add('active');
+  if (p === 'calling') { applyFilters(); }
+  if (p === 'report') { renderReport(); }
+}
+
+// ============================================================
+// FILE UPLOAD
+// ============================================================
+function handleFile(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(ev) {
+    try {
+      const wb = XLSX.read(ev.target.result, {type:'binary'});
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const raw = XLSX.utils.sheet_to_json(ws, {defval:''});
+      previewData = raw.map(r => ({
+        acquiredDate: r['Acquired Date']||r['acquired_date']||r['Acquired date']||r['AcquiredDate']||'',
+        callerName:   r['Caller Name']||r['caller_name']||r['Caller']||'',
+        propertyId:   String(r['Property ID']||r['property_id']||r['PropertyID']||r['Prop ID']||''),
+        mobile:       String(r['Mobile']||r['mobile']||r['Phone']||r['Contact']||'').replace(/\D/g,'').slice(-10),
+        source:       r['Source']||r['source']||'',
+        calledBySource: r['Called By Source']||r['called_by_source']||r['CalledBySource']||'',
+        propertyType: r['Property Type']||r['property_type']||r['PropertyType']||'',
+        preference:   r['Preference']||r['preference']||'',
+        resCom:       r['Res/Com']||r['res_com']||r['ResComm']||r['Res Com']||'',
+        city:         r['City']||r['city']||''
+      }));
+      renderPreview();
+    } catch(err) { showToast('File read error: ' + err.message); }
+  };
+  reader.readAsBinaryString(file);
+}
+
+function renderPreview() {
+  if (!previewData.length) return;
+  document.getElementById('upload-preview').style.display = 'block';
+  document.getElementById('upload-guide').style.display = 'none';
+  document.getElementById('preview-count').textContent = previewData.length + ' records loaded — pehle 10 rows preview:';
+  const cols = ['acquiredDate','callerName','propertyId','mobile','source','calledBySource','propertyType','resCom','city'];
+  const labels = ['Acquired Date','Caller','Property ID','Mobile','Source','Called By','Type','Res/Com','City'];
+  let html = '<thead><tr>' + labels.map(l => '<th>' + l + '</th>').join('') + '</tr></thead><tbody>';
+  previewData.slice(0,10).forEach(r => {
+    html += '<tr>' + cols.map(c => '<td>' + r[c] + '</td>').join('') + '</tr>';
+  });
+  document.getElementById('preview-table').innerHTML = html + '</tbody>';
+}
+
+function confirmUpload() {
+  allData = [...previewData];
+  populateFilters();
+  document.getElementById('preview-count').textContent = allData.length + ' records confirmed ✓';
+  document.getElementById('confirm-btn').textContent = 'Loaded ✓';
+  document.getElementById('confirm-btn').disabled = true;
+  showToast(allData.length + ' records successfully loaded!');
+}
+
+function clearData() {
+  previewData = [];
+  document.getElementById('upload-preview').style.display = 'none';
+  document.getElementById('upload-guide').style.display = 'block';
+  document.getElementById('file-input').value = '';
+  document.getElementById('confirm-btn').textContent = 'Confirm & Load →';
+  document.getElementById('confirm-btn').disabled = false;
+}
+
+// ============================================================
+// FILTERS & MOBILE LIST
+// ============================================================
+function populateFilters() {
+  const sources = [...new Set(allData.map(r => r.source).filter(Boolean))];
+  const callers = [...new Set(allData.map(r => r.callerName).filter(Boolean))];
+  const fs = document.getElementById('f-source');
+  fs.innerHTML = '<option value="">All Sources</option>' + sources.map(s => `<option>${s}</option>`).join('');
+  const fc = document.getElementById('f-caller');
+  fc.innerHTML = '<option value="">All Callers</option>' + callers.map(c => `<option>${c}</option>`).join('');
+
+  const rCities = [...new Set(allData.map(r => r.city).filter(Boolean))];
+  const rCallers = [...new Set(allData.map(r => r.callerName).filter(Boolean))];
+  document.getElementById('report-caller').innerHTML = '<option value="">All Callers</option>' + rCallers.map(c => `<option>${c}</option>`).join('');
+  document.getElementById('report-city').innerHTML = '<option value="">All Cities</option>' + rCities.map(c => `<option>${c}</option>`).join('');
+
+  applyFilters();
+}
+
+function clearFilters() {
+  document.getElementById('f-mobile').value = '';
+  document.getElementById('f-propid').value = '';
+  document.getElementById('f-source').value = '';
+  document.getElementById('f-caller').value = '';
+  document.getElementById('f-disp').value = '';
+  document.getElementById('f-status').value = '';
+  applyFilters();
+}
+
+function parseAcquiredDate(str) {
+  if (!str) return new Date(9999,0,1);
+  const d = new Date(str);
+  if (!isNaN(d)) return d;
+  // Try DD-Mon-YYYY
+  const m = String(str).match(/(\d{1,2})[-\/]([A-Za-z]+)[-\/](\d{4})/);
+  if (m) {
+    const months = {jan:0,feb:1,mar:2,apr:3,may:4,jun:5,jul:6,aug:7,sep:8,oct:9,nov:10,dec:11};
+    const mo = months[m[2].toLowerCase().slice(0,3)];
+    if (mo !== undefined) return new Date(parseInt(m[3]), mo, parseInt(m[1]));
+  }
+  return new Date(9999,0,1);
+}
+
+function getMobileStatus(mobile) {
+  const props = allData.filter(r => r.mobile === mobile);
+  const calledProps = props.filter(p => (callLog[mobile + '_' + p.propertyId]||[]).length > 0);
+  if (calledProps.length === 0) return 'untouched';
+  if (calledProps.length < props.length) return 'partial';
+  return 'done';
+}
+
+function getLastDisp(mobile) {
+  let lastTs = 0, lastDisp = null;
+  allData.filter(r => r.mobile === mobile).forEach(p => {
+    const logs = callLog[mobile + '_' + p.propertyId] || [];
+    if (logs.length) {
+      const last = logs[logs.length - 1];
+      if (last.ts > lastTs) { lastTs = last.ts; lastDisp = last.disp; }
+    }
+  });
+  return lastDisp;
+}
+
+function applyFilters() {
+  if (!allData.length) return;
+
+  const fMobile = (document.getElementById('f-mobile')?.value || '').trim();
+  const fPropId = (document.getElementById('f-propid')?.value || '').trim().toLowerCase();
+  const fSource = document.getElementById('f-source')?.value || '';
+  const fCaller = document.getElementById('f-caller')?.value || '';
+  const fDisp   = document.getElementById('f-disp')?.value || '';
+  const fStatus = document.getElementById('f-status')?.value || '';
+
+  // Group by mobile
+  const mobileMap = {};
+  allData.forEach(r => {
+    if (!r.mobile) return;
+    if (!mobileMap[r.mobile]) mobileMap[r.mobile] = [];
+    mobileMap[r.mobile].push(r);
+  });
+
+  let mobiles = Object.keys(mobileMap);
+
+  // Filter
+  mobiles = mobiles.filter(mob => {
+    const props = mobileMap[mob];
+    if (fMobile && !mob.includes(fMobile)) return false;
+    if (fPropId && !props.some(p => p.propertyId.toLowerCase().includes(fPropId))) return false;
+    if (fSource && !props.some(p => p.source === fSource)) return false;
+    if (fCaller && !props.some(p => p.callerName === fCaller)) return false;
+
+    const status = getMobileStatus(mob);
+    const lastDisp = getLastDisp(mob);
+
+    if (fDisp === 'untouched') { if (status !== 'untouched') return false; }
+    else if (fDisp && lastDisp !== fDisp) return false;
+
+    if (fStatus === 'untouched' && status !== 'untouched') return false;
+    if (fStatus === 'partial' && status !== 'partial') return false;
+    if (fStatus === 'done' && status !== 'done') return false;
+
+    return true;
+  });
+
+  // Sort: untouched first, then partial, then done; within each group oldest acquiredDate first
+  const statusOrder = { untouched: 0, partial: 1, done: 2 };
+  mobiles.sort((a, b) => {
+    const sa = statusOrder[getMobileStatus(a)];
+    const sb = statusOrder[getMobileStatus(b)];
+    if (sa !== sb) return sa - sb;
+    // oldest acquired date first (old to new)
+    const da = parseAcquiredDate(mobileMap[a][0]?.acquiredDate);
+    const db = parseAcquiredDate(mobileMap[b][0]?.acquiredDate);
+    return da - db;
+  });
+
+  document.getElementById('results-count').textContent = mobiles.length + ' mobile' + (mobiles.length !== 1 ? 's' : '') + ' found';
+
+  if (!mobiles.length) {
+    document.getElementById('mobile-list').innerHTML = '<div class="empty-state"><div class="empty-icon">🔍</div>Koi result nahi mila — filters clear karein</div>';
+    return;
+  }
+
+  let html = '';
+  mobiles.forEach(mob => {
+    const props = mobileMap[mob];
+    const status = getMobileStatus(mob);
+    const calledCount = props.filter(p => (callLog[mob + '_' + p.propertyId]||[]).length > 0).length;
+    const lastDisp = getLastDisp(mob);
+    const oldestDate = props.map(p => p.acquiredDate).filter(Boolean)[0] || '—';
+    const cities = [...new Set(props.map(p => p.city).filter(Boolean))].join(', ') || '—';
+    const callerName = props[0]?.callerName || '—';
+    const source = [...new Set(props.map(p => p.source).filter(Boolean))].join(', ') || '—';
+
+    const pillClass = status === 'untouched' ? 'prop-pill-untouched' : status === 'partial' ? 'prop-pill-partial' : 'prop-pill-done';
+    const cardClass = status === 'untouched' ? 'untouched' : status === 'partial' ? 'partial' : 'done';
+
+    const dispTag = lastDisp
+      ? `<span class="tag ${lastDisp==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(lastDisp)?'tag-red':'tag-amber'}">${lastDisp}</span>`
+      : `<span class="tag tag-gray">Not Called</span>`;
+
+    const priorityTag = status === 'untouched' ? `<span class="priority-tag priority-hot">PRIORITY</span>` : '';
+
+    html += `<div class="mobile-card ${cardClass}" onclick="openMobile('${mob}')">
+      <div style="flex:1;min-width:0">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span class="mobile-num">${mob}</span>
+          ${priorityTag}
+          ${dispTag}
+        </div>
+        <div class="mobile-sub">
+          <span>👤 ${callerName}</span>
+          <span>🏙 ${cities}</span>
+          <span>🔗 ${source}</span>
+          <span>📅 ${oldestDate}</span>
+        </div>
+      </div>
+      <div class="mobile-right">
+        <div style="text-align:right">
+          <span class="prop-pill ${pillClass}">${calledCount}/${props.length} props</span>
+          <div style="font-size:10px;color:var(--text3);margin-top:3px">${status==='untouched'?'Untouched':status==='partial'?'In Progress':'Completed'}</div>
+        </div>
+        <span style="color:var(--text3);font-size:18px">›</span>
+      </div>
+    </div>`;
+  });
+
+  document.getElementById('mobile-list').innerHTML = html;
+}
+
+// ============================================================
+// DETAIL VIEW
+// ============================================================
+function openMobile(mobile) {
+  currentMobile = mobile;
+  const props = allData.filter(r => r.mobile === mobile);
+  document.getElementById('calling-search-view').style.display = 'none';
+  document.getElementById('calling-detail-view').style.display = 'block';
+  document.getElementById('detail-mobile').textContent = '📱 ' + mobile;
+  document.getElementById('detail-owner').textContent = (props[0]?.callerName || 'Unknown') + ' · ' + (props[0]?.city || '') + ' · ' + (props[0]?.source || '');
+  document.getElementById('prop-count-label').textContent = props.length;
+
+  let html = '';
+  props.forEach(p => {
+    const key = mobile + '_' + p.propertyId;
+    const lastCall = callLog[key];
+    const lastDisp = lastCall?.length ? lastCall[lastCall.length - 1].disp : null;
+    const attCount = lastCall?.length || 0;
+    const resCls = p.resCom && p.resCom.toLowerCase().includes('com') ? 'tag-amber' : 'tag-green';
+
+    html += `<div class="prop-item${currentPropId === p.propertyId ? ' active' : ''}" onclick="selectProp('${p.propertyId}')">
+      <div class="prop-id">${p.propertyId}</div>
+      <div class="prop-sub">${p.propertyType || '—'} · ${p.preference || '—'} · ${p.city || '—'}</div>
+      <div class="prop-tags">
+        <span class="tag ${resCls}">${p.resCom || 'Res'}</span>
+        ${lastDisp ? `<span class="tag ${lastDisp==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(lastDisp)?'tag-red':'tag-amber'}">${lastDisp}</span>` : '<span class="tag tag-gray">Not Called</span>'}
+        ${attCount ? `<span class="att-badge">${attCount} att</span>` : ''}
+      </div>
+    </div>`;
+  });
+  document.getElementById('prop-list').innerHTML = `<div class="panel-header"><span>${props.length} Properties</span><span style="font-size:10px;color:var(--text3)">${mobile}</span></div>` + html;
+}
+
+function selectProp(propId) {
+  currentPropId = propId;
+  // Update active state
+  document.querySelectorAll('.prop-item').forEach(el => el.classList.remove('active'));
+  event.currentTarget.classList.add('active');
+
+  const prop = allData.find(r => r.mobile === currentMobile && r.propertyId === propId);
+  if (!prop) return;
+  renderCallForm(prop);
+}
+
+function renderCallForm(prop) {
+  const key = currentMobile + '_' + prop.propertyId;
+  const history = callLog[key] || [];
+
+  let histHtml = '';
+  if (history.length) {
+    histHtml = history.slice().reverse().map(h => {
+      const cls = h.disp === 'Interested' ? 'hdot-g' : ['Not Interested','Switch Off','Call Disconnected','Language Issue'].includes(h.disp) ? 'hdot-r' : ['Ringing','Call Later'].includes(h.disp) ? 'hdot-a' : 'hdot-n';
+      return `<div class="history-item">
+        <div class="hdot ${cls}"></div>
+        <div>
+          <div class="h-text"><strong>${h.disp}</strong>${h.subDisp ? ' → ' + h.subDisp : ''}</div>
+          <div class="h-meta">${h.date} · ${h.caller || '—'}${h.notes ? ' · ' + h.notes : ''}</div>
+        </div>
+      </div>`;
+    }).join('');
+  } else {
+    histHtml = '<div style="font-size:12px;color:var(--text3);padding:4px 0">Abhi tak koi call nahi hua</div>';
+  }
+
+  const dispBtns = DISPOSITIONS.map(d =>
+    `<div class="disp-btn" onclick="selectDisp(this,'${d.label}')" data-disp="${d.label}" data-color="${d.color}">${d.label}</div>`
+  ).join('');
+
+  document.getElementById('call-form-area').innerHTML = `
+  <div class="call-form">
+    <div class="call-header">
+      <div>
+        <div class="call-prop-id">${prop.propertyId}</div>
+        <div class="call-prop-meta">${prop.propertyType || '—'} · ${prop.preference || '—'} · ${prop.city || '—'}</div>
+        <div class="prop-tags" style="margin-top:6px">
+          <span class="tag ${prop.resCom&&prop.resCom.toLowerCase().includes('com')?'tag-amber':'tag-green'}">${prop.resCom||'Residential'}</span>
+          <span class="tag tag-blue">${prop.source||'—'}</span>
+        </div>
+      </div>
+      <div>
+        <div class="att-badge" style="font-size:13px">${history.length} attempts</div>
+        <div style="font-size:10px;color:var(--text3);text-align:right;margin-top:4px">${prop.acquiredDate||''}</div>
+      </div>
+    </div>
+
+    <div class="client-grid">
+      <div class="ci-item"><span class="ci-label">Mobile</span><span class="ci-val">${prop.mobile}</span></div>
+      <div class="ci-item"><span class="ci-label">Caller Name</span><span class="ci-val">${prop.callerName||'—'}</span></div>
+      <div class="ci-item"><span class="ci-label">Called By</span><span class="ci-val">${prop.calledBySource||'—'}</span></div>
+      <div class="ci-item"><span class="ci-label">Source</span><span class="ci-val">${prop.source||'—'}</span></div>
+    </div>
+
+    <p class="section-label">Calling History</p>
+    <div class="history-box">${histHtml}</div>
+
+    <p class="section-label">Disposition Select karein</p>
+    <div class="disp-grid">${dispBtns}</div>
+
+    <div id="sub-disp-area"></div>
+
+    <div class="form-group">
+      <label class="form-label">Caller Name</label>
+      <input type="text" id="call-caller" placeholder="Caller ka naam" value="${prop.callerName||''}" style="width:100%">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Notes (optional)</label>
+      <input type="text" id="call-notes" placeholder="Important note..." style="width:100%">
+    </div>
+    <div style="display:flex;gap:8px;justify-content:flex-end;margin-top:4px">
+      <button class="btn" onclick="clearFormState()">Clear</button>
+      <button class="btn btn-primary" onclick="saveCall('${prop.propertyId}')">✓ Save Call Log</button>
+    </div>
+  </div>`;
+
+  selectedDisp = null;
+  selectedSubDisp = null;
+}
+
+function selectDisp(el, disp) {
+  document.querySelectorAll('.disp-btn').forEach(b => {
+    b.classList.remove('sel-red','sel-green','sel-amber','sel-blue');
+  });
+  const color = el.dataset.color;
+  el.classList.add('sel-' + color);
+  selectedDisp = disp;
+  selectedSubDisp = null;
+
+  const subs = SUB_DISPOSITIONS[disp] || [];
+  if (subs.length) {
+    document.getElementById('sub-disp-area').innerHTML =
+      '<label class="form-label">Sub Disposition</label><div class="subdisp-grid">' +
+      subs.map(s => `<div class="disp-btn" onclick="selectSubDisp(this,'${s}')" data-color="blue">${s}</div>`).join('') +
+      '</div>';
+  } else {
+    document.getElementById('sub-disp-area').innerHTML = '';
+  }
+}
+
+function selectSubDisp(el, sub) {
+  document.querySelectorAll('#sub-disp-area .disp-btn').forEach(b => b.classList.remove('sel-blue'));
+  el.classList.add('sel-blue');
+  selectedSubDisp = sub;
+}
+
+function saveCall(propId) {
+  if (!selectedDisp) { showToast('⚠ Pehle disposition select karein'); return; }
+  const key = currentMobile + '_' + propId;
+  if (!callLog[key]) callLog[key] = [];
+  const today = new Date();
+  const dateStr = String(today.getDate()).padStart(2,'0') + '-' + today.toLocaleString('default',{month:'short'}) + '-' + today.getFullYear();
+  callLog[key].push({
+    disp: selectedDisp,
+    subDisp: selectedSubDisp || '',
+    date: dateStr,
+    caller: document.getElementById('call-caller')?.value || '',
+    notes: document.getElementById('call-notes')?.value || '',
+    ts: Date.now()
+  });
+  selectedDisp = null;
+  selectedSubDisp = null;
+  showToast('✓ Call log saved — ' + propId);
+  // Re-render prop list with updated state
+  openMobile(currentMobile);
+  const prop = allData.find(r => r.mobile === currentMobile && r.propertyId === propId);
+  if (prop) renderCallForm(prop);
+}
+
+function clearFormState() {
+  selectedDisp = null;
+  selectedSubDisp = null;
+  document.querySelectorAll('.disp-btn').forEach(b => b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
+  const sub = document.getElementById('sub-disp-area');
+  if (sub) sub.innerHTML = '';
+  const notes = document.getElementById('call-notes');
+  if (notes) notes.value = '';
+}
+
+function backToList() {
+  currentMobile = null;
+  currentPropId = null;
+  document.getElementById('calling-search-view').style.display = 'block';
+  document.getElementById('calling-detail-view').style.display = 'none';
+  applyFilters();
+}
+
+// ============================================================
+// REPORT
+// ============================================================
+function getFilteredLogs() {
+  const callerFilter = document.getElementById('report-caller')?.value || '';
+  const cityFilter   = document.getElementById('report-city')?.value || '';
+  const dateFilter   = document.getElementById('report-date')?.value || 'all';
+  const now = new Date();
+
+  const logs = [];
+  Object.entries(callLog).forEach(([key, entries]) => {
+    const [mob, propId] = key.split('_');
+    const prop = allData.find(r => r.mobile === mob && r.propertyId === propId) || {};
+    entries.forEach(e => {
+      if (callerFilter && e.caller !== callerFilter && prop.callerName !== callerFilter) return;
+      if (cityFilter && prop.city !== cityFilter) return;
+      const d = new Date(e.ts);
+      if (dateFilter === 'today' && d.toDateString() !== now.toDateString()) return;
+      if (dateFilter === 'week') { const w = new Date(now); w.setDate(w.getDate()-7); if (d < w) return; }
+      if (dateFilter === 'month') { const m = new Date(now); m.setDate(m.getDate()-30); if (d < m) return; }
+      logs.push({...e, mobile: mob, propId, prop});
+    });
+  });
+  return logs;
+}
+
+function pct(n, d) { return d ? Math.round(n / d * 100) : 0; }
+function pbColor(p) { return p >= 60 ? '#639922' : p >= 30 ? '#BA7517' : '#E24B4A'; }
+
+function renderReport() {
+  const logs = getFilteredLogs();
+  const total = logs.length;
+  const touchedSet = new Set(logs.map(e => e.mobile + '_' + e.propId));
+  const touched = touchedSet.size;
+  const totalProps = allData.length || 1;
+  const connected = logs.filter(e => !['Ringing','Switch Off'].includes(e.disp)).length;
+  const interested = logs.filter(e => e.disp === 'Interested').length;
+  const photosAvail = logs.filter(e => e.subDisp === 'Photos Available').length;
+  const whatsapp = logs.filter(e => e.subDisp === 'Sharing on WhatsApp').length;
+  const selfUpload = logs.filter(e => e.subDisp === 'Client Will Upload').length;
+
+  function statCard(label, val, sub, pctVal, accentClass) {
+    const fill = pbColor(pctVal);
+    return `<div class="stat-card ${accentClass}">
+      <div class="stat-label">${label}</div>
+      <div class="stat-val">${val}</div>
+      <div class="stat-pct">${sub}</div>
+      <div class="progress-bar"><div class="pb-fill" style="width:${pctVal}%;background:${fill}"></div></div>
+    </div>`;
+  }
+
+  document.getElementById('report-stats').innerHTML =
+    statCard('Total Attempts', total, touched + ' unique properties', pct(touched, totalProps), '') +
+    statCard('Touched', touched, pct(touched, totalProps) + '% of all props', pct(touched, totalProps), 'accent-amber') +
+    statCard('Connected', connected, pct(connected, total) + '% of attempts', pct(connected, total), 'accent-blue') +
+    statCard('Interested', interested, pct(interested, connected) + '% of connected', pct(interested, connected), 'accent-amber') +
+    statCard('Photos Available', photosAvail, pct(photosAvail, interested) + '% of interested', pct(photosAvail, interested), 'accent-green') +
+    statCard('WhatsApp Share', whatsapp, pct(whatsapp, interested) + '%', pct(whatsapp, interested), 'accent-green') +
+    statCard('Self Upload', selfUpload, pct(selfUpload, interested) + '%', pct(selfUpload, interested), 'accent-blue');
+
+  // Date-wise
+  const byDate = {};
+  logs.forEach(e => {
+    const d = e.date || 'Unknown';
+    if (!byDate[d]) byDate[d] = {date:d, attempts:0, connected:0, interested:0, photos:0, whatsapp:0};
+    byDate[d].attempts++;
+    if (!['Ringing','Switch Off'].includes(e.disp)) byDate[d].connected++;
+    if (e.disp === 'Interested') byDate[d].interested++;
+    if (e.subDisp === 'Photos Available') byDate[d].photos++;
+    if (e.subDisp === 'Sharing on WhatsApp') byDate[d].whatsapp++;
+  });
+  const dateRows = Object.values(byDate).sort((a,b) => b.date.localeCompare(a.date));
+  document.getElementById('report-table').innerHTML = dateRows.length
+    ? '<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos Available</th><th>WhatsApp</th><th>Connect %</th><th>Photo %</th></tr></thead><tbody>' +
+      dateRows.map(r => `<tr>
+        <td><strong>${r.date}</strong></td>
+        <td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td>
+        <td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td>
+        <td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td>
+      </tr>`).join('') + '</tbody>'
+    : '<thead><tr><th>Date</th></tr></thead><tbody><tr><td style="color:var(--text3)">Koi data nahi</td></tr></tbody>';
+
+  // Caller-wise
+  const byCaller = {};
+  logs.forEach(e => {
+    const c = e.caller || e.prop?.callerName || 'Unknown';
+    if (!byCaller[c]) byCaller[c] = {name:c, attempts:0, connected:0, interested:0, photos:0, whatsapp:0, selfUpload:0};
+    byCaller[c].attempts++;
+    if (!['Ringing','Switch Off'].includes(e.disp)) byCaller[c].connected++;
+    if (e.disp === 'Interested') byCaller[c].interested++;
+    if (e.subDisp === 'Photos Available') byCaller[c].photos++;
+    if (e.subDisp === 'Sharing on WhatsApp') byCaller[c].whatsapp++;
+    if (e.subDisp === 'Client Will Upload') byCaller[c].selfUpload++;
+  });
+  const callerRows = Object.values(byCaller).sort((a,b) => b.photos - a.photos);
+  document.getElementById('caller-table').innerHTML = callerRows.length
+    ? '<thead><tr><th>Caller</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Photo %</th></tr></thead><tbody>' +
+      callerRows.map(r => `<tr>
+        <td><strong>${r.name}</strong></td>
+        <td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.selfUpload}</td>
+        <td style="color:${pbColor(pct(r.photos,r.attempts))};font-weight:600">${pct(r.photos,r.attempts)}%</td>
+      </tr>`).join('') + '</tbody>'
+    : '<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">Koi data nahi</td></tr></tbody>';
+
+  // Disposition breakdown
+  const byDisp = {};
+  logs.forEach(e => {
+    if (!byDisp[e.disp]) byDisp[e.disp] = {disp:e.disp, count:0};
+    byDisp[e.disp].count++;
+  });
+  const dispRows = Object.values(byDisp).sort((a,b) => b.count - a.count);
+  document.getElementById('disp-table').innerHTML = dispRows.length
+    ? '<thead><tr><th>Disposition</th><th>Count</th><th>% of Attempts</th></tr></thead><tbody>' +
+      dispRows.map(r => `<tr>
+        <td><strong>${r.disp}</strong></td>
+        <td>${r.count}</td>
+        <td style="font-weight:600">${pct(r.count, total)}%</td>
+      </tr>`).join('') + '</tbody>'
+    : '<thead><tr><th>Disposition</th></tr></thead><tbody><tr><td style="color:var(--text3)">Koi data nahi</td></tr></tbody>';
+}
+
+function exportReport() {
+  const logs = [];
+  Object.entries(callLog).forEach(([key, entries]) => {
+    const [mob, propId] = key.split('_');
+    const prop = allData.find(r => r.mobile === mob && r.propertyId === propId) || {};
+    entries.forEach(e => {
+      logs.push({
+        'Mobile': mob,
+        'Property ID': propId,
+        'Caller Name': e.caller,
+        'Date': e.date,
+        'Disposition': e.disp,
+        'Sub Disposition': e.subDisp || '',
+        'Notes': e.notes || '',
+        'City': prop.city || '',
+        'Property Type': prop.propertyType || '',
+        'Preference': prop.preference || '',
+        'Res/Com': prop.resCom || '',
+        'Source': prop.source || '',
+        'Acquired Date': prop.acquiredDate || ''
+      });
+    });
+  });
+  if (!logs.length) { showToast('Export ke liye koi data nahi'); return; }
+  const ws = XLSX.utils.json_to_sheet(logs);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Call Report');
+  XLSX.writeFile(wb, '99acres_call_report_' + new Date().toISOString().slice(0,10) + '.xlsx');
+  showToast('✓ Report export ho gayi');
+}
+
+// ============================================================
+// UTILITIES
+// ============================================================
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2500);
+}
+
+// Drag & drop
+const dz = document.getElementById('drop-zone');
+dz.addEventListener('dragover', e => { e.preventDefault(); dz.style.background = '#E6F1FB'; });
+dz.addEventListener('dragleave', () => { dz.style.background = ''; });
+dz.addEventListener('drop', e => {
+  e.preventDefault();
+  dz.style.background = '';
+  const file = e.dataTransfer.files[0];
+  if (file) {
+    document.getElementById('file-input').files = e.dataTransfer.files;
+    handleFile({target: {files: [file]}});
+  }
+});
+</script>
+</body>
+</html>
