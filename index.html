@@ -37,9 +37,6 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .connect-btn{margin-top:10px;width:100%;padding:10px;border-radius:var(--radius);background:var(--red);color:#fff;border:none;font-size:14px;font-weight:600;cursor:pointer}
 .connect-btn:hover{background:var(--red-dark)}
 .connect-error{font-size:12px;color:var(--red-dark);background:var(--red-light);padding:8px 12px;border-radius:var(--radius);margin-top:8px;display:none}
-.code-block{background:#1a1a18;color:#e8e6df;border-radius:var(--radius);padding:10px 14px;font-family:monospace;font-size:11px;line-height:1.7;overflow-x:auto;margin-top:6px;position:relative}
-.copy-btn{position:absolute;top:8px;right:8px;background:rgba(255,255,255,.15);border:none;color:#fff;font-size:11px;padding:3px 8px;border-radius:4px;cursor:pointer}
-.copy-btn:hover{background:rgba(255,255,255,.25)}
 .warning-bar{background:var(--amber-light);border:1px solid var(--amber);border-radius:var(--radius);padding:9px 12px;font-size:12px;color:#7a4a00;margin-bottom:1rem;line-height:1.5}
 
 /* ===== TOPBAR ===== */
@@ -202,11 +199,9 @@ table.data-table tr:hover td{background:var(--surface2)}
       <div class="logo-badge">99A</div>
       <div style="font-size:16px;font-weight:700">Photo Penetration Portal — Setup</div>
     </div>
-
     <div class="warning-bar">
       ⚠ One-time setup required. Follow these steps to connect Google Sheets as your database. Takes about 5 minutes.
     </div>
-
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
@@ -214,15 +209,13 @@ table.data-table tr:hover td{background:var(--surface2)}
         <div class="step-desc">Go to <strong>sheets.google.com</strong> → create a new blank spreadsheet → name it <code>99acres Portal DB</code></div>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
         <div class="step-title">Open Apps Script</div>
-        <div class="step-desc">In the sheet: <strong>Extensions → Apps Script</strong>. Delete any existing code. Paste the entire contents of the <code>Code.gs</code> file (provided separately). Click <strong>Save (💾)</strong>.</div>
+        <div class="step-desc">In the sheet: <strong>Extensions → Apps Script</strong>. Delete any existing code. Paste the entire contents of the <code>Code.gs</code> file. Click <strong>Save (💾)</strong>.</div>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
@@ -230,12 +223,11 @@ table.data-table tr:hover td{background:var(--surface2)}
         <div class="step-desc">Click <strong>Deploy → New Deployment</strong> → Type: <strong>Web App</strong> → Execute as: <strong>Me</strong> → Who has access: <strong>Anyone</strong> → Click <strong>Deploy</strong> → Authorize when prompted.</div>
       </div>
     </div>
-
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-body">
         <div class="step-title">Paste your Web App URL below</div>
-        <div class="step-desc">After deploying, copy the <strong>Web App URL</strong> (looks like: <code>https://script.google.com/macros/s/ABC.../exec</code>) and paste it here.</div>
+        <div class="step-desc">After deploying, copy the <strong>Web App URL</strong> and paste it here.</div>
         <input class="url-input" type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec">
         <div id="connect-error" class="connect-error"></div>
         <button class="connect-btn" onclick="connectAndSave()">Connect & Open Portal →</button>
@@ -287,19 +279,15 @@ table.data-table tr:hover td{background:var(--surface2)}
         <div style="margin-top:10px"><span class="tag tag-blue">Merges by Property ID</span> <span class="tag tag-green">All data safe</span></div>
       </div>
     </div>
-
     <div id="mode-info-fresh" class="info-bar">🆕 &nbsp;<strong>Fresh Import:</strong> All existing listings will be replaced. Call logs will not be affected.</div>
     <div id="mode-info-update" class="info-bar" style="display:none;background:var(--green-light);border-color:#9fcf6e;color:var(--green)">🔄 &nbsp;<strong>Update / Merge:</strong> Matched by Property ID. New IDs are added. Records not in file remain unchanged.</div>
-
     <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
       <div style="font-size:36px;margin-bottom:10px">📂</div>
       <div style="font-size:15px;font-weight:600;margin-bottom:4px" id="drop-zone-label">Fresh Import — Upload Excel or CSV</div>
       <div style="font-size:12px;color:var(--text3)">Click or drag & drop · .xlsx, .xls, .csv</div>
     </div>
     <input type="file" id="file-input" accept=".xlsx,.xls,.csv" onchange="handleFile(event)">
-
     <div class="info-bar">ℹ &nbsp;Columns: <strong>Acquired Date, Acquired By, Property ID, Mobile, Client Name, Client Email, Source, Called By Source, Property Type, Preference, Res/Com, City</strong></div>
-
     <div id="upload-preview" style="display:none">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
         <div>
@@ -332,7 +320,6 @@ table.data-table tr:hover td{background:var(--surface2)}
       </div>
       <div class="table-wrap"><table class="data-table" id="preview-table"></table></div>
     </div>
-
     <div id="upload-guide">
       <p class="section-label" style="margin-top:1.5rem">Column Reference</p>
       <div class="table-wrap">
@@ -394,7 +381,7 @@ table.data-table tr:hover td{background:var(--surface2)}
             </select>
           </div>
           <div class="filter-actions">
-            <button class="btn btn-sm" onclick="applyFilters()" title="Refresh from Google Sheets">⟳ Refresh</button>
+            <button class="btn btn-sm" onclick="loadAllData()" title="Refresh from Google Sheets">⟳ Refresh</button>
             <button class="btn btn-sm" onclick="clearFilters()">Clear Filters</button>
           </div>
         </div>
@@ -484,7 +471,7 @@ table.data-table tr:hover td{background:var(--surface2)}
 
 <script>
 // ============================================================
-// CONFIG — stored in localStorage (just the URL, not data)
+// CONFIG
 // ============================================================
 const LS_URL = '99acres_script_url';
 let SCRIPT_URL = localStorage.getItem(LS_URL) || '';
@@ -492,16 +479,16 @@ let SCRIPT_URL = localStorage.getItem(LS_URL) || '';
 // ============================================================
 // STATE
 // ============================================================
-let allData    = [];   // listings from Sheets
-let callLog    = {};   // { "propId_mobile": [{...}] } built from callLogRows
-let callLogRows= [];   // raw rows from Sheets CallLogs tab
-let currentMobile  = null;
-let currentPropId  = null;
-let previewData    = [];
-let importMode     = 'fresh';
-let selectedDisp   = null;
-let selectedSubDisp= null;
-let pollInterval   = null;
+let allData     = [];
+let callLog     = {};
+let callLogRows = [];
+let currentMobile   = null;
+let currentPropId   = null;
+let previewData     = [];
+let importMode      = 'fresh';
+let selectedDisp    = null;
+let selectedSubDisp = null;
+let pollInterval    = null;
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
 const DISPOSITIONS = [
@@ -522,6 +509,16 @@ const SUB_DISPOSITIONS = {
 };
 
 // ============================================================
+// NORMALIZE HELPERS  ← KEY FIX
+// ============================================================
+function normMobile(v) {
+  return String(v || '').replace(/\D/g, '').slice(-10).trim();
+}
+function normStr(v) {
+  return String(v || '').trim();
+}
+
+// ============================================================
 // DATE UTILITIES
 // ============================================================
 function excelSerialToDate(s) {
@@ -538,7 +535,7 @@ function formatDate(val) {
     if (d) return String(d.getUTCDate()).padStart(2,'0')+'-'+MONTHS[d.getUTCMonth()]+'-'+d.getUTCFullYear();
   }
   const str = String(val).trim();
-  if (!str||str==='—') return '—';
+  if (!str || str==='—') return '—';
   if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(str)) return str;
   const d = new Date(str);
   if (!isNaN(d)) return String(d.getDate()).padStart(2,'0')+'-'+MONTHS[d.getMonth()]+'-'+d.getFullYear();
@@ -576,12 +573,10 @@ async function connectAndSave() {
   const url = document.getElementById('script-url-input').value.trim();
   const errEl = document.getElementById('connect-error');
   errEl.style.display = 'none';
-
   if (!url.startsWith('https://script.google.com')) {
-    errEl.textContent = 'https://script.google.com/macros/s/AKfycbyKnnegml7ZhpBVyiecsmPHQoFf6tPTXQ-LVWtXBf_qeXUw9XspBzXypXB9LZoTa_3e/exec';
+    errEl.textContent = 'Please paste a valid Google Apps Script URL';
     errEl.style.display = 'block'; return;
   }
-
   SCRIPT_URL = url;
   showLoading('Testing connection...');
   try {
@@ -610,11 +605,8 @@ function resetSetup() {
 // INIT
 // ============================================================
 window.addEventListener('DOMContentLoaded', () => {
-  if (SCRIPT_URL) {
-    launchApp();
-  } else {
-    document.getElementById('setup-screen').style.display = 'flex';
-  }
+  if (SCRIPT_URL) { launchApp(); }
+  else { document.getElementById('setup-screen').style.display = 'flex'; }
 });
 
 async function launchApp() {
@@ -625,7 +617,6 @@ async function launchApp() {
     hideLoading();
     document.getElementById('main-app').style.display = 'block';
     showPage('calling');
-    // Poll every 30s for new call logs
     pollInterval = setInterval(pollCallLogs, 30000);
   } catch(e) {
     hideLoading();
@@ -646,12 +637,13 @@ async function loadAllData() {
       gsCall({action:'getListings'}),
       gsCall({action:'getCallLogs'})
     ]);
-    // Convert listing rows (keys = sheet column names)
+
+    // ── FIX: normalise mobile + propertyId as strings on load ──
     allData = (lr.data||[]).map(r => ({
       acquiredDate:   r.AcquiredDate   || '',
       acquiredBy:     r.AcquiredBy     || '',
-      propertyId:     r.PropertyID     || '',
-      mobile:         r.Mobile         || '',
+      propertyId:     normStr(r.PropertyID),
+      mobile:         normMobile(r.Mobile),
       clientName:     r.ClientName     || '',
       clientEmail:    r.ClientEmail    || '',
       source:         r.Source         || '',
@@ -660,8 +652,14 @@ async function loadAllData() {
       preference:     r.Preference     || '',
       resCom:         r.ResCom         || '',
       city:           r.City           || ''
+    })).filter(r => r.mobile); // skip rows with no mobile
+
+    callLogRows = (cr.data||[]).map(r => ({
+      ...r,
+      PropertyID: normStr(r.PropertyID),
+      Mobile:     normMobile(r.Mobile)
     }));
-    callLogRows = cr.data || [];
+
     rebuildCallLog();
     populateFilters();
     populateReportFilters();
@@ -676,7 +674,11 @@ async function loadAllData() {
 async function pollCallLogs() {
   try {
     const cr = await gsCall({action:'getCallLogs'});
-    const fresh = cr.data || [];
+    const fresh = (cr.data||[]).map(r => ({
+      ...r,
+      PropertyID: normStr(r.PropertyID),
+      Mobile:     normMobile(r.Mobile)
+    }));
     if (fresh.length !== callLogRows.length) {
       callLogRows = fresh;
       rebuildCallLog();
@@ -689,7 +691,7 @@ async function pollCallLogs() {
 function rebuildCallLog() {
   callLog = {};
   callLogRows.forEach(row => {
-    const key = (row.PropertyID||'') + '_' + (row.Mobile||'');
+    const key = normStr(row.PropertyID) + '_' + normMobile(row.Mobile);
     if (!callLog[key]) callLog[key] = [];
     callLog[key].push({
       disp:    row.Disposition    || '',
@@ -701,7 +703,6 @@ function rebuildCallLog() {
       logId:   row.LogID          || ''
     });
   });
-  // Sort each key by timestamp
   Object.values(callLog).forEach(arr => arr.sort((a,b) => a.ts - b.ts));
 }
 
@@ -762,8 +763,8 @@ function handleFile(e) {
       previewData = raw.map(r => ({
         acquiredDate:   r['Acquired Date']   ||r['acquired_date']   ||r['AcquiredDate']||'',
         acquiredBy:     r['Acquired By']     ||r['acquired_by']     ||r['Caller Name'] ||'',
-        propertyId:     String(r['Property ID']||r['property_id']   ||r['PropertyID'] ||''),
-        mobile:         String(r['Mobile']   ||r['mobile']          ||r['Phone']       ||'').replace(/\D/g,'').slice(-10),
+        propertyId:     normStr(r['Property ID']||r['property_id']  ||r['PropertyID'] ||''),
+        mobile:         normMobile(r['Mobile']||r['mobile']         ||r['Phone']       ||''),
         clientName:     r['Client Name']     ||r['client_name']     ||r['ClientName']  ||'',
         clientEmail:    r['Client Email']    ||r['client_email']    ||r['ClientEmail'] ||'',
         source:         r['Source']          ||r['source']          ||'',
@@ -772,7 +773,7 @@ function handleFile(e) {
         preference:     r['Preference']      ||r['preference']      ||'',
         resCom:         r['Res/Com']         ||r['res_com']         ||'',
         city:           r['City']            ||r['city']            ||''
-      }));
+      })).filter(r => r.mobile); // skip rows with no mobile
       renderPreview();
     } catch(err) { showToast('File error: ' + err.message); }
   };
@@ -787,17 +788,18 @@ function renderPreview() {
   document.getElementById('confirm-btn').textContent = importMode==='fresh' ? 'Confirm Fresh Import →' : 'Confirm Merge & Update →';
 
   const existingIds = new Set(allData.map(r=>r.propertyId));
-  const modeBadge = document.getElementById('preview-mode-badge');
-  const mergeSummary = document.getElementById('merge-summary');
+  const modeBadge   = document.getElementById('preview-mode-badge');
+  const mergeSummary= document.getElementById('merge-summary');
 
   if (importMode==='fresh') {
     document.getElementById('preview-count').textContent = previewData.length + ' records — preview (first 10):';
     modeBadge.innerHTML = '<span class="tag tag-amber">Fresh Import</span>';
     mergeSummary.style.display = 'none';
   } else {
+    const newIds     = new Set(previewData.map(x=>x.propertyId));
     const willUpdate = previewData.filter(r=>existingIds.has(r.propertyId)).length;
     const willAdd    = previewData.filter(r=>!existingIds.has(r.propertyId)).length;
-    const willKeep   = allData.filter(r=>!new Set(previewData.map(x=>x.propertyId)).has(r.propertyId)).length;
+    const willKeep   = allData.filter(r=>!newIds.has(r.propertyId)).length;
     document.getElementById('preview-count').textContent = previewData.length + ' rows in file — merge preview:';
     modeBadge.innerHTML = '<span class="tag tag-blue">Update / Merge</span>';
     mergeSummary.style.display = 'block';
@@ -812,9 +814,9 @@ function renderPreview() {
   if (importMode==='update') html += '<th>Action</th>';
   html += '</tr></thead><tbody>';
   previewData.slice(0,10).forEach(r => {
-    const row = {...r, acquiredDate: formatDate(r.acquiredDate)};
-    const isNew = !existingIds.has(r.propertyId);
-    const rs = importMode==='update' && isNew ? 'style="background:#F0FBE8"' : '';
+    const row  = {...r, acquiredDate: formatDate(r.acquiredDate)};
+    const isNew= !existingIds.has(r.propertyId);
+    const rs   = importMode==='update' && isNew ? 'style="background:#F0FBE8"' : '';
     html += `<tr ${rs}>` + cols.map(c=>'<td>'+(row[c]||'—')+'</td>').join('');
     if (importMode==='update') html += `<td><span class="tag ${isNew?'tag-green':'tag-blue'}">${isNew?'Add New':'Update'}</span></td>`;
     html += '</tr>';
@@ -826,7 +828,6 @@ async function confirmUpload() {
   const btn = document.getElementById('confirm-btn');
   btn.disabled = true; btn.textContent = 'Uploading...';
 
-  // Build payload in Sheets column format
   const toSheetRow = r => ({
     PropertyID:     r.propertyId     || '',
     Mobile:         r.mobile         || '',
@@ -850,11 +851,11 @@ async function confirmUpload() {
       data:   previewData.map(toSheetRow)
     });
     const msg = importMode==='fresh'
-      ? `✓ Fresh import done — ${result.added} records uploaded to Google Sheets`
+      ? `✓ Fresh import done — ${result.added} records uploaded`
       : `✓ Merge done — ${result.updated} updated, ${result.added} added`;
     showToast(msg);
     btn.textContent = 'Done ✓';
-    await loadAllData(); // reload from Sheets to stay in sync
+    await loadAllData();
   } catch(e) {
     setSyncStatus('error','Upload failed');
     showToast('⚠ Upload failed: ' + e.message);
@@ -897,28 +898,28 @@ function clearFilters() {
 }
 
 // ============================================================
-// MOBILE LIST
+// MOBILE LIST  ← KEY FIX: all comparisons use normMobile/normStr
 // ============================================================
 function getMobileStatus(mobile, props) {
-  const called = props.filter(p=>(callLog[p.propertyId+'_'+mobile]||[]).length>0).length;
+  const called = props.filter(p=>(callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[]).length>0).length;
   return called===0 ? 'untouched' : called<props.length ? 'partial' : 'done';
 }
 function getLastDisp(mobile, props) {
   let lastTs=0, lastDisp=null;
   props.forEach(p=>{
-    const logs=callLog[p.propertyId+'_'+mobile]||[];
-    if (logs.length){ const l=logs[logs.length-1]; if(l.ts>lastTs){lastTs=l.ts;lastDisp=l.disp;}}
+    const logs=callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[];
+    if(logs.length){ const l=logs[logs.length-1]; if(l.ts>lastTs){lastTs=l.ts;lastDisp=l.disp;} }
   });
   return lastDisp;
 }
 function getTotalAttempts(mobile, props) {
-  return props.reduce((s,p)=>s+(callLog[p.propertyId+'_'+mobile]||[]).length,0);
+  return props.reduce((s,p)=>s+(callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[]).length,0);
 }
 
 function applyFilters() {
   if (!allData.length) return;
-  const fMob    = (document.getElementById('f-mobile')?.value||'').trim();
-  const fProp   = (document.getElementById('f-propid')?.value||'').trim().toLowerCase();
+  const fMob    = normMobile(document.getElementById('f-mobile')?.value||'');
+  const fProp   = normStr(document.getElementById('f-propid')?.value||'').toLowerCase();
   const fClient = (document.getElementById('f-client')?.value||'').trim().toLowerCase();
   const fSrc    = document.getElementById('f-source')?.value||'';
   const fCby    = document.getElementById('f-callby')?.value||'';
@@ -926,56 +927,63 @@ function applyFilters() {
   const fDisp   = document.getElementById('f-disp')?.value||'';
   const fStatus = document.getElementById('f-status')?.value||'';
 
-  const mobileMap={};
-  allData.forEach(r=>{ if(!r.mobile)return; if(!mobileMap[r.mobile])mobileMap[r.mobile]=[]; mobileMap[r.mobile].push(r); });
+  // ── FIX: always use normMobile as map key ──
+  const mobileMap = {};
+  allData.forEach(r => {
+    const mob = normMobile(r.mobile);
+    if (!mob) return;
+    if (!mobileMap[mob]) mobileMap[mob] = [];
+    mobileMap[mob].push({...r, mobile: mob, propertyId: normStr(r.propertyId)});
+  });
 
-  let mobiles = Object.keys(mobileMap).filter(mob=>{
-    const props=mobileMap[mob];
-    if(fMob    && !mob.includes(fMob)) return false;
-    if(fProp   && !props.some(p=>p.propertyId.toLowerCase().includes(fProp))) return false;
-    if(fClient && !props.some(p=>(p.clientName||'').toLowerCase().includes(fClient))) return false;
-    if(fSrc    && !props.some(p=>p.source===fSrc)) return false;
-    if(fCby    && !props.some(p=>p.calledBySource===fCby)) return false;
-    if(fCity   && !props.some(p=>p.city===fCity)) return false;
-    const status  = getMobileStatus(mob,props);
-    const lastD   = getLastDisp(mob,props);
-    if(fDisp==='untouched'){ if(status!=='untouched') return false; }
-    else if(fDisp && lastD!==fDisp) return false;
-    if(fStatus && status!==fStatus) return false;
+  let mobiles = Object.keys(mobileMap).filter(mob => {
+    const props = mobileMap[mob];
+    if (fMob    && !mob.includes(fMob)) return false;
+    if (fProp   && !props.some(p=>normStr(p.propertyId).toLowerCase().includes(fProp))) return false;
+    if (fClient && !props.some(p=>(p.clientName||'').toLowerCase().includes(fClient))) return false;
+    if (fSrc    && !props.some(p=>p.source===fSrc)) return false;
+    if (fCby    && !props.some(p=>p.calledBySource===fCby)) return false;
+    if (fCity   && !props.some(p=>p.city===fCity)) return false;
+    const status = getMobileStatus(mob, props);
+    const lastD  = getLastDisp(mob, props);
+    if (fDisp==='untouched') { if (status!=='untouched') return false; }
+    else if (fDisp && lastD!==fDisp) return false;
+    if (fStatus && status!==fStatus) return false;
     return true;
   });
 
-  const so={untouched:0,partial:1,done:2};
-  mobiles.sort((a,b)=>{
+  const so = {untouched:0, partial:1, done:2};
+  mobiles.sort((a,b) => {
     const sa=so[getMobileStatus(a,mobileMap[a])], sb=so[getMobileStatus(b,mobileMap[b])];
-    if(sa!==sb) return sa-sb;
-    return parseForSort(mobileMap[a][0]?.acquiredDate)-parseForSort(mobileMap[b][0]?.acquiredDate);
+    if (sa!==sb) return sa-sb;
+    return parseForSort(mobileMap[a][0]?.acquiredDate) - parseForSort(mobileMap[b][0]?.acquiredDate);
   });
 
   document.getElementById('results-info').textContent = mobiles.length+' mobiles · '+allData.length+' total properties';
 
-  function dispTag(d){
-    if(!d) return '<span class="tag tag-gray">—</span>';
-    const cls=d==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(d)?'tag-red':'tag-amber';
+  function dispTag(d) {
+    if (!d) return '<span class="tag tag-gray">—</span>';
+    const cls = d==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(d)?'tag-red':'tag-amber';
     return `<span class="tag ${cls}">${d}</span>`;
   }
 
-  let rows='';
-  mobiles.forEach(mob=>{
-    const props     = mobileMap[mob];
-    const status    = getMobileStatus(mob,props);
-    const lastDisp  = getLastDisp(mob,props);
-    const attempts  = getTotalAttempts(mob,props);
-    const calledC   = props.filter(p=>(callLog[p.propertyId+'_'+mob]||[]).length>0).length;
-    const acqDate   = formatDate(props.map(p=>p.acquiredDate).filter(x=>x||x===0)[0]);
-    const sources   = [...new Set(props.map(p=>p.source).filter(Boolean))].join(', ')||'—';
-    const callBySrc = [...new Set(props.map(p=>p.calledBySource).filter(Boolean))].join(', ')||'—';
-    const cities    = [...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
-    const acqBy     = [...new Set(props.map(p=>p.acquiredBy).filter(Boolean))].join(', ')||'—';
-    const clientNm  = [...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
-    const spCls     = status==='untouched'?'sp-untouched':status==='partial'?'sp-partial':'sp-done';
-    const spTxt     = status==='untouched'?'Untouched':status==='partial'?'In Progress':'Done';
-    rows+=`<tr class="mobile-row ${status}" onclick="openMobile('${mob}')">
+  let rows = '';
+  mobiles.forEach(mob => {
+    const props    = mobileMap[mob];
+    const status   = getMobileStatus(mob, props);
+    const lastDisp = getLastDisp(mob, props);
+    const attempts = getTotalAttempts(mob, props);
+    const calledC  = props.filter(p=>(callLog[normStr(p.propertyId)+'_'+mob]||[]).length>0).length;
+    const acqDate  = formatDate(props.map(p=>p.acquiredDate).filter(x=>x||x===0)[0]);
+    const sources  = [...new Set(props.map(p=>p.source).filter(Boolean))].join(', ')||'—';
+    const callBySrc= [...new Set(props.map(p=>p.calledBySource).filter(Boolean))].join(', ')||'—';
+    const cities   = [...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
+    const acqBy    = [...new Set(props.map(p=>p.acquiredBy).filter(Boolean))].join(', ')||'—';
+    const clientNm = [...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
+    const spCls    = status==='untouched'?'sp-untouched':status==='partial'?'sp-partial':'sp-done';
+    const spTxt    = status==='untouched'?'Untouched':status==='partial'?'In Progress':'Done';
+    // ── FIX: pass mob as data-attribute, not inline string (avoids quote escaping issues) ──
+    rows += `<tr class="mobile-row ${status}" data-mob="${mob}" onclick="openMobile(this.dataset.mob)">
       <td><div class="mob-num">${status==='untouched'?'<span class="priority-dot"></span>':''}${mob}</div><div class="mob-sub">${calledC}/${props.length} props called</div></td>
       <td style="font-size:12px;white-space:nowrap">${acqDate}</td>
       <td style="font-size:12px">${clientNm}</td>
@@ -989,70 +997,97 @@ function applyFilters() {
       <td style="color:var(--text3);font-size:16px;text-align:right">›</td>
     </tr>`;
   });
-  document.getElementById('mobile-tbody').innerHTML = rows||`<tr><td colspan="11"><div class="empty-state"><div class="empty-icon">🔍</div>No results — clear filters</div></td></tr>`;
+  document.getElementById('mobile-tbody').innerHTML = rows || `<tr><td colspan="11"><div class="empty-state"><div class="empty-icon">🔍</div>No results — clear filters</div></td></tr>`;
 }
 
 // ============================================================
-// DETAIL VIEW
+// DETAIL VIEW  ← KEY FIX: normMobile everywhere
 // ============================================================
 function openMobile(mobile) {
-  currentMobile = mobile;
-  const props = allData.filter(r=>r.mobile===mobile);
-  document.getElementById('calling-search-view').style.display='none';
-  document.getElementById('calling-detail-view').style.display='block';
-  document.getElementById('detail-mobile').textContent = '📱 ' + mobile;
+  const mob = normMobile(mobile);
+  currentMobile = mob;
+
+  // ── FIX: filter using normMobile so type mismatches don't give 0 props ──
+  const props = allData.filter(r => normMobile(r.mobile) === mob);
+
+  if (!props.length) {
+    showToast('⚠ No properties found for this mobile. Try refreshing.');
+    return;
+  }
+
+  document.getElementById('calling-search-view').style.display = 'none';
+  document.getElementById('calling-detail-view').style.display = 'block';
+  document.getElementById('detail-mobile').textContent = '📱 ' + mob;
+
   const clientNames = [...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
-  const cities  = [...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
-  document.getElementById('detail-owner').textContent = clientNames+' · '+cities;
+  const cities      = [...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
+  document.getElementById('detail-owner').textContent = clientNames + ' · ' + cities;
   document.getElementById('prop-count-label').textContent = props.length;
-  renderPropList(props);
+
+  // Normalise propertyId in props before rendering
+  const normProps = props.map(p => ({...p, propertyId: normStr(p.propertyId), mobile: mob}));
+  renderPropList(normProps);
 }
 
 function renderPropList(props) {
   let html = `<div class="panel-header"><span>${props.length} Properties</span><span style="font-size:10px;color:var(--text3)">${currentMobile}</span></div>`;
-  props.forEach(p=>{
-    const key=p.propertyId+'_'+currentMobile;
-    const logs=callLog[key]||[];
-    const lastDisp=logs.length?logs[logs.length-1].disp:null;
-    const resCls=p.resCom&&p.resCom.toLowerCase().includes('com')?'tag-amber':'tag-green';
-    html+=`<div class="prop-item${currentPropId===p.propertyId?' active':''}" onclick="selectProp('${p.propertyId}',this)">
-      <div class="prop-id-text">${p.propertyId}</div>
+  props.forEach(p => {
+    const key     = normStr(p.propertyId) + '_' + normMobile(currentMobile);
+    const logs    = callLog[key] || [];
+    const lastDisp= logs.length ? logs[logs.length-1].disp : null;
+    const resCls  = p.resCom && p.resCom.toLowerCase().includes('com') ? 'tag-amber' : 'tag-green';
+    const pid     = normStr(p.propertyId);
+    html += `<div class="prop-item${normStr(currentPropId)===pid?' active':''}" data-pid="${pid}" onclick="selectProp(this.dataset.pid, this)">
+      <div class="prop-id-text">${pid||'—'}</div>
       <div class="prop-sub-text">${p.propertyType||'—'} · ${p.preference||'—'}</div>
       <div class="prop-tags">
         <span class="tag ${resCls}">${p.resCom||'Res'}</span>
-        ${lastDisp?`<span class="tag ${lastDisp==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(lastDisp)?'tag-red':'tag-amber'}">${lastDisp}</span>`:'<span class="tag tag-gray">Not Called</span>'}
-        ${logs.length?`<span class="att-badge">${logs.length} att</span>`:''}
+        ${lastDisp
+          ? `<span class="tag ${lastDisp==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(lastDisp)?'tag-red':'tag-amber'}">${lastDisp}</span>`
+          : '<span class="tag tag-gray">Not Called</span>'}
+        ${logs.length ? `<span class="att-badge">${logs.length} att</span>` : ''}
       </div>
     </div>`;
   });
-  document.getElementById('prop-list').innerHTML=html;
+  document.getElementById('prop-list').innerHTML = html;
 }
 
 function selectProp(propId, el) {
-  currentPropId=propId;
-  document.querySelectorAll('.prop-item').forEach(x=>x.classList.remove('active'));
-  if(el) el.classList.add('active');
-  const prop=allData.find(r=>r.mobile===currentMobile&&r.propertyId===propId);
-  if(prop) renderCallForm(prop);
+  currentPropId = normStr(propId);
+  document.querySelectorAll('.prop-item').forEach(x => x.classList.remove('active'));
+  if (el) el.classList.add('active');
+
+  // ── FIX: normStr + normMobile on both sides ──
+  const prop = allData.find(r =>
+    normStr(r.propertyId) === normStr(propId) &&
+    normMobile(r.mobile)  === normMobile(currentMobile)
+  );
+  if (prop) renderCallForm({...prop, propertyId: normStr(prop.propertyId), mobile: normMobile(prop.mobile)});
 }
 
 function renderCallForm(prop) {
-  const key     = prop.propertyId+'_'+currentMobile;
-  const history = callLog[key]||[];
-  let histHtml  = history.length
-    ? history.slice().reverse().map(h=>{
-        const cls=h.disp==='Interested'?'hdot-g':['Not Interested','Switch Off','Call Disconnected','Language Issue'].includes(h.disp)?'hdot-r':['Ringing','Call Later'].includes(h.disp)?'hdot-a':'hdot-n';
+  const key     = normStr(prop.propertyId) + '_' + normMobile(prop.mobile);
+  const history = callLog[key] || [];
+
+  let histHtml = history.length
+    ? history.slice().reverse().map(h => {
+        const cls = h.disp==='Interested'?'hdot-g':['Not Interested','Switch Off','Call Disconnected','Language Issue'].includes(h.disp)?'hdot-r':['Ringing','Call Later'].includes(h.disp)?'hdot-a':'hdot-n';
         return `<div class="history-item"><div class="hdot ${cls}"></div><div><div class="h-text"><strong>${h.disp}</strong>${h.subDisp?' → '+h.subDisp:''}</div><div class="h-meta">${h.date} · By: ${h.calledBy||'—'}${h.notes?' · '+h.notes:''}</div></div></div>`;
       }).join('')
     : '<div style="font-size:12px;color:var(--text3);padding:4px 0">No calls logged yet</div>';
 
-  const dispBtns=DISPOSITIONS.map(d=>`<div class="disp-btn" onclick="selectDisp(this,'${d.label}')" data-color="${d.color}">${d.label}</div>`).join('');
+  const dispBtns = DISPOSITIONS.map(d =>
+    `<div class="disp-btn" onclick="selectDisp(this,'${d.label}')" data-color="${d.color}">${d.label}</div>`
+  ).join('');
 
-  document.getElementById('call-form-area').innerHTML=`
+  const pid = normStr(prop.propertyId);
+  const mob = normMobile(prop.mobile);
+
+  document.getElementById('call-form-area').innerHTML = `
   <div class="call-form">
     <div class="call-header">
       <div>
-        <div class="call-prop-id">${prop.propertyId}</div>
+        <div class="call-prop-id">${pid}</div>
         <div style="font-size:12px;color:var(--text3);margin-top:3px">${prop.propertyType||'—'} · ${prop.preference||'—'} · ${prop.city||'—'}</div>
         <div class="prop-tags" style="margin-top:6px">
           <span class="tag ${prop.resCom&&prop.resCom.toLowerCase().includes('com')?'tag-amber':'tag-green'}">${prop.resCom||'Residential'}</span>
@@ -1065,7 +1100,7 @@ function renderCallForm(prop) {
       </div>
     </div>
     <div class="client-grid">
-      <div class="ci-item"><span class="ci-label">Mobile</span><span class="ci-val">${prop.mobile}</span></div>
+      <div class="ci-item"><span class="ci-label">Mobile</span><span class="ci-val">${mob}</span></div>
       <div class="ci-item"><span class="ci-label">Client Name</span><span class="ci-val">${prop.clientName||'—'}</span></div>
       <div class="ci-item"><span class="ci-label">Client Email</span><span class="ci-val">${prop.clientEmail||'—'}</span></div>
       <div class="ci-item"><span class="ci-label">Acquired By</span><span class="ci-val">${prop.acquiredBy||'—'}</span></div>
@@ -1087,87 +1122,94 @@ function renderCallForm(prop) {
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn" onclick="clearFormState()">Clear</button>
-      <button class="btn btn-primary" id="save-call-btn" onclick="saveCall('${prop.propertyId}','${prop.mobile}')">✓ Save Call Log</button>
+      <button class="btn btn-primary" id="save-call-btn" data-pid="${pid}" data-mob="${mob}" onclick="saveCall(this.dataset.pid, this.dataset.mob)">✓ Save Call Log</button>
     </div>
   </div>`;
-  selectedDisp=null; selectedSubDisp=null;
+  selectedDisp = null; selectedSubDisp = null;
 }
 
-function selectDisp(el,disp) {
-  document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
-  el.classList.add('sel-'+el.dataset.color);
-  selectedDisp=disp; selectedSubDisp=null;
-  const subs=SUB_DISPOSITIONS[disp]||[];
-  document.getElementById('sub-disp-area').innerHTML=subs.length
-    ?'<label class="field-label" style="margin-bottom:6px">Sub Disposition <span style="font-weight:400;color:var(--text3)">(optional)</span></label><div class="subdisp-grid">'+
-      subs.map(s=>`<div class="disp-btn" onclick="selectSubDisp(this,'${s}')" data-color="blue">${s}</div>`).join('')+'</div>'
-    :'';
+function selectDisp(el, disp) {
+  document.querySelectorAll('.disp-btn').forEach(b => b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
+  el.classList.add('sel-' + el.dataset.color);
+  selectedDisp = disp; selectedSubDisp = null;
+  const subs = SUB_DISPOSITIONS[disp] || [];
+  document.getElementById('sub-disp-area').innerHTML = subs.length
+    ? '<label class="field-label" style="margin-bottom:6px">Sub Disposition <span style="font-weight:400;color:var(--text3)">(optional)</span></label><div class="subdisp-grid">'
+      + subs.map(s=>`<div class="disp-btn" onclick="selectSubDisp(this,'${s}')" data-color="blue">${s}</div>`).join('')
+      + '</div>'
+    : '';
 }
-function selectSubDisp(el,sub) {
-  document.querySelectorAll('#sub-disp-area .disp-btn').forEach(b=>b.classList.remove('sel-blue'));
-  el.classList.add('sel-blue'); selectedSubDisp=sub;
+function selectSubDisp(el, sub) {
+  document.querySelectorAll('#sub-disp-area .disp-btn').forEach(b => b.classList.remove('sel-blue'));
+  el.classList.add('sel-blue'); selectedSubDisp = sub;
 }
 
 async function saveCall(propId, mobile) {
-  if(!selectedDisp){ showToast('⚠ Select a disposition first'); return; }
-  const callerVal=(document.getElementById('call-caller')?.value||'').trim();
-  if(!callerVal){ showToast('⚠ Enter your name (Called By)'); return; }
+  const pid = normStr(propId);
+  const mob = normMobile(mobile);
 
-  const btn=document.getElementById('save-call-btn');
-  btn.disabled=true; btn.textContent='Saving...';
+  if (!selectedDisp) { showToast('⚠ Select a disposition first'); return; }
+  const callerVal = (document.getElementById('call-caller')?.value||'').trim();
+  if (!callerVal) { showToast('⚠ Enter your name (Called By)'); return; }
 
-  const today=new Date();
-  const ds=String(today.getDate()).padStart(2,'0')+'-'+MONTHS[today.getMonth()]+'-'+today.getFullYear();
-  const entry={
-    propertyId: propId,
-    mobile:     mobile,
+  const btn = document.getElementById('save-call-btn');
+  btn.disabled = true; btn.textContent = 'Saving...';
+
+  const today = new Date();
+  const ds    = String(today.getDate()).padStart(2,'0')+'-'+MONTHS[today.getMonth()]+'-'+today.getFullYear();
+  const entry = {
+    propertyId: pid,
+    mobile:     mob,
     calledBy:   callerVal,
     date:       ds,
     disp:       selectedDisp,
-    subDisp:    selectedSubDisp||'',
-    notes:      document.getElementById('call-notes')?.value||''
+    subDisp:    selectedSubDisp || '',
+    notes:      document.getElementById('call-notes')?.value || ''
   };
 
   setSyncStatus('saving','Saving...');
   try {
     const result = await gsCall({action:'appendCallLog', entry});
-    // Optimistically add to local state
-    const key=propId+'_'+mobile;
-    if(!callLog[key]) callLog[key]=[];
+    const key = pid + '_' + mob;
+    if (!callLog[key]) callLog[key] = [];
     callLog[key].push({...entry, ts: Date.now(), logId: result.logId});
     callLogRows.push({
-      LogID:entry.mobile+Date.now(), Timestamp:new Date().toISOString(),
-      PropertyID:propId, Mobile:mobile, CalledBy:callerVal,
-      Date:ds, Disposition:selectedDisp, SubDisposition:selectedSubDisp||'', Notes:entry.notes
+      LogID: mob+Date.now(), Timestamp: new Date().toISOString(),
+      PropertyID: pid, Mobile: mob, CalledBy: callerVal,
+      Date: ds, Disposition: selectedDisp, SubDisposition: selectedSubDisp||'', Notes: entry.notes
     });
     setSyncStatus('ok','Saved ' + new Date().toLocaleTimeString());
-    showToast('✓ Call saved for ' + propId);
-    selectedDisp=null; selectedSubDisp=null;
-    const props=allData.filter(r=>r.mobile===currentMobile);
+    showToast('✓ Call saved for ' + pid);
+    selectedDisp = null; selectedSubDisp = null;
+
+    const props = allData
+      .filter(r => normMobile(r.mobile) === mob)
+      .map(p => ({...p, propertyId: normStr(p.propertyId), mobile: mob}));
     renderPropList(props);
-    const prop=allData.find(r=>r.mobile===currentMobile&&r.propertyId===propId);
-    if(prop) renderCallForm(prop);
+
+    const prop = allData.find(r => normStr(r.propertyId)===pid && normMobile(r.mobile)===mob);
+    if (prop) renderCallForm({...prop, propertyId: pid, mobile: mob});
   } catch(e) {
     setSyncStatus('error','Save failed');
     showToast('⚠ Save failed: ' + e.message);
-    btn.disabled=false; btn.textContent='✓ Save Call Log';
+    btn.disabled = false; btn.textContent = '✓ Save Call Log';
   }
 }
 
 function clearFormState() {
-  selectedDisp=null; selectedSubDisp=null;
-  document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
-  const s=document.getElementById('sub-disp-area'); if(s)s.innerHTML='';
-  const n=document.getElementById('call-notes'); if(n)n.value='';
-  const c=document.getElementById('call-caller'); if(c)c.value='';
+  selectedDisp = null; selectedSubDisp = null;
+  document.querySelectorAll('.disp-btn').forEach(b => b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
+  const s = document.getElementById('sub-disp-area'); if (s) s.innerHTML = '';
+  const n = document.getElementById('call-notes');    if (n) n.value = '';
+  const c = document.getElementById('call-caller');   if (c) c.value = '';
 }
 
 function backToList() {
-  currentMobile=null; currentPropId=null;
-  const sv=document.getElementById('calling-search-view');
-  const dv=document.getElementById('calling-detail-view');
-  if(sv) sv.style.display='block';
-  if(dv) dv.style.display='none';
+  currentMobile = null; currentPropId = null;
+  const sv = document.getElementById('calling-search-view');
+  const dv = document.getElementById('calling-detail-view');
+  if (sv) sv.style.display = 'block';
+  if (dv) dv.style.display = 'none';
   applyFilters();
 }
 
@@ -1175,41 +1217,41 @@ function backToList() {
 // REPORTS
 // ============================================================
 function getFilteredLogs() {
-  const cf=document.getElementById('report-caller')?.value||'';
-  const ci=document.getElementById('report-city')?.value||'';
-  const df=document.getElementById('report-date')?.value||'all';
-  const now=new Date();
-  return callLogRows.filter(row=>{
-    if(cf && row.CalledBy!==cf) return false;
-    const prop=allData.find(r=>r.propertyId===row.PropertyID&&r.mobile===row.Mobile)||{};
-    if(ci && prop.city!==ci) return false;
-    const d=new Date(row.Timestamp);
-    if(df==='today' && d.toDateString()!==now.toDateString()) return false;
-    if(df==='week'){const w=new Date(now);w.setDate(w.getDate()-7);if(d<w)return false;}
-    if(df==='month'){const m=new Date(now);m.setDate(m.getDate()-30);if(d<m)return false;}
+  const cf = document.getElementById('report-caller')?.value||'';
+  const ci = document.getElementById('report-city')?.value||'';
+  const df = document.getElementById('report-date')?.value||'all';
+  const now = new Date();
+  return callLogRows.filter(row => {
+    if (cf && row.CalledBy!==cf) return false;
+    const prop = allData.find(r => normStr(r.propertyId)===normStr(row.PropertyID) && normMobile(r.mobile)===normMobile(row.Mobile)) || {};
+    if (ci && prop.city!==ci) return false;
+    const d = new Date(row.Timestamp);
+    if (df==='today' && d.toDateString()!==now.toDateString()) return false;
+    if (df==='week')  { const w=new Date(now); w.setDate(w.getDate()-7); if(d<w) return false; }
+    if (df==='month') { const m=new Date(now); m.setDate(m.getDate()-30); if(d<m) return false; }
     return true;
   });
 }
-function pct(n,d){return d?Math.round(n/d*100):0;}
-function pbColor(p){return p>=60?'#639922':p>=30?'#BA7517':'#E24B4A';}
+function pct(n,d){ return d ? Math.round(n/d*100) : 0; }
+function pbColor(p){ return p>=60?'#639922':p>=30?'#BA7517':'#E24B4A'; }
 
 function renderReport() {
   populateReportFilters();
-  const logs=getFilteredLogs();
-  const total=logs.length;
-  const touchedSet=new Set(logs.map(r=>r.PropertyID+'_'+r.Mobile));
-  const touched=touchedSet.size;
-  const totalProps=allData.length||1;
-  const connected=logs.filter(r=>!['Ringing','Switch Off'].includes(r.Disposition)).length;
-  const interested=logs.filter(r=>r.Disposition==='Interested').length;
-  const photosAvail=logs.filter(r=>r.SubDisposition==='Photos Available').length;
-  const whatsapp=logs.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
-  const selfUpload=logs.filter(r=>r.SubDisposition==='Client Will Upload').length;
+  const logs       = getFilteredLogs();
+  const total      = logs.length;
+  const touchedSet = new Set(logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+  const touched    = touchedSet.size;
+  const totalProps = allData.length || 1;
+  const connected  = logs.filter(r=>!['Ringing','Switch Off'].includes(r.Disposition)).length;
+  const interested = logs.filter(r=>r.Disposition==='Interested').length;
+  const photosAvail= logs.filter(r=>r.SubDisposition==='Photos Available').length;
+  const whatsapp   = logs.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
+  const selfUpload = logs.filter(r=>r.SubDisposition==='Client Will Upload').length;
 
-  function sc(label,val,sub,pctV,ac){
+  function sc(label,val,sub,pctV,ac) {
     return `<div class="stat-card ${ac}"><div class="stat-label">${label}</div><div class="stat-val">${val}</div><div class="stat-pct">${sub}</div><div class="progress-bar"><div class="pb-fill" style="width:${pctV}%;background:${pbColor(pctV)}"></div></div></div>`;
   }
-  document.getElementById('report-stats').innerHTML=
+  document.getElementById('report-stats').innerHTML =
     sc('Total Attempts',total,touched+' unique props',pct(touched,totalProps),'')+
     sc('Touched',touched,pct(touched,totalProps)+'% of all',pct(touched,totalProps),'accent-amber')+
     sc('Connected',connected,pct(connected,total)+'% of attempts',pct(connected,total),'accent-blue')+
@@ -1219,77 +1261,97 @@ function renderReport() {
     sc('Self Upload',selfUpload,pct(selfUpload,interested)+'%',pct(selfUpload,interested),'accent-blue');
 
   // Date-wise
-  const byDate={};
-  logs.forEach(r=>{
-    const d=r.Date||'Unknown';
-    if(!byDate[d])byDate[d]={date:d,attempts:0,connected:0,interested:0,photos:0,whatsapp:0};
+  const byDate = {};
+  logs.forEach(r => {
+    const d = r.Date||'Unknown';
+    if (!byDate[d]) byDate[d]={date:d,attempts:0,connected:0,interested:0,photos:0,whatsapp:0};
     byDate[d].attempts++;
-    if(!['Ringing','Switch Off'].includes(r.Disposition))byDate[d].connected++;
-    if(r.Disposition==='Interested')byDate[d].interested++;
-    if(r.SubDisposition==='Photos Available')byDate[d].photos++;
-    if(r.SubDisposition==='Sharing on WhatsApp')byDate[d].whatsapp++;
+    if (!['Ringing','Switch Off'].includes(r.Disposition)) byDate[d].connected++;
+    if (r.Disposition==='Interested') byDate[d].interested++;
+    if (r.SubDisposition==='Photos Available') byDate[d].photos++;
+    if (r.SubDisposition==='Sharing on WhatsApp') byDate[d].whatsapp++;
   });
-  const dr=Object.values(byDate).sort((a,b)=>b.date.localeCompare(a.date));
-  document.getElementById('report-table').innerHTML=dr.length
-    ?'<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Connect%</th><th>Photo%</th></tr></thead><tbody>'+
-      dr.map(r=>`<tr><td><strong>${r.date}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td><td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td></tr>`).join('')+'</tbody>'
-    :'<thead><tr><th>Date</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data yet</td></tr></tbody>';
+  const dr = Object.values(byDate).sort((a,b) => b.date.localeCompare(a.date));
+  document.getElementById('report-table').innerHTML = dr.length
+    ? '<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Connect%</th><th>Photo%</th></tr></thead><tbody>'
+      + dr.map(r=>`<tr><td><strong>${r.date}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td><td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td></tr>`).join('')
+      + '</tbody>'
+    : '<thead><tr><th>Date</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data yet</td></tr></tbody>';
 
   // Caller-wise
-  const byCaller={};
-  logs.forEach(r=>{
-    const c=r.CalledBy||'Unknown';
-    if(!byCaller[c])byCaller[c]={name:c,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0};
+  const byCaller = {};
+  logs.forEach(r => {
+    const c = r.CalledBy||'Unknown';
+    if (!byCaller[c]) byCaller[c]={name:c,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0};
     byCaller[c].attempts++;
-    if(!['Ringing','Switch Off'].includes(r.Disposition))byCaller[c].connected++;
-    if(r.Disposition==='Interested')byCaller[c].interested++;
-    if(r.SubDisposition==='Photos Available')byCaller[c].photos++;
-    if(r.SubDisposition==='Sharing on WhatsApp')byCaller[c].whatsapp++;
-    if(r.SubDisposition==='Client Will Upload')byCaller[c].self++;
+    if (!['Ringing','Switch Off'].includes(r.Disposition)) byCaller[c].connected++;
+    if (r.Disposition==='Interested') byCaller[c].interested++;
+    if (r.SubDisposition==='Photos Available') byCaller[c].photos++;
+    if (r.SubDisposition==='Sharing on WhatsApp') byCaller[c].whatsapp++;
+    if (r.SubDisposition==='Client Will Upload') byCaller[c].self++;
   });
-  const cr=Object.values(byCaller).sort((a,b)=>b.photos-a.photos);
-  document.getElementById('caller-table').innerHTML=cr.length
-    ?'<thead><tr><th>Caller</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Photo%</th></tr></thead><tbody>'+
-      cr.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.photos,r.attempts))};font-weight:600">${pct(r.photos,r.attempts)}%</td></tr>`).join('')+'</tbody>'
-    :'<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+  const cr = Object.values(byCaller).sort((a,b) => b.photos-a.photos);
+  document.getElementById('caller-table').innerHTML = cr.length
+    ? '<thead><tr><th>Caller</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Photo%</th></tr></thead><tbody>'
+      + cr.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.photos,r.attempts))};font-weight:600">${pct(r.photos,r.attempts)}%</td></tr>`).join('')
+      + '</tbody>'
+    : '<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
 
-  // Disposition
-  const byDisp={};
-  logs.forEach(r=>{if(!byDisp[r.Disposition])byDisp[r.Disposition]={d:r.Disposition,c:0};byDisp[r.Disposition].c++;});
-  const dispRows=Object.values(byDisp).sort((a,b)=>b.c-a.c);
-  document.getElementById('disp-table').innerHTML=dispRows.length
-    ?'<thead><tr><th>Disposition</th><th>Count</th><th>% of Attempts</th></tr></thead><tbody>'+
-      dispRows.map(r=>`<tr><td><strong>${r.d}</strong></td><td>${r.c}</td><td style="font-weight:600">${pct(r.c,total)}%</td></tr>`).join('')+'</tbody>'
-    :'<thead><tr><th>Disposition</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+  // Disposition breakdown
+  const byDisp = {};
+  logs.forEach(r => {
+    if (!byDisp[r.Disposition]) byDisp[r.Disposition]={d:r.Disposition,c:0};
+    byDisp[r.Disposition].c++;
+  });
+  const dispRows = Object.values(byDisp).sort((a,b) => b.c-a.c);
+  document.getElementById('disp-table').innerHTML = dispRows.length
+    ? '<thead><tr><th>Disposition</th><th>Count</th><th>% of Attempts</th></tr></thead><tbody>'
+      + dispRows.map(r=>`<tr><td><strong>${r.d}</strong></td><td>${r.c}</td><td style="font-weight:600">${pct(r.c,total)}%</td></tr>`).join('')
+      + '</tbody>'
+    : '<thead><tr><th>Disposition</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
 }
 
 function exportReport() {
-  const rows=callLogRows.map(r=>{
-    const prop=allData.find(x=>x.propertyId===r.PropertyID&&x.mobile===r.Mobile)||{};
-    return {'Mobile':r.Mobile,'Property ID':r.PropertyID,'Client Name':prop.clientName||'','Client Email':prop.clientEmail||'','Called By':r.CalledBy,'Date':r.Date,'Disposition':r.Disposition,'Sub Disposition':r.SubDisposition||'','Notes':r.Notes||'','City':prop.city||'','Property Type':prop.propertyType||'','Preference':prop.preference||'','Res/Com':prop.resCom||'','Source':prop.source||'','Called By Source':prop.calledBySource||'','Acquired By':prop.acquiredBy||'','Acquired Date':prop.acquiredDate||''};
+  const rows = callLogRows.map(r => {
+    const prop = allData.find(x => normStr(x.propertyId)===normStr(r.PropertyID) && normMobile(x.mobile)===normMobile(r.Mobile)) || {};
+    return {
+      'Mobile': r.Mobile, 'Property ID': r.PropertyID,
+      'Client Name': prop.clientName||'', 'Client Email': prop.clientEmail||'',
+      'Called By': r.CalledBy, 'Date': r.Date,
+      'Disposition': r.Disposition, 'Sub Disposition': r.SubDisposition||'',
+      'Notes': r.Notes||'', 'City': prop.city||'',
+      'Property Type': prop.propertyType||'', 'Preference': prop.preference||'',
+      'Res/Com': prop.resCom||'', 'Source': prop.source||'',
+      'Called By Source': prop.calledBySource||'',
+      'Acquired By': prop.acquiredBy||'', 'Acquired Date': prop.acquiredDate||''
+    };
   });
-  if(!rows.length){showToast('No data to export');return;}
-  const ws=XLSX.utils.json_to_sheet(rows);
-  const wb=XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb,ws,'Call Report');
-  XLSX.writeFile(wb,'99acres_report_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  if (!rows.length) { showToast('No data to export'); return; }
+  const ws = XLSX.utils.json_to_sheet(rows);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Call Report');
+  XLSX.writeFile(wb, '99acres_report_'+new Date().toISOString().slice(0,10)+'.xlsx');
   showToast('✓ Report exported');
 }
 
 // ============================================================
 // UTILS
 // ============================================================
-function showToast(msg,dur=3000){
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),dur);
+function showToast(msg, dur=3000) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), dur);
 }
 
-const dz=document.getElementById('drop-zone');
-if(dz){
-  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
-  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
-  dz.addEventListener('drop',e=>{e.preventDefault();dz.classList.remove('drag-over');const f=e.dataTransfer.files[0];if(f)handleFile({target:{files:[f]}});});
+const dz = document.getElementById('drop-zone');
+if (dz) {
+  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
+  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
+  dz.addEventListener('drop', e => {
+    e.preventDefault(); dz.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0];
+    if (f) handleFile({target:{files:[f]}});
+  });
 }
 </script>
 </body>
