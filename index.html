@@ -440,6 +440,7 @@ table.data-table tr:hover td{background:var(--surface2)}
           <div class="filter-group"><span class="filter-label">Called By Source</span><select id="f-callby" onchange="applyFilters()" style="width:120px"><option value="">All</option></select></div>
           <div class="filter-group"><span class="filter-label">Called By (Portal)</span><select id="f-calledby-portal" onchange="applyFilters()" style="width:130px"><option value="">All Callers</option></select></div>
           <div class="filter-group"><span class="filter-label">City</span><select id="f-city" onchange="applyFilters()" style="width:110px"><option value="">All Cities</option></select></div>
+          <div class="filter-group"><span class="filter-label">Property Type</span><select id="f-proptype" onchange="applyFilters()" style="width:130px"><option value="">All Types</option></select></div>
           <div class="filter-divider"></div>
           <div class="filter-group"><span class="filter-label">Last Disposition</span>
             <select id="f-disp" onchange="applyFilters()" style="width:155px">
@@ -560,7 +561,7 @@ table.data-table tr:hover td{background:var(--surface2)}
     <p class="section-label">Caller-wise Performance</p>
     <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="caller-table"></table></div>
     <p class="section-label">Caller × Date Breakdown</p>
-    <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="caller-date-table"></table></div>
+    <div id="caller-date-container" style="margin-bottom:1.5rem"></div>
     <p class="section-label">Disposition Breakdown</p>
     <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="disp-table"></table></div>
     <p class="section-label">Photo Upload Status</p>
@@ -1289,12 +1290,8 @@ function renderCallForm(prop) {
     <div id="sub-disp-area"></div>
 
     <div class="photo-toggle-area">
-      <div class="photo-toggle-title">📸 Photo Upload Status</div>
-      <div class="photo-btns">
-        <button class="photo-btn ${psSelYes}"  onclick="selectPhoto(this,'yes')">✅ Uploaded</button>
-        <button class="photo-btn ${psSelPend}" onclick="selectPhoto(this,'pending')">⏳ Pending</button>
-        <button class="photo-btn ${psSelNo}"   onclick="selectPhoto(this,'no')">❌ Not Uploaded</button>
-      </div>
+      <div class="photo-toggle-title">📸 Photo Upload Status <span style="font-size:10px;font-weight:400;color:var(--text3)">(updated from Google Sheet by backend query)</span></div>
+      <div style="margin-top:6px">${ps ? photoTag(ps) : '<span class="tag tag-gray">Not yet updated — synced from backend</span>'}</div>
     </div>
 
     <div class="field-group">
@@ -1346,8 +1343,7 @@ async function saveCall(propId, mobile) {
   const entry={
     propertyId:pid, mobile:mob, calledBy:callerVal, date:ds,
     disp:selectedDisp, subDisp:selectedSubDisp||'',
-    notes:document.getElementById('call-notes')?.value||'',
-    photoStatus:selectedPhoto||''
+    notes:document.getElementById('call-notes')?.value||''
   };
 
   setSyncStatus('saving','Saving...');
@@ -1360,11 +1356,8 @@ async function saveCall(propId, mobile) {
       LogID:mob+Date.now(),Timestamp:new Date().toISOString(),
       PropertyID:pid,Mobile:mob,CalledBy:callerVal,Date:ds,
       Disposition:selectedDisp,SubDisposition:selectedSubDisp||'',
-      Notes:entry.notes,PhotoStatus:selectedPhoto||''
+      Notes:entry.notes
     });
-
-    // Update photo status locally
-    if (selectedPhoto) photoStatus[key]=selectedPhoto;
 
     setSyncStatus('ok','Saved '+new Date().toLocaleTimeString());
     showToast('✓ Call saved for '+pid);
@@ -1382,12 +1375,11 @@ async function saveCall(propId, mobile) {
 }
 
 function clearFormState() {
-  selectedDisp=null; selectedSubDisp=null; selectedPhoto=null;
+  selectedDisp=null; selectedSubDisp=null;
   document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue','sel-purple'));
   const s=document.getElementById('sub-disp-area'); if(s) s.innerHTML='';
   const n=document.getElementById('call-notes'); if(n) n.value='';
   const c=document.getElementById('call-caller'); if(c) c.value='';
-  document.querySelectorAll('.photo-btn').forEach(b=>b.classList.remove('sel-yes','sel-no','sel-pending'));
 }
 function backToList() {
   currentMobile=null; currentPropId=null;
@@ -1488,7 +1480,7 @@ function renderReport() {
       }
     }
   });
-  const dr=Object.values(byDate).sort((a,b)=>b.date.localeCompare(a.date));
+  const dr=Object.values(byDate).sort((a,b)=>parseForSort(b.date)-parseForSort(a.date));
   document.getElementById('report-table').innerHTML=dr.length
     ?'<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Connect%</th><th>Photo%</th><th>Avg TAT</th></tr></thead><tbody>'
       +dr.map(r=>`<tr><td><strong>${r.date}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td><td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td><td>${r.tatCount?Math.round(r.tatSum/r.tatCount)+'d':'—'}</td></tr>`).join('')
@@ -1522,29 +1514,56 @@ function renderReport() {
       +'</tbody>'
     :'<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
 
-  // Caller × Date pivot
+  // Caller × Date — card grid per caller
   const callerDates={};
-  const allDates=new Set(); const allCallers=new Set();
+  const allDatesSet=new Set(); const allCallersSet=new Set();
   logs.forEach(r=>{
     const c=r.CalledBy||'Unknown'; const d=r.Date||'Unknown';
-    allCallers.add(c); allDates.add(d);
+    allCallersSet.add(c); allDatesSet.add(d);
     const k=c+'__'+d;
-    if(!callerDates[k]) callerDates[k]={attempts:0,photos:0};
+    if(!callerDates[k]) callerDates[k]={attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0};
     callerDates[k].attempts++;
+    if(!['Ringing','Switch Off'].includes(r.Disposition)) callerDates[k].connected++;
+    if(r.Disposition==='Interested') callerDates[k].interested++;
     if(r.SubDisposition==='Photos Available') callerDates[k].photos++;
+    if(r.SubDisposition==='Sharing on WhatsApp') callerDates[k].whatsapp++;
+    if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) callerDates[k].self++;
   });
-  const sortedDates=[...allDates].sort((a,b)=>b.localeCompare(a)).slice(0,14);
-  const sortedCallers=[...allCallers];
+  const sortedDates=[...allDatesSet].sort((a,b)=>parseForSort(b)-parseForSort(a)).slice(0,14);
+  const sortedCallers=[...allCallersSet];
+  let cdHtml='';
   if(sortedCallers.length&&sortedDates.length){
-    document.getElementById('caller-date-table').innerHTML=
-      '<thead><tr><th>Caller</th>'+sortedDates.map(d=>`<th>${d}</th>`).join('')+'</tr></thead><tbody>'
-      +sortedCallers.map(c=>'<tr><td><strong>'+c+'</strong></td>'+sortedDates.map(d=>{
-        const k=c+'__'+d; const v=callerDates[k];
-        return v?`<td>${v.attempts} att / ${v.photos} 📸</td>`:'<td style="color:var(--text3)">—</td>';
-      }).join('')+'</tr>').join('')+'</tbody>';
+    sortedCallers.forEach(caller=>{
+      cdHtml+=`<div style="margin-bottom:1.25rem">
+        <div style="font-size:12px;font-weight:700;color:var(--text);margin-bottom:8px;padding:6px 10px;background:var(--surface2);border-radius:var(--radius);border:1px solid var(--border)">👤 ${caller}</div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(145px,1fr));gap:8px">`;
+      sortedDates.forEach(d=>{
+        const v=callerDates[caller+'__'+d];
+        if(!v){
+          cdHtml+=`<div class="stat-card" style="opacity:.4"><div class="stat-label">${d}</div><div class="stat-val" style="font-size:16px;color:var(--text3)">—</div><div class="stat-pct">No calls</div></div>`;
+          return;
+        }
+        const connPct=pct(v.connected,v.attempts);
+        const photoPct=pct(v.photos,v.attempts);
+        cdHtml+=`<div class="stat-card" style="border-top:3px solid ${pbColor(connPct)}">
+          <div class="stat-label">${d}</div>
+          <div class="stat-val" style="font-size:18px">${v.attempts}</div>
+          <div class="stat-pct" style="display:flex;flex-direction:column;gap:2px">
+            <span>🔗 ${v.connected} conn (${connPct}%)</span>
+            <span>⭐ ${v.interested} int</span>
+            <span>📸 ${v.photos} photos (${photoPct}%)</span>
+            ${v.whatsapp?`<span>💬 ${v.whatsapp} WA</span>`:''}
+            ${v.self?`<span>☁ ${v.self} upload</span>`:''}
+          </div>
+          <div class="progress-bar" style="margin-top:6px"><div class="pb-fill" style="width:${connPct}%;background:${pbColor(connPct)}"></div></div>
+        </div>`;
+      });
+      cdHtml+='</div></div>';
+    });
   } else {
-    document.getElementById('caller-date-table').innerHTML='<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+    cdHtml='<div style="color:var(--text3);font-size:13px;padding:1rem">No data yet</div>';
   }
+  document.getElementById('caller-date-container').innerHTML=cdHtml;
 
   // Disposition breakdown
   const byDisp={};
