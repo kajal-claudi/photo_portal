@@ -23,7 +23,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 
 /* ===== SETUP SCREEN ===== */
 .setup-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--bg);padding:1.5rem}
-.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:620px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
+.setup-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:2rem;width:100%;max-width:680px;box-shadow:0 4px 24px rgba(0,0,0,.06)}
 .setup-logo{display:flex;align-items:center;gap:10px;margin-bottom:1.5rem}
 .logo-badge{background:var(--red);color:#fff;font-size:10px;font-weight:700;padding:2px 8px;border-radius:8px;letter-spacing:.04em}
 .step{display:flex;gap:14px;margin-bottom:1.25rem;padding-bottom:1.25rem;border-bottom:1px solid var(--border)}
@@ -39,6 +39,11 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .connect-btn:hover{background:var(--red-dark)}
 .connect-error{font-size:12px;color:var(--red-dark);background:var(--red-light);padding:8px 12px;border-radius:var(--radius);margin-top:8px;display:none}
 .warning-bar{background:var(--amber-light);border:1px solid var(--amber);border-radius:var(--radius);padding:9px 12px;font-size:12px;color:#7a4a00;margin-bottom:1rem;line-height:1.5}
+.info-callout{background:#EEF7FF;border:1px solid var(--blue-border);border-radius:var(--radius);padding:10px 14px;font-size:12px;color:var(--blue);line-height:1.7;margin-bottom:8px}
+.info-callout strong{color:#0e4a87}
+.col-list{display:grid;grid-template-columns:1fr 1fr;gap:4px 16px;margin-top:6px}
+.col-item{font-size:11px;color:var(--text2);padding:2px 0}
+.col-item span{font-family:monospace;background:var(--surface2);border-radius:3px;padding:1px 5px;font-size:11px;color:var(--text);border:1px solid var(--border)}
 
 /* ===== TOPBAR ===== */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;justify-content:space-between;height:52px;position:sticky;top:0;z-index:100;box-shadow:0 1px 4px rgba(0,0,0,.05)}
@@ -255,6 +260,34 @@ table.data-table tr:hover td{background:var(--surface2)}
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-body">
+        <div class="step-title">CallLogs Sheet — Required Columns</div>
+        <div class="info-callout">
+          <strong>📋 Google Sheet ke CallLogs tab mein ye columns hone chahiye (isi exact order mein):</strong>
+          <div class="col-list">
+            <div class="col-item"><span>LogID</span></div>
+            <div class="col-item"><span>Timestamp</span></div>
+            <div class="col-item"><span>PropertyID</span></div>
+            <div class="col-item"><span>Mobile</span></div>
+            <div class="col-item"><span>CalledBy</span></div>
+            <div class="col-item"><span>Date</span></div>
+            <div class="col-item"><span>Disposition</span></div>
+            <div class="col-item"><span>SubDisposition</span></div>
+            <div class="col-item"><span>PhotoStatus</span> ← <strong>Naya column</strong></div>
+            <div class="col-item"><span>Notes</span></div>
+          </div>
+          <div style="margin-top:8px;padding-top:8px;border-top:1px solid #B5D4F4">
+            <strong>PhotoStatus column mein values:</strong> &nbsp;
+            <code style="background:#EAF3DE;color:#3B6D11;padding:2px 6px;border-radius:4px;font-family:monospace">yes</code> &nbsp;
+            <code style="background:#FCEBEB;color:#A32D2D;padding:2px 6px;border-radius:4px;font-family:monospace">no</code> &nbsp;
+            <code style="background:#FAEEDA;color:#7a4a00;padding:2px 6px;border-radius:4px;font-family:monospace">pending</code>
+            <br><small style="color:#555;margin-top:4px;display:block">Calling ke time PhotoStatus set hogi — alag sheet ki zaroorat nahi.</small>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
         <div class="step-title">Paste your Web App URL below</div>
         <div class="step-desc">After deploying, copy the <strong>Web App URL</strong> and paste it here.</div>
         <input class="url-input" type="text" id="script-url-input" placeholder="https://script.google.com/macros/s/.../exec">
@@ -339,7 +372,6 @@ table.data-table tr:hover td{background:var(--surface2)}
     <div id="mode-info-fresh" class="info-bar">🆕 &nbsp;<strong>Fresh Import:</strong> All existing listings will be replaced. Call logs will not be affected.</div>
     <div id="mode-info-update" class="info-bar" style="display:none;background:var(--green-light);border-color:#9fcf6e;color:var(--green)">🔄 &nbsp;<strong>Update / Merge:</strong> Matched by Property ID. New IDs are added. Records not in file remain unchanged.</div>
     
-    <!-- Called By filter for upload -->
     <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 16px;margin-bottom:12px">
       <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text2)">📋 Upload Scope (optional)</div>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
@@ -440,6 +472,7 @@ table.data-table tr:hover td{background:var(--surface2)}
           <div class="filter-group"><span class="filter-label">Called By Source</span><select id="f-callby" onchange="applyFilters()" style="width:120px"><option value="">All</option></select></div>
           <div class="filter-group"><span class="filter-label">Called By (Portal)</span><select id="f-calledby-portal" onchange="applyFilters()" style="width:130px"><option value="">All Callers</option></select></div>
           <div class="filter-group"><span class="filter-label">City</span><select id="f-city" onchange="applyFilters()" style="width:110px"><option value="">All Cities</option></select></div>
+          <!-- FIX #2: Property Type dropdown now properly populated -->
           <div class="filter-group"><span class="filter-label">Property Type</span><select id="f-proptype" onchange="applyFilters()" style="width:130px"><option value="">All Types</option></select></div>
           <div class="filter-divider"></div>
           <div class="filter-group"><span class="filter-label">Last Disposition</span>
@@ -585,7 +618,6 @@ let allData     = [];
 let callLog     = {};
 let callLogRows = [];
 let photoStatus = {}; // key: propId_mobile => 'yes'|'no'|'pending'
-let photoRows   = []; // raw rows from Google Sheets photoUpload sheet
 let currentMobile   = null;
 let currentPropId   = null;
 let previewData     = [];
@@ -652,8 +684,15 @@ function parseForSort(val) {
     const d=excelSerialToDate(Number(val)); return d||new Date(9999,0,1);
   }
   const str=String(val).trim();
-  const m=str.match(/(\d{1,2})[-\/]([A-Za-z]{3})[-\/](\d{2,4})/);
-  if(m){const mo=MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());if(mo>=0){const yr=parseInt(m[3]);return new Date(yr<100?2000+yr:yr,mo,parseInt(m[1]));}}
+  // FIX #3: Handle DD-Mon-YYYY format properly (e.g. "15-Apr-2025")
+  const m=str.match(/^(\d{1,2})[-\/]([A-Za-z]{3})[-\/](\d{2,4})$/);
+  if(m){
+    const mo=MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());
+    if(mo>=0){const yr=parseInt(m[3]);return new Date(yr<100?2000+yr:yr,mo,parseInt(m[1]));}
+  }
+  // Handle YYYY-MM-DD format
+  const iso=str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+  if(iso) return new Date(parseInt(iso[1]),parseInt(iso[2])-1,parseInt(iso[3]));
   const d=new Date(str); return isNaN(d)?new Date(9999,0,1):d;
 }
 function parseDateToYMD(val) {
@@ -662,12 +701,11 @@ function parseDateToYMD(val) {
   return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
 }
 function calcTAT(acquiredDate, callDate) {
-  // Returns days between acquired date and call date
   const d1 = parseForSort(acquiredDate);
   let d2;
   if (!callDate) return '—';
-  d2 = new Date(callDate);
-  if (!d1||d1.getFullYear()===9999||isNaN(d2)) return '—';
+  d2 = parseForSort(callDate);
+  if (!d1||d1.getFullYear()===9999||!d2||d2.getFullYear()===9999) return '—';
   const diff = Math.round((d2 - d1) / (1000*60*60*24));
   return diff >= 0 ? diff + 'd' : '—';
 }
@@ -757,11 +795,7 @@ async function launchApp() {
 async function loadAllData() {
   setSyncStatus('saving','Loading...');
   try {
-    // Try to load photo status too; if action not supported, skip gracefully
-    const calls = [gsCall({action:'getListings'}), gsCall({action:'getCallLogs'})];
-    let photoResult = null;
-    try { photoResult = await gsCall({action:'getPhotoStatus'}); } catch(e) { /* optional */ }
-    const [lr, cr] = await Promise.all(calls);
+    const [lr, cr] = await Promise.all([gsCall({action:'getListings'}), gsCall({action:'getCallLogs'})]);
 
     allData = (lr.data||[]).map(r=>({
       acquiredDate:   r.AcquiredDate   ||'',
@@ -784,16 +818,9 @@ async function loadAllData() {
       Mobile: normMobile(r.Mobile)
     }));
 
-    // Build photo status from callLogs (SubDisposition = 'Photos Available' means uploaded)
-    // Also from dedicated photo sheet if available
-    photoRows = (photoResult?.data||[]).map(r=>({
-      propertyId: normStr(r.PropertyID||r.propertyId||''),
-      mobile:     normMobile(r.Mobile||r.mobile||''),
-      status:     normStr(r.PhotoStatus||r.photoStatus||r.Status||'').toLowerCase()
-    }));
-
     rebuildCallLog();
-    rebuildPhotoStatus();
+    // FIX #1: Photo status now built from CallLogs PhotoStatus column directly
+    rebuildPhotoStatusFromCallLogs();
     populateFilters();
     populateReportFilters();
     populateUploadCallByFilter();
@@ -807,7 +834,7 @@ async function pollCallLogs() {
     const cr = await gsCall({action:'getCallLogs'});
     const fresh = (cr.data||[]).map(r=>({...r, PropertyID:normStr(r.PropertyID), Mobile:normMobile(r.Mobile)}));
     if (fresh.length !== callLogRows.length) {
-      callLogRows = fresh; rebuildCallLog(); rebuildPhotoStatus();
+      callLogRows = fresh; rebuildCallLog(); rebuildPhotoStatusFromCallLogs();
       if (!currentMobile) applyFilters();
       setSyncStatus('ok','Updated ' + new Date().toLocaleTimeString());
     }
@@ -820,35 +847,37 @@ function rebuildCallLog() {
     const key = normStr(row.PropertyID)+'_'+normMobile(row.Mobile);
     if (!callLog[key]) callLog[key]=[];
     callLog[key].push({
-      disp:     row.Disposition   ||'',
-      subDisp:  row.SubDisposition||'',
-      date:     row.Date          ||'',
-      calledBy: row.CalledBy      ||'',
-      notes:    row.Notes         ||'',
-      ts:       row.Timestamp ? new Date(row.Timestamp).getTime() : 0,
-      logId:    row.LogID         ||''
+      disp:      row.Disposition    ||'',
+      subDisp:   row.SubDisposition ||'',
+      photoSt:   normStr(row.PhotoStatus||'').toLowerCase(), // FIX #1: read PhotoStatus column
+      date:      row.Date           ||'',
+      calledBy:  row.CalledBy       ||'',
+      notes:     row.Notes          ||'',
+      ts:        row.Timestamp ? new Date(row.Timestamp).getTime() : 0,
+      logId:     row.LogID          ||''
     });
   });
   Object.values(callLog).forEach(arr=>arr.sort((a,b)=>a.ts-b.ts));
 }
 
-function rebuildPhotoStatus() {
+// FIX #1: Build photoStatus entirely from CallLogs PhotoStatus column
+// Most recent log entry with a PhotoStatus value wins
+function rebuildPhotoStatusFromCallLogs() {
   photoStatus = {};
-  // First: set from dedicated photo sheet rows
-  photoRows.forEach(r => {
-    if (r.propertyId && r.mobile) {
-      const key = r.propertyId+'_'+r.mobile;
-      photoStatus[key] = r.status;
-    }
-  });
-  // Then: derive from call log sub-dispositions (Photos Available = yes, etc.)
   Object.entries(callLog).forEach(([key, logs]) => {
-    if (photoStatus[key]) return; // already set from sheet
+    // Find last log that has PhotoStatus explicitly set
+    const logsWithPhoto = [...logs].reverse().find(l => l.photoSt && ['yes','no','pending'].includes(l.photoSt));
+    if (logsWithPhoto) {
+      photoStatus[key] = logsWithPhoto.photoSt;
+      return;
+    }
+    // Fallback: derive from SubDisposition if PhotoStatus column not filled
     const lastInterested = [...logs].reverse().find(l => l.disp==='Interested');
     if (lastInterested) {
       const sd = lastInterested.subDisp;
       if (sd === 'Photos Available') photoStatus[key] = 'yes';
       else if (['Sharing on WhatsApp','Client Will Upload','Client Will Upload via Email'].includes(sd)) photoStatus[key] = 'pending';
+      else if (sd === 'Photos Not Available') photoStatus[key] = 'no';
     }
   });
 }
@@ -1010,25 +1039,30 @@ function clearUpload() {
 // FILTERS
 // ============================================================
 function populateFilters() {
-  const u=arr=>[...new Set(arr.filter(Boolean))];
+  const u=arr=>[...new Set(arr.filter(Boolean))].sort();
   const sources=u(allData.map(r=>r.source));
   const callbys=u(allData.map(r=>r.calledBySource));
   const cities=u(allData.map(r=>r.city));
   const callerPortal=u(callLogRows.map(r=>r.CalledBy));
+  // FIX #2: Property Type dropdown properly populated from allData
+  const propTypes=u(allData.map(r=>r.propertyType));
+
   document.getElementById('f-source').innerHTML='<option value="">All Sources</option>'+sources.map(s=>`<option>${s}</option>`).join('');
   document.getElementById('f-callby').innerHTML='<option value="">All</option>'+callbys.map(s=>`<option>${s}</option>`).join('');
   document.getElementById('f-city').innerHTML='<option value="">All Cities</option>'+cities.map(s=>`<option>${s}</option>`).join('');
   document.getElementById('f-calledby-portal').innerHTML='<option value="">All Callers</option>'+callerPortal.map(c=>`<option>${c}</option>`).join('');
+  // FIX #2: Actually populate the property type dropdown
+  document.getElementById('f-proptype').innerHTML='<option value="">All Types</option>'+propTypes.map(t=>`<option>${t}</option>`).join('');
 }
 function populateReportFilters() {
-  const callers=[...new Set(callLogRows.map(r=>r.CalledBy).filter(Boolean))];
-  const cities=[...new Set(allData.map(r=>r.city).filter(Boolean))];
+  const callers=[...new Set(callLogRows.map(r=>r.CalledBy).filter(Boolean))].sort();
+  const cities=[...new Set(allData.map(r=>r.city).filter(Boolean))].sort();
   document.getElementById('report-caller').innerHTML='<option value="">All Callers</option>'+callers.map(c=>`<option>${c}</option>`).join('');
   document.getElementById('report-city').innerHTML='<option value="">All Cities</option>'+cities.map(c=>`<option>${c}</option>`).join('');
 }
 function clearFilters() {
   ['f-mobile','f-propid','f-client'].forEach(id=>document.getElementById(id).value='');
-  ['f-source','f-callby','f-city','f-disp','f-status','f-photo','f-calledby-portal'].forEach(id=>document.getElementById(id).value='');
+  ['f-source','f-callby','f-city','f-disp','f-status','f-photo','f-calledby-portal','f-proptype'].forEach(id=>document.getElementById(id).value='');
   document.getElementById('f-date-from').value='';
   document.getElementById('f-date-to').value='';
   applyFilters();
@@ -1053,7 +1087,6 @@ function getTotalAttempts(mobile, props) {
   return props.reduce((s,p)=>s+(callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[]).length,0);
 }
 function getMobilePhotoStatus(mobile, props) {
-  // any prop with photo = yes => show yes; else pending if any pending; else no if any no
   let hasYes=false, hasPending=false, hasNo=false;
   props.forEach(p=>{
     const key=normStr(p.propertyId)+'_'+normMobile(mobile);
@@ -1093,6 +1126,8 @@ function applyFilters() {
   const fCallerPortal = document.getElementById('f-calledby-portal')?.value||'';
   const fDateFrom = document.getElementById('f-date-from')?.value||'';
   const fDateTo   = document.getElementById('f-date-to')?.value||'';
+  // FIX #2: Read the property type filter value
+  const fPropType = document.getElementById('f-proptype')?.value||'';
 
   const mobileMap={};
   allData.forEach(r=>{
@@ -1109,8 +1144,9 @@ function applyFilters() {
     if (fSrc && !props.some(p=>p.source===fSrc)) return false;
     if (fCby && !props.some(p=>p.calledBySource===fCby)) return false;
     if (fCity && !props.some(p=>p.city===fCity)) return false;
+    // FIX #2: Actually apply the property type filter
+    if (fPropType && !props.some(p=>p.propertyType===fPropType)) return false;
 
-    // Date range filter on acquiredDate
     if (fDateFrom||fDateTo) {
       const propDates = props.map(p=>parseDateToYMD(p.acquiredDate)).filter(Boolean);
       if (!propDates.length) return false;
@@ -1119,7 +1155,6 @@ function applyFilters() {
       if (!propDates.some(d => d>=fromYMD && d<=toYMD)) return false;
     }
 
-    // Called By Portal filter
     if (fCallerPortal) {
       const mobileCallLogs = props.flatMap(p=>callLog[normStr(p.propertyId)+'_'+mob]||[]);
       if (!mobileCallLogs.some(l=>l.calledBy===fCallerPortal)) return false;
@@ -1131,7 +1166,6 @@ function applyFilters() {
     else if (fDisp && lastD!==fDisp) return false;
     if (fStatus && status!==fStatus) return false;
 
-    // Photo upload filter
     if (fPhoto) {
       const ps=getMobilePhotoStatus(mob,props);
       if (fPhoto==='none' && ps!==null) return false;
@@ -1247,17 +1281,14 @@ function renderCallForm(prop) {
     ?history.slice().reverse().map(h=>{
         const cls=h.disp==='Interested'?'hdot-g':['Not Interested','Switch Off','Call Disconnected','Language Issue','Invalid Property','Duplicate Property'].includes(h.disp)?'hdot-r':['Ringing','Call Later','Broker on propadmin'].includes(h.disp)?'hdot-a':'hdot-n';
         const tat=calcTAT(prop.acquiredDate, h.date);
-        return `<div class="history-item"><div class="hdot ${cls}"></div><div><div class="h-text"><strong>${h.disp}</strong>${h.subDisp?' → '+h.subDisp:''}</div><div class="h-meta">${h.date} · TAT: ${tat} · By: ${h.calledBy||'—'}${h.notes?' · '+h.notes:''}</div></div></div>`;
+        // Show photo status in history if set
+        const photoStr=h.photoSt?` · 📸 ${h.photoSt}`:'';
+        return `<div class="history-item"><div class="hdot ${cls}"></div><div><div class="h-text"><strong>${h.disp}</strong>${h.subDisp?' → '+h.subDisp:''}${photoStr}</div><div class="h-meta">${h.date} · TAT: ${tat} · By: ${h.calledBy||'—'}${h.notes?' · '+h.notes:''}</div></div></div>`;
       }).join('')
     :'<div style="font-size:12px;color:var(--text3);padding:4px 0">No calls logged yet</div>';
 
   const dispBtns=DISPOSITIONS.map(d=>`<div class="disp-btn" onclick="selectDisp(this,'${d.label}')" data-color="${d.color}">${d.label}</div>`).join('');
   const pid=normStr(prop.propertyId); const mob=normMobile(prop.mobile);
-
-  // Photo status buttons
-  const psSelYes   = ps==='yes'    ? 'sel-yes'    : '';
-  const psSelNo    = ps==='no'     ? 'sel-no'     : '';
-  const psSelPend  = ps==='pending'? 'sel-pending' : '';
 
   document.getElementById('call-form-area').innerHTML=`
   <div class="call-form">
@@ -1289,9 +1320,18 @@ function renderCallForm(prop) {
     <div class="disp-grid">${dispBtns}</div>
     <div id="sub-disp-area"></div>
 
+    <!-- FIX #1: Photo Status now saved directly into CallLog row -->
     <div class="photo-toggle-area">
-      <div class="photo-toggle-title">📸 Photo Upload Status <span style="font-size:10px;font-weight:400;color:var(--text3)">(updated from Google Sheet by backend query)</span></div>
-      <div style="margin-top:6px">${ps ? photoTag(ps) : '<span class="tag tag-gray">Not yet updated — synced from backend</span>'}</div>
+      <div class="photo-toggle-title">📸 Photo Upload Status</div>
+      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">
+        Yahan select karo — ye directly CallLogs sheet ke <strong>PhotoStatus</strong> column mein save hoga
+      </div>
+      <div class="photo-btns">
+        <button class="photo-btn${ps==='yes'?' sel-yes':''}" onclick="selectPhoto(this,'yes')">✅ Uploaded</button>
+        <button class="photo-btn${ps==='pending'?' sel-pending':''}" onclick="selectPhoto(this,'pending')">⏳ Pending</button>
+        <button class="photo-btn${ps==='no'?' sel-no':''}" onclick="selectPhoto(this,'no')">❌ Not Uploaded</button>
+      </div>
+      ${ps?`<div style="margin-top:8px;font-size:11px;color:var(--text3)">Current: ${photoTag(ps)}</div>`:''}
     </div>
 
     <div class="field-group">
@@ -1343,6 +1383,8 @@ async function saveCall(propId, mobile) {
   const entry={
     propertyId:pid, mobile:mob, calledBy:callerVal, date:ds,
     disp:selectedDisp, subDisp:selectedSubDisp||'',
+    // FIX #1: PhotoStatus saved in same row as call log
+    photoStatus: selectedPhoto||'',
     notes:document.getElementById('call-notes')?.value||''
   };
 
@@ -1351,13 +1393,21 @@ async function saveCall(propId, mobile) {
     const result=await gsCall({action:'appendCallLog',entry});
     const key=pid+'_'+mob;
     if (!callLog[key]) callLog[key]=[];
-    callLog[key].push({...entry,ts:Date.now(),logId:result.logId});
+    callLog[key].push({
+      disp:entry.disp, subDisp:entry.subDisp,
+      photoSt:entry.photoStatus,
+      date:entry.date, calledBy:entry.calledBy,
+      notes:entry.notes, ts:Date.now(), logId:result.logId
+    });
     callLogRows.push({
       LogID:mob+Date.now(),Timestamp:new Date().toISOString(),
       PropertyID:pid,Mobile:mob,CalledBy:callerVal,Date:ds,
       Disposition:selectedDisp,SubDisposition:selectedSubDisp||'',
+      PhotoStatus:selectedPhoto||'',
       Notes:entry.notes
     });
+    // Update photoStatus map immediately
+    if (selectedPhoto) photoStatus[key]=selectedPhoto;
 
     setSyncStatus('ok','Saved '+new Date().toLocaleTimeString());
     showToast('✓ Call saved for '+pid);
@@ -1375,11 +1425,12 @@ async function saveCall(propId, mobile) {
 }
 
 function clearFormState() {
-  selectedDisp=null; selectedSubDisp=null;
+  selectedDisp=null; selectedSubDisp=null; selectedPhoto=null;
   document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue','sel-purple'));
   const s=document.getElementById('sub-disp-area'); if(s) s.innerHTML='';
   const n=document.getElementById('call-notes'); if(n) n.value='';
   const c=document.getElementById('call-caller'); if(c) c.value='';
+  document.querySelectorAll('.photo-btn').forEach(b=>b.classList.remove('sel-yes','sel-no','sel-pending'));
 }
 function backToList() {
   currentMobile=null; currentPropId=null;
@@ -1425,12 +1476,10 @@ function renderReport() {
   const whatsapp=logs.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
   const selfUpload=logs.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
 
-  // Photo status from dedicated tracking
   const photoUploaded=Object.values(photoStatus).filter(v=>v==='yes').length;
   const photoPending=Object.values(photoStatus).filter(v=>v==='pending').length;
   const photoNot=Object.values(photoStatus).filter(v=>v==='no').length;
 
-  // TAT stats
   const tatVals=[];
   logs.forEach(row=>{
     const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
@@ -1460,7 +1509,7 @@ function renderReport() {
     sc('Self Upload',selfUpload,pct(selfUpload,interested)+'%',pct(selfUpload,interested),'accent-blue')+
     sc('Avg TAT',avgTAT?avgTAT+'d':'—','min: '+minTAT+' max: '+maxTAT,0,'accent-purple');
 
-  // Date-wise table (no time)
+  // FIX #3: Date-wise table — sort correctly using parseForSort on DD-Mon-YYYY dates
   const byDate={};
   logs.forEach(r=>{
     const d=r.Date||'Unknown';
@@ -1480,7 +1529,11 @@ function renderReport() {
       }
     }
   });
-  const dr=Object.values(byDate).sort((a,b)=>parseForSort(b.date)-parseForSort(a.date));
+  // FIX #3: Sort by actual parsed date descending (newest first)
+  const dr=Object.values(byDate).sort((a,b)=>{
+    const da=parseForSort(a.date); const db=parseForSort(b.date);
+    return db-da; // descending = newest first
+  });
   document.getElementById('report-table').innerHTML=dr.length
     ?'<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Connect%</th><th>Photo%</th><th>Avg TAT</th></tr></thead><tbody>'
       +dr.map(r=>`<tr><td><strong>${r.date}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td><td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td><td>${r.tatCount?Math.round(r.tatSum/r.tatCount)+'d':'—'}</td></tr>`).join('')
@@ -1514,7 +1567,7 @@ function renderReport() {
       +'</tbody>'
     :'<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
 
-  // Caller × Date — card grid per caller
+  // FIX #3: Caller × Date — also sort dates properly
   const callerDates={};
   const allDatesSet=new Set(); const allCallersSet=new Set();
   logs.forEach(r=>{
@@ -1529,8 +1582,9 @@ function renderReport() {
     if(r.SubDisposition==='Sharing on WhatsApp') callerDates[k].whatsapp++;
     if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) callerDates[k].self++;
   });
+  // FIX #3: Sort dates using parseForSort so DD-Mon-YYYY sorts correctly
   const sortedDates=[...allDatesSet].sort((a,b)=>parseForSort(b)-parseForSort(a)).slice(0,14);
-  const sortedCallers=[...allCallersSet];
+  const sortedCallers=[...allCallersSet].sort();
   let cdHtml='';
   if(sortedCallers.length&&sortedDates.length){
     sortedCallers.forEach(caller=>{
@@ -1588,7 +1642,7 @@ function renderReport() {
 }
 
 // ============================================================
-// EXPORT REPORT (Raw + Summary)
+// EXPORT REPORT
 // ============================================================
 function exportReport() {
   const logs=getFilteredLogs();
@@ -1596,7 +1650,6 @@ function exportReport() {
 
   const wb=XLSX.utils.book_new();
 
-  // --- Sheet 1: Raw Call Logs ---
   const rawRows=logs.map(r=>{
     const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile))||{};
     const tatVal=calcTAT(prop.acquiredDate||'', r.Date||'');
@@ -1605,6 +1658,7 @@ function exportReport() {
       'Client Name':prop.clientName||'','Client Email':prop.clientEmail||'',
       'Called By':r.CalledBy,'Date':r.Date,
       'Disposition':r.Disposition,'Sub Disposition':r.SubDisposition||'',
+      // FIX #1: PhotoStatus from CallLogs row
       'Photo Status':r.PhotoStatus||photoStatus[normStr(r.PropertyID)+'_'+normMobile(r.Mobile)]||'',
       'Notes':r.Notes||'','City':prop.city||'',
       'Property Type':prop.propertyType||'','Preference':prop.preference||'',
@@ -1616,7 +1670,6 @@ function exportReport() {
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rawRows),'Raw Call Logs');
 
-  // --- Sheet 2: Summary KPIs ---
   const total=logs.length;
   const touchedSet=new Set(logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
   const connected=logs.filter(r=>!['Ringing','Switch Off'].includes(r.Disposition)).length;
@@ -1642,9 +1695,9 @@ function exportReport() {
     {Metric:'Connect Rate',Value:pct(connected,total)+'%',Notes:'Connected / Attempts'},
     {Metric:'Interested',Value:interested,Notes:'Disposition = Interested'},
     {Metric:'Interest Rate',Value:pct(interested,connected)+'%',Notes:'Interested / Connected'},
-    {Metric:'Photos Available',Value:photosAvail,Notes:'SubDisp = Photos Available'},
-    {Metric:'Photos Uploaded (tracked)',Value:photoUp,Notes:'Photo status = Yes'},
-    {Metric:'Photo Pending',Value:photoPend,Notes:'Photo status = Pending'},
+    {Metric:'Photos Available (SubDisp)',Value:photosAvail,Notes:'SubDisp = Photos Available'},
+    {Metric:'Photos Uploaded (PhotoStatus)',Value:photoUp,Notes:'PhotoStatus column = yes'},
+    {Metric:'Photo Pending',Value:photoPend,Notes:'PhotoStatus column = pending'},
     {Metric:'Photo Upload Rate',Value:pct(photoUp,allData.length)+'%',Notes:'Uploaded / Total Properties'},
     {Metric:'Avg TAT (days)',Value:avgTAT,Notes:'Acquired Date → Call Date'},
     {Metric:'Min TAT (days)',Value:tatVals.length?Math.min(...tatVals):'—',Notes:''},
@@ -1652,7 +1705,6 @@ function exportReport() {
   ];
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summaryRows),'Summary');
 
-  // --- Sheet 3: Date-wise ---
   const byDate={};
   logs.forEach(r=>{
     const d=r.Date||'Unknown';
@@ -1669,7 +1721,8 @@ function exportReport() {
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0){byDate[d].TatSum+=diff;byDate[d].TatCnt++;}}
     }
   });
-  const dateSheet=Object.values(byDate).sort((a,b)=>b.Date.localeCompare(a.Date)).map(r=>({
+  // FIX #3: Sort export dates correctly too
+  const dateSheet=Object.values(byDate).sort((a,b)=>parseForSort(b.Date)-parseForSort(a.Date)).map(r=>({
     'Date':r.Date,'Attempts':r.Attempts,'Connected':r.Connected,'Interested':r.Interested,
     'Photos':r.Photos,'WhatsApp':r.WhatsApp,'Self Upload':r.SelfUpload,
     'Connect%':pct(r.Connected,r.Attempts)+'%','Photo%':pct(r.Photos,r.Interested)+'%',
@@ -1677,7 +1730,6 @@ function exportReport() {
   }));
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(dateSheet),'Date-wise');
 
-  // --- Sheet 4: Caller-wise ---
   const byCaller={};
   logs.forEach(r=>{
     const c=r.CalledBy||'Unknown';
