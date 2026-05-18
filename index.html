@@ -12,6 +12,7 @@
   --green:#3B6D11;--green-mid:#639922;--green-light:#EAF3DE;
   --amber:#BA7517;--amber-light:#FAEEDA;
   --blue:#185FA5;--blue-light:#E6F1FB;--blue-border:#B5D4F4;
+  --purple:#6B3FA0;--purple-light:#F0EAFB;
   --gray:#5F5E5A;--gray-light:#F1EFE8;--gray-mid:#B4B2A9;
   --bg:#F4F3EF;--surface:#FFFFFF;--surface2:#F1EFE8;
   --border:#E2DED6;--border2:#C8C4BB;
@@ -57,7 +58,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .settings-btn:hover{background:var(--surface2)}
 
 /* ===== PAGES ===== */
-.page{display:none;padding:1.5rem;max-width:1300px;margin:0 auto;width:100%}
+.page{display:none;padding:1.5rem;max-width:1400px;margin:0 auto;width:100%}
 .page.active{display:block}
 .section-label{font-size:11px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
 
@@ -69,6 +70,8 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .btn-primary:hover{background:var(--red-dark)}
 .btn-green{background:var(--green);color:#fff;border-color:var(--green)}
 .btn-green:hover{background:#27500A}
+.btn-danger{background:#fff;color:var(--red-dark);border-color:var(--red)}
+.btn-danger:hover{background:var(--red-light)}
 .btn-sm{padding:5px 12px;font-size:12px}
 
 /* ===== TAGS ===== */
@@ -78,7 +81,12 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .tag-green{background:var(--green-light);color:var(--green)}
 .tag-red{background:var(--red-light);color:var(--red-dark)}
 .tag-gray{background:var(--gray-light);color:var(--gray)}
+.tag-purple{background:var(--purple-light);color:var(--purple)}
 .att-badge{display:inline-flex;align-items:center;font-size:10px;background:var(--gray-light);color:var(--gray);padding:2px 7px;border-radius:10px;font-weight:600;border:1px solid var(--border)}
+.photo-badge{display:inline-flex;align-items:center;font-size:10px;padding:2px 7px;border-radius:10px;font-weight:600;border:1px solid}
+.photo-yes{background:#EAF3DE;color:#3B6D11;border-color:#9fcf6e}
+.photo-no{background:#FCEBEB;color:#A32D2D;border-color:#f5a0a0}
+.photo-pending{background:#FAEEDA;color:#7a4a00;border-color:#e8c07a}
 .status-pill{font-size:10px;font-weight:700;padding:2px 8px;border-radius:10px}
 .sp-untouched{background:var(--amber-light);color:#7a4a00}
 .sp-partial{background:var(--blue-light);color:var(--blue)}
@@ -86,7 +94,7 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);min-height
 .priority-dot{width:7px;height:7px;border-radius:50%;background:var(--amber);display:inline-block;margin-right:5px}
 
 /* ===== FORMS ===== */
-input[type=text],input[type=email],select,textarea{padding:7px 10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:13px;color:var(--text);transition:border-color .15s;font-family:inherit}
+input[type=text],input[type=email],input[type=date],select,textarea{padding:7px 10px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:13px;color:var(--text);transition:border-color .15s;font-family:inherit}
 input:focus,select:focus,textarea:focus{outline:none;border-color:var(--blue);box-shadow:0 0 0 2px rgba(24,95,165,.12)}
 .field-group{display:flex;flex-direction:column;gap:4px;margin-bottom:12px}
 .field-label{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em}
@@ -117,9 +125,12 @@ table.data-table tr:hover td{background:var(--surface2)}
 .filter-label{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em}
 .filter-divider{width:1px;height:32px;background:var(--border);align-self:flex-end}
 .filter-actions{display:flex;gap:6px;align-self:flex-end;margin-left:auto}
+.date-range-group{display:flex;flex-direction:column;gap:4px}
+.date-range-inputs{display:flex;gap:6px;align-items:center}
+.date-range-inputs span{font-size:11px;color:var(--text3)}
 .list-panel{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);overflow:hidden}
 .list-header-bar{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;border-bottom:1px solid var(--border);background:var(--surface2)}
-.list-scroll{overflow-y:auto;max-height:calc(100vh - 285px)}
+.list-scroll{overflow-y:auto;max-height:calc(100vh - 305px)}
 .mobile-table{width:100%;border-collapse:collapse;font-size:13px}
 .mobile-table thead th{font-size:10px;font-weight:700;color:var(--text3);text-transform:uppercase;letter-spacing:.06em;padding:9px 12px;text-align:left;border-bottom:1px solid var(--border);background:var(--surface);white-space:nowrap;position:sticky;top:0;z-index:2}
 .mobile-row{cursor:pointer;transition:background .1s;border-bottom:1px solid var(--border)}
@@ -160,6 +171,7 @@ table.data-table tr:hover td{background:var(--surface2)}
 .disp-btn.sel-green{border-color:var(--green-mid);background:var(--green-light);color:var(--green);font-weight:700}
 .disp-btn.sel-amber{border-color:var(--amber);background:var(--amber-light);color:#7a4a00;font-weight:700}
 .disp-btn.sel-blue{border-color:var(--blue);background:var(--blue-light);color:var(--blue);font-weight:700}
+.disp-btn.sel-purple{border-color:var(--purple);background:var(--purple-light);color:var(--purple);font-weight:700}
 .subdisp-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:14px}
 .history-box{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:10px;max-height:160px;overflow-y:auto;margin-bottom:14px}
 .history-item{display:flex;gap:8px;padding:5px 0;border-bottom:1px solid var(--border)}
@@ -168,12 +180,29 @@ table.data-table tr:hover td{background:var(--surface2)}
 .hdot-g{background:var(--green-mid)}.hdot-a{background:var(--amber)}.hdot-r{background:var(--red)}.hdot-n{background:var(--gray-mid)}
 .h-text{font-size:12px;color:var(--text)}.h-meta{font-size:10px;color:var(--text3);margin-top:1px}
 
+/* Photo upload toggle */
+.photo-toggle-area{background:var(--surface2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px;margin-bottom:14px}
+.photo-toggle-title{font-size:11px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.05em;margin-bottom:8px}
+.photo-btns{display:flex;gap:8px}
+.photo-btn{padding:7px 14px;border-radius:var(--radius);border:1px solid var(--border);background:var(--surface);font-size:12px;cursor:pointer;font-weight:600;transition:all .15s}
+.photo-btn.sel-yes{border-color:var(--green-mid);background:var(--green-light);color:var(--green)}
+.photo-btn.sel-no{border-color:var(--red);background:var(--red-light);color:var(--red-dark)}
+.photo-btn.sel-pending{border-color:var(--amber);background:var(--amber-light);color:#7a4a00}
+
+/* ===== DELETE MODAL ===== */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center;padding:1rem}
+.modal-card{background:var(--surface);border-radius:var(--radius-lg);padding:1.5rem;max-width:420px;width:100%;box-shadow:0 8px 32px rgba(0,0,0,.15)}
+.modal-title{font-size:16px;font-weight:700;margin-bottom:8px}
+.modal-desc{font-size:13px;color:var(--text3);margin-bottom:1.25rem;line-height:1.6}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
+
 /* ===== REPORT ===== */
 .stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:1.5rem}
 .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 14px}
 .stat-card.accent-green{border-top:3px solid var(--green-mid)}
 .stat-card.accent-amber{border-top:3px solid var(--amber)}
 .stat-card.accent-blue{border-top:3px solid var(--blue)}
+.stat-card.accent-purple{border-top:3px solid var(--purple)}
 .stat-label{font-size:10px;font-weight:600;color:var(--text3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
 .stat-val{font-size:24px;font-weight:700;color:var(--text)}
 .stat-pct{font-size:11px;color:var(--text3);margin-top:2px}
@@ -200,7 +229,7 @@ table.data-table tr:hover td{background:var(--surface2)}
       <div style="font-size:16px;font-weight:700">Photo Penetration Portal — Setup</div>
     </div>
     <div class="warning-bar">
-      ⚠ One-time setup required. Follow these steps to connect Google Sheets as your database. Takes about 5 minutes.
+      ⚠ One-time setup required. Follow these steps to connect Google Sheets as your database.
     </div>
     <div class="step">
       <div class="step-num">1</div>
@@ -242,6 +271,33 @@ table.data-table tr:hover td{background:var(--surface2)}
   <div style="font-size:13px;color:var(--text3)" id="loading-text">Connecting to Google Sheets...</div>
 </div>
 
+<!-- ===== DELETE MODAL ===== -->
+<div class="modal-overlay" id="delete-modal" style="display:none">
+  <div class="modal-card">
+    <div class="modal-title">🗑 Remove Data</div>
+    <div class="modal-desc" id="delete-modal-desc">Choose what to delete. This cannot be undone.</div>
+    <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:1.25rem">
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+        <input type="radio" name="delete-scope" value="listings" checked> Remove all <strong>listings</strong> only (call logs kept)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+        <input type="radio" name="delete-scope" value="calllogs"> Remove all <strong>call logs</strong> only (listings kept)
+      </label>
+      <label style="display:flex;align-items:center;gap:8px;font-size:13px;cursor:pointer">
+        <input type="radio" name="delete-scope" value="all"> Remove <strong>everything</strong> (listings + call logs)
+      </label>
+    </div>
+    <div id="delete-confirm-area" style="margin-bottom:12px">
+      <label class="filter-label" style="display:block;margin-bottom:4px">Type DELETE to confirm</label>
+      <input type="text" id="delete-confirm-input" placeholder="DELETE" style="width:100%">
+    </div>
+    <div class="modal-actions">
+      <button class="btn btn-sm" onclick="closeDeleteModal()">Cancel</button>
+      <button class="btn btn-sm btn-danger" onclick="confirmDelete()">Delete →</button>
+    </div>
+  </div>
+</div>
+
 <!-- ===== MAIN APP ===== -->
 <div id="main-app" style="display:none">
   <div class="topbar">
@@ -259,6 +315,7 @@ table.data-table tr:hover td{background:var(--surface2)}
         <div class="sync-dot" id="sync-dot"></div>
         <span id="sync-text">—</span>
       </div>
+      <button class="settings-btn btn-danger" onclick="openDeleteModal()" style="color:var(--red-dark);border-color:var(--red)">🗑 Remove Data</button>
       <button class="settings-btn" onclick="resetSetup()">⚙ Change URL</button>
     </div>
   </div>
@@ -281,6 +338,23 @@ table.data-table tr:hover td{background:var(--surface2)}
     </div>
     <div id="mode-info-fresh" class="info-bar">🆕 &nbsp;<strong>Fresh Import:</strong> All existing listings will be replaced. Call logs will not be affected.</div>
     <div id="mode-info-update" class="info-bar" style="display:none;background:var(--green-light);border-color:#9fcf6e;color:var(--green)">🔄 &nbsp;<strong>Update / Merge:</strong> Matched by Property ID. New IDs are added. Records not in file remain unchanged.</div>
+    
+    <!-- Called By filter for upload -->
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-lg);padding:12px 16px;margin-bottom:12px">
+      <div style="font-size:12px;font-weight:600;margin-bottom:8px;color:var(--text2)">📋 Upload Scope (optional)</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:flex-end">
+        <div class="filter-group">
+          <span class="filter-label">Filter by Called By Source</span>
+          <select id="upload-calledby-filter" style="width:200px" onchange="renderPreview()">
+            <option value="">All (no filter)</option>
+          </select>
+        </div>
+        <div style="font-size:11px;color:var(--text3);align-self:flex-end;padding-bottom:8px">
+          If selected, only rows matching this Called By Source will be shown in preview.
+        </div>
+      </div>
+    </div>
+
     <div class="upload-zone" id="drop-zone" onclick="document.getElementById('file-input').click()">
       <div style="font-size:36px;margin-bottom:10px">📂</div>
       <div style="font-size:15px;font-weight:600;margin-bottom:4px" id="drop-zone-label">Fresh Import — Upload Excel or CSV</div>
@@ -349,16 +423,26 @@ table.data-table tr:hover td{background:var(--surface2)}
     <div id="calling-search-view" class="calling-layout">
       <div class="filter-panel">
         <div class="filter-row">
-          <div class="filter-group"><span class="filter-label">Mobile</span><input type="text" id="f-mobile" placeholder="9876..." oninput="applyFilters()" style="width:120px"></div>
-          <div class="filter-group"><span class="filter-label">Property ID</span><input type="text" id="f-propid" placeholder="P123..." oninput="applyFilters()" style="width:120px"></div>
-          <div class="filter-group"><span class="filter-label">Client Name</span><input type="text" id="f-client" placeholder="Name..." oninput="applyFilters()" style="width:120px"></div>
+          <div class="filter-group"><span class="filter-label">Mobile</span><input type="text" id="f-mobile" placeholder="9876..." oninput="applyFilters()" style="width:110px"></div>
+          <div class="filter-group"><span class="filter-label">Property ID</span><input type="text" id="f-propid" placeholder="P123..." oninput="applyFilters()" style="width:110px"></div>
+          <div class="filter-group"><span class="filter-label">Client Name</span><input type="text" id="f-client" placeholder="Name..." oninput="applyFilters()" style="width:110px"></div>
           <div class="filter-divider"></div>
-          <div class="filter-group"><span class="filter-label">Source</span><select id="f-source" onchange="applyFilters()" style="width:130px"><option value="">All Sources</option></select></div>
-          <div class="filter-group"><span class="filter-label">Called By Source</span><select id="f-callby" onchange="applyFilters()" style="width:130px"><option value="">All</option></select></div>
-          <div class="filter-group"><span class="filter-label">City</span><select id="f-city" onchange="applyFilters()" style="width:120px"><option value="">All Cities</option></select></div>
+          <div class="date-range-group">
+            <span class="filter-label">Acquired Date Range</span>
+            <div class="date-range-inputs">
+              <input type="date" id="f-date-from" onchange="applyFilters()" style="width:130px">
+              <span>to</span>
+              <input type="date" id="f-date-to" onchange="applyFilters()" style="width:130px">
+            </div>
+          </div>
+          <div class="filter-divider"></div>
+          <div class="filter-group"><span class="filter-label">Source</span><select id="f-source" onchange="applyFilters()" style="width:120px"><option value="">All Sources</option></select></div>
+          <div class="filter-group"><span class="filter-label">Called By Source</span><select id="f-callby" onchange="applyFilters()" style="width:120px"><option value="">All</option></select></div>
+          <div class="filter-group"><span class="filter-label">Called By (Portal)</span><select id="f-calledby-portal" onchange="applyFilters()" style="width:130px"><option value="">All Callers</option></select></div>
+          <div class="filter-group"><span class="filter-label">City</span><select id="f-city" onchange="applyFilters()" style="width:110px"><option value="">All Cities</option></select></div>
           <div class="filter-divider"></div>
           <div class="filter-group"><span class="filter-label">Last Disposition</span>
-            <select id="f-disp" onchange="applyFilters()" style="width:150px">
+            <select id="f-disp" onchange="applyFilters()" style="width:155px">
               <option value="">All</option>
               <option value="untouched">🔴 Untouched</option>
               <option value="Ringing">Ringing</option>
@@ -370,14 +454,26 @@ table.data-table tr:hover td{background:var(--surface2)}
               <option value="Not Interested">Not Interested</option>
               <option value="Rented Out">Rented Out</option>
               <option value="Sold Out">Sold Out</option>
+              <option value="Broker on propadmin">Broker on propadmin</option>
+              <option value="Invalid Property">Invalid Property</option>
+              <option value="Duplicate Property">Duplicate Property</option>
             </select>
           </div>
           <div class="filter-group"><span class="filter-label">Status</span>
-            <select id="f-status" onchange="applyFilters()" style="width:120px">
+            <select id="f-status" onchange="applyFilters()" style="width:115px">
               <option value="">All</option>
               <option value="untouched">Untouched</option>
               <option value="partial">In Progress</option>
               <option value="done">Completed</option>
+            </select>
+          </div>
+          <div class="filter-group"><span class="filter-label">Photo Upload</span>
+            <select id="f-photo" onchange="applyFilters()" style="width:130px">
+              <option value="">All</option>
+              <option value="yes">✅ Uploaded</option>
+              <option value="no">❌ Not Uploaded</option>
+              <option value="pending">⏳ Pending</option>
+              <option value="none">— Not Set</option>
             </select>
           </div>
           <div class="filter-actions">
@@ -399,20 +495,21 @@ table.data-table tr:hover td{background:var(--surface2)}
         <div class="list-scroll">
           <table class="mobile-table">
             <thead><tr>
-              <th style="width:155px">Mobile</th>
-              <th style="width:105px">Acquired Date</th>
-              <th style="width:130px">Client Name</th>
-              <th style="width:120px">Source</th>
-              <th style="width:120px">Called By Source</th>
-              <th style="width:110px">City</th>
-              <th style="width:120px">Acquired By</th>
-              <th style="width:95px">Status</th>
+              <th style="width:145px">Mobile</th>
+              <th style="width:100px">Acquired Date</th>
+              <th style="width:125px">Client Name</th>
+              <th style="width:110px">Source</th>
+              <th style="width:110px">Called By Source</th>
+              <th style="width:100px">City</th>
+              <th style="width:115px">Acquired By</th>
+              <th style="width:90px">Status</th>
               <th style="width:130px">Last Disposition</th>
-              <th style="width:55px">Att.</th>
+              <th style="width:90px">Photo Upload</th>
+              <th style="width:45px">Att.</th>
               <th style="width:28px"></th>
             </tr></thead>
             <tbody id="mobile-tbody">
-              <tr><td colspan="11"><div class="empty-state"><div class="empty-icon">📱</div>Loading data from Google Sheets...</div></td></tr>
+              <tr><td colspan="12"><div class="empty-state"><div class="empty-icon">📱</div>Loading data from Google Sheets...</div></td></tr>
             </tbody>
           </table>
         </div>
@@ -454,7 +551,7 @@ table.data-table tr:hover td{background:var(--surface2)}
       </div>
       <div style="margin-left:auto;align-self:flex-end;display:flex;gap:8px">
         <button class="btn btn-sm" onclick="loadAllData()">⟳ Refresh</button>
-        <button class="btn btn-sm btn-green" onclick="exportReport()">⬇ Export Excel</button>
+        <button class="btn btn-sm btn-green" onclick="exportReport()">⬇ Export Excel (Raw + Summary)</button>
       </div>
     </div>
     <div id="report-stats" class="stat-grid"></div>
@@ -462,8 +559,12 @@ table.data-table tr:hover td{background:var(--surface2)}
     <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="report-table"></table></div>
     <p class="section-label">Caller-wise Performance</p>
     <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="caller-table"></table></div>
+    <p class="section-label">Caller × Date Breakdown</p>
+    <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="caller-date-table"></table></div>
     <p class="section-label">Disposition Breakdown</p>
-    <div class="table-wrap"><table class="data-table" id="disp-table"></table></div>
+    <div class="table-wrap" style="margin-bottom:1.5rem"><table class="data-table" id="disp-table"></table></div>
+    <p class="section-label">Photo Upload Status</p>
+    <div class="table-wrap"><table class="data-table" id="photo-table"></table></div>
   </div>
 </div>
 
@@ -482,12 +583,16 @@ let SCRIPT_URL = localStorage.getItem(LS_URL) || '';
 let allData     = [];
 let callLog     = {};
 let callLogRows = [];
+let photoStatus = {}; // key: propId_mobile => 'yes'|'no'|'pending'
+let photoRows   = []; // raw rows from Google Sheets photoUpload sheet
 let currentMobile   = null;
 let currentPropId   = null;
 let previewData     = [];
+let previewDataRaw  = [];
 let importMode      = 'fresh';
 let selectedDisp    = null;
 let selectedSubDisp = null;
+let selectedPhoto   = null;
 let pollInterval    = null;
 
 const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
@@ -496,53 +601,52 @@ const DISPOSITIONS = [
   {label:'Call Later',color:'amber'},{label:'Interested',color:'green'},
   {label:'Call Disconnected',color:'red'},{label:'Language Issue',color:'red'},
   {label:'Not Interested',color:'red'},{label:'Rented Out',color:'blue'},
-  {label:'Sold Out',color:'blue'}
+  {label:'Sold Out',color:'blue'},
+  {label:'Broker on propadmin',color:'purple'},
+  {label:'Invalid Property',color:'red'},
+  {label:'Duplicate Property',color:'red'}
 ];
 const SUB_DISPOSITIONS = {
-  'Interested':['Photos Available','Photos Not Available','Sharing on WhatsApp','Client Will Upload'],
+  'Interested':['Photos Available','Photos Not Available','Sharing on WhatsApp','Client Will Upload','Client Will Upload via Email'],
   'Call Later':['Requested Callback','Will Call Back','Best Time Given'],
   'Not Interested':['Already Has Photos','Property Sold/Rented','Does Not Want to Share'],
   'Rented Out':['Photos Not Required'],'Sold Out':['Photos Not Required'],
   'Ringing':['No Answer','Voicemail Left'],'Switch Off':['Try Later','Permanently Off'],
   'Call Disconnected':['Network Issue','Hung Up'],
-  'Language Issue':['Hindi','Regional Language','Other']
+  'Language Issue':['Hindi','Regional Language','Other'],
+  'Broker on propadmin':['Will Update Photos','Not Responding'],
+  'Invalid Property':['Listing Removed','Wrong Number','Already Expired'],
+  'Duplicate Property':['Same as Property ID']
 };
 
 // ============================================================
-// NORMALIZE HELPERS  ← KEY FIX
+// NORMALIZE HELPERS
 // ============================================================
-function normMobile(v) {
-  return String(v || '').replace(/\D/g, '').slice(-10).trim();
-}
-function normStr(v) {
-  return String(v || '').trim();
-}
+function normMobile(v) { return String(v||'').replace(/\D/g,'').slice(-10).trim(); }
+function normStr(v)    { return String(v||'').trim(); }
 
 // ============================================================
 // DATE UTILITIES
 // ============================================================
 function excelSerialToDate(s) {
-  s = Number(s);
-  if (!s || s < 1) return null;
-  const d = new Date(Date.UTC(1900,0,1) + (s-1)*86400000);
-  if (s > 59) d.setUTCDate(d.getUTCDate()-1);
-  return d;
+  s = Number(s); if (!s||s<1) return null;
+  const d = new Date(Date.UTC(1900,0,1)+(s-1)*86400000);
+  if (s>59) d.setUTCDate(d.getUTCDate()-1); return d;
 }
 function formatDate(val) {
-  if (!val && val !== 0) return '—';
-  if (typeof val==='number' || (typeof val==='string' && /^\d{4,6}$/.test(String(val).trim()))) {
-    const d = excelSerialToDate(Number(val));
+  if (!val && val!==0) return '—';
+  if (typeof val==='number'||(typeof val==='string'&&/^\d{4,6}$/.test(String(val).trim()))) {
+    const d=excelSerialToDate(Number(val));
     if (d) return String(d.getUTCDate()).padStart(2,'0')+'-'+MONTHS[d.getUTCMonth()]+'-'+d.getUTCFullYear();
   }
-  const str = String(val).trim();
-  if (!str || str==='—') return '—';
+  const str=String(val).trim();
+  if (!str||str==='—') return '—';
   if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(str)) return str;
-  const d = new Date(str);
-  if (!isNaN(d)) return String(d.getDate()).padStart(2,'0')+'-'+MONTHS[d.getMonth()]+'-'+d.getFullYear();
+  const d=new Date(str); if(!isNaN(d)) return String(d.getDate()).padStart(2,'0')+'-'+MONTHS[d.getMonth()]+'-'+d.getFullYear();
   return str;
 }
 function parseForSort(val) {
-  if (!val && val!==0) return new Date(9999,0,1);
+  if (!val&&val!==0) return new Date(9999,0,1);
   if (typeof val==='number'||(typeof val==='string'&&/^\d{4,6}$/.test(String(val).trim()))) {
     const d=excelSerialToDate(Number(val)); return d||new Date(9999,0,1);
   }
@@ -551,18 +655,30 @@ function parseForSort(val) {
   if(m){const mo=MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());if(mo>=0){const yr=parseInt(m[3]);return new Date(yr<100?2000+yr:yr,mo,parseInt(m[1]));}}
   const d=new Date(str); return isNaN(d)?new Date(9999,0,1):d;
 }
+function parseDateToYMD(val) {
+  const d = parseForSort(val);
+  if (!d||d.getFullYear()===9999) return null;
+  return d.getFullYear()*10000 + (d.getMonth()+1)*100 + d.getDate();
+}
+function calcTAT(acquiredDate, callDate) {
+  // Returns days between acquired date and call date
+  const d1 = parseForSort(acquiredDate);
+  let d2;
+  if (!callDate) return '—';
+  d2 = new Date(callDate);
+  if (!d1||d1.getFullYear()===9999||isNaN(d2)) return '—';
+  const diff = Math.round((d2 - d1) / (1000*60*60*24));
+  return diff >= 0 ? diff + 'd' : '—';
+}
 
 // ============================================================
 // GOOGLE SHEETS API
 // ============================================================
 async function gsCall(payload) {
   if (!SCRIPT_URL) throw new Error('No script URL configured');
-  const resp = await fetch(SCRIPT_URL, {
-    method: 'POST',
-    body: JSON.stringify(payload)
-  });
+  const resp = await fetch(SCRIPT_URL, {method:'POST', body:JSON.stringify(payload)});
   const json = await resp.json();
-  if (!json.ok) throw new Error(json.error || 'Unknown error');
+  if (!json.ok) throw new Error(json.error||'Unknown error');
   return json;
 }
 
@@ -582,106 +698,115 @@ async function connectAndSave() {
   try {
     await gsCall({action:'getListings'});
     localStorage.setItem(LS_URL, SCRIPT_URL);
-    hideLoading();
-    launchApp();
+    hideLoading(); launchApp();
   } catch(e) {
     hideLoading();
     errEl.textContent = 'Connection failed: ' + e.message + '. Check URL and that deployment is set to "Anyone".';
-    errEl.style.display = 'block';
-    SCRIPT_URL = '';
+    errEl.style.display = 'block'; SCRIPT_URL = '';
   }
 }
-
 function resetSetup() {
   if (!confirm('Change the Google Sheets URL? You will be taken back to setup.')) return;
-  localStorage.removeItem(LS_URL);
-  SCRIPT_URL = '';
+  localStorage.removeItem(LS_URL); SCRIPT_URL = '';
   clearInterval(pollInterval);
   document.getElementById('main-app').style.display   = 'none';
   document.getElementById('setup-screen').style.display = 'flex';
 }
 
 // ============================================================
+// DELETE DATA
+// ============================================================
+function openDeleteModal() { document.getElementById('delete-modal').style.display='flex'; document.getElementById('delete-confirm-input').value=''; }
+function closeDeleteModal() { document.getElementById('delete-modal').style.display='none'; }
+async function confirmDelete() {
+  const scope = document.querySelector('input[name="delete-scope"]:checked').value;
+  const confirm = document.getElementById('delete-confirm-input').value.trim();
+  if (confirm !== 'DELETE') { showToast('⚠ Type DELETE to confirm'); return; }
+  closeDeleteModal();
+  showLoading('Removing data...');
+  try {
+    await gsCall({action:'deleteData', scope});
+    showToast('✓ Data removed successfully');
+    await loadAllData(); hideLoading();
+  } catch(e) { hideLoading(); showToast('⚠ Delete failed: ' + e.message); }
+}
+
+// ============================================================
 // INIT
 // ============================================================
 window.addEventListener('DOMContentLoaded', () => {
-  if (SCRIPT_URL) { launchApp(); }
-  else { document.getElementById('setup-screen').style.display = 'flex'; }
+  if (SCRIPT_URL) launchApp();
+  else document.getElementById('setup-screen').style.display = 'flex';
 });
-
 async function launchApp() {
   document.getElementById('setup-screen').style.display = 'none';
   showLoading('Loading data from Google Sheets...');
   try {
-    await loadAllData();
-    hideLoading();
+    await loadAllData(); hideLoading();
     document.getElementById('main-app').style.display = 'block';
     showPage('calling');
     pollInterval = setInterval(pollCallLogs, 30000);
   } catch(e) {
     hideLoading();
-    if (e.message.includes('No script URL')) {
-      document.getElementById('setup-screen').style.display = 'flex';
-    } else {
-      showToast('⚠ Load error: ' + e.message);
-      document.getElementById('main-app').style.display = 'block';
-      showPage('calling');
-    }
+    if (e.message.includes('No script URL')) { document.getElementById('setup-screen').style.display='flex'; }
+    else { showToast('⚠ Load error: ' + e.message); document.getElementById('main-app').style.display='block'; showPage('calling'); }
   }
 }
 
 async function loadAllData() {
   setSyncStatus('saving','Loading...');
   try {
-    const [lr, cr] = await Promise.all([
-      gsCall({action:'getListings'}),
-      gsCall({action:'getCallLogs'})
-    ]);
+    // Try to load photo status too; if action not supported, skip gracefully
+    const calls = [gsCall({action:'getListings'}), gsCall({action:'getCallLogs'})];
+    let photoResult = null;
+    try { photoResult = await gsCall({action:'getPhotoStatus'}); } catch(e) { /* optional */ }
+    const [lr, cr] = await Promise.all(calls);
 
-    // ── FIX: normalise mobile + propertyId as strings on load ──
-    allData = (lr.data||[]).map(r => ({
-      acquiredDate:   r.AcquiredDate   || '',
-      acquiredBy:     r.AcquiredBy     || '',
+    allData = (lr.data||[]).map(r=>({
+      acquiredDate:   r.AcquiredDate   ||'',
+      acquiredBy:     r.AcquiredBy     ||'',
       propertyId:     normStr(r.PropertyID),
       mobile:         normMobile(r.Mobile),
-      clientName:     r.ClientName     || '',
-      clientEmail:    r.ClientEmail    || '',
-      source:         r.Source         || '',
-      calledBySource: r.CalledBySource || '',
-      propertyType:   r.PropertyType   || '',
-      preference:     r.Preference     || '',
-      resCom:         r.ResCom         || '',
-      city:           r.City           || ''
-    })).filter(r => r.mobile); // skip rows with no mobile
+      clientName:     r.ClientName     ||'',
+      clientEmail:    r.ClientEmail    ||'',
+      source:         r.Source         ||'',
+      calledBySource: r.CalledBySource ||'',
+      propertyType:   r.PropertyType   ||'',
+      preference:     r.Preference     ||'',
+      resCom:         r.ResCom         ||'',
+      city:           r.City           ||''
+    })).filter(r=>r.mobile);
 
-    callLogRows = (cr.data||[]).map(r => ({
+    callLogRows = (cr.data||[]).map(r=>({
       ...r,
       PropertyID: normStr(r.PropertyID),
-      Mobile:     normMobile(r.Mobile)
+      Mobile: normMobile(r.Mobile)
+    }));
+
+    // Build photo status from callLogs (SubDisposition = 'Photos Available' means uploaded)
+    // Also from dedicated photo sheet if available
+    photoRows = (photoResult?.data||[]).map(r=>({
+      propertyId: normStr(r.PropertyID||r.propertyId||''),
+      mobile:     normMobile(r.Mobile||r.mobile||''),
+      status:     normStr(r.PhotoStatus||r.photoStatus||r.Status||'').toLowerCase()
     }));
 
     rebuildCallLog();
+    rebuildPhotoStatus();
     populateFilters();
     populateReportFilters();
+    populateUploadCallByFilter();
     applyFilters();
     setSyncStatus('ok','Synced ' + new Date().toLocaleTimeString());
-  } catch(e) {
-    setSyncStatus('error','Sync failed');
-    showToast('⚠ ' + e.message);
-  }
+  } catch(e) { setSyncStatus('error','Sync failed'); showToast('⚠ ' + e.message); }
 }
 
 async function pollCallLogs() {
   try {
     const cr = await gsCall({action:'getCallLogs'});
-    const fresh = (cr.data||[]).map(r => ({
-      ...r,
-      PropertyID: normStr(r.PropertyID),
-      Mobile:     normMobile(r.Mobile)
-    }));
+    const fresh = (cr.data||[]).map(r=>({...r, PropertyID:normStr(r.PropertyID), Mobile:normMobile(r.Mobile)}));
     if (fresh.length !== callLogRows.length) {
-      callLogRows = fresh;
-      rebuildCallLog();
+      callLogRows = fresh; rebuildCallLog(); rebuildPhotoStatus();
       if (!currentMobile) applyFilters();
       setSyncStatus('ok','Updated ' + new Date().toLocaleTimeString());
     }
@@ -690,47 +815,60 @@ async function pollCallLogs() {
 
 function rebuildCallLog() {
   callLog = {};
-  callLogRows.forEach(row => {
-    const key = normStr(row.PropertyID) + '_' + normMobile(row.Mobile);
-    if (!callLog[key]) callLog[key] = [];
+  callLogRows.forEach(row=>{
+    const key = normStr(row.PropertyID)+'_'+normMobile(row.Mobile);
+    if (!callLog[key]) callLog[key]=[];
     callLog[key].push({
-      disp:    row.Disposition    || '',
-      subDisp: row.SubDisposition || '',
-      date:    row.Date           || '',
-      calledBy:row.CalledBy       || '',
-      notes:   row.Notes          || '',
-      ts:      row.Timestamp ? new Date(row.Timestamp).getTime() : 0,
-      logId:   row.LogID          || ''
+      disp:     row.Disposition   ||'',
+      subDisp:  row.SubDisposition||'',
+      date:     row.Date          ||'',
+      calledBy: row.CalledBy      ||'',
+      notes:    row.Notes         ||'',
+      ts:       row.Timestamp ? new Date(row.Timestamp).getTime() : 0,
+      logId:    row.LogID         ||''
     });
   });
-  Object.values(callLog).forEach(arr => arr.sort((a,b) => a.ts - b.ts));
+  Object.values(callLog).forEach(arr=>arr.sort((a,b)=>a.ts-b.ts));
+}
+
+function rebuildPhotoStatus() {
+  photoStatus = {};
+  // First: set from dedicated photo sheet rows
+  photoRows.forEach(r => {
+    if (r.propertyId && r.mobile) {
+      const key = r.propertyId+'_'+r.mobile;
+      photoStatus[key] = r.status;
+    }
+  });
+  // Then: derive from call log sub-dispositions (Photos Available = yes, etc.)
+  Object.entries(callLog).forEach(([key, logs]) => {
+    if (photoStatus[key]) return; // already set from sheet
+    const lastInterested = [...logs].reverse().find(l => l.disp==='Interested');
+    if (lastInterested) {
+      const sd = lastInterested.subDisp;
+      if (sd === 'Photos Available') photoStatus[key] = 'yes';
+      else if (['Sharing on WhatsApp','Client Will Upload','Client Will Upload via Email'].includes(sd)) photoStatus[key] = 'pending';
+    }
+  });
 }
 
 // ============================================================
 // SYNC STATUS
 // ============================================================
 function setSyncStatus(state, text) {
-  const dot = document.getElementById('sync-dot');
-  const sp  = document.getElementById('sync-text');
-  if (!dot) return;
-  dot.className = 'sync-dot ' + state;
-  sp.textContent = text;
+  const dot=document.getElementById('sync-dot'); const sp=document.getElementById('sync-text');
+  if (!dot) return; dot.className='sync-dot '+state; sp.textContent=text;
 }
-function showLoading(msg) {
-  document.getElementById('loading-text').textContent = msg || 'Loading...';
-  document.getElementById('loading-overlay').style.display = 'flex';
-}
-function hideLoading() {
-  document.getElementById('loading-overlay').style.display = 'none';
-}
+function showLoading(msg) { document.getElementById('loading-text').textContent=msg||'Loading...'; document.getElementById('loading-overlay').style.display='flex'; }
+function hideLoading()    { document.getElementById('loading-overlay').style.display='none'; }
 
 // ============================================================
 // PAGE NAV
 // ============================================================
 function showPage(p) {
-  document.querySelectorAll('.page').forEach(x => x.classList.remove('active'));
-  document.querySelectorAll('.tab').forEach(x => x.classList.remove('active'));
-  document.getElementById('page-' + p).classList.add('active');
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
   document.querySelectorAll('.tab')[['upload','calling','report'].indexOf(p)].classList.add('active');
   if (p==='calling') { backToList(); applyFilters(); }
   if (p==='report')  { populateReportFilters(); renderReport(); }
@@ -741,12 +879,17 @@ function showPage(p) {
 // ============================================================
 function setImportMode(mode) {
   importMode = mode;
-  document.getElementById('mode-card-fresh').className  = 'import-mode-card' + (mode==='fresh'?' active':'');
-  document.getElementById('mode-card-update').className = 'import-mode-card' + (mode==='update'?' active-green':'');
+  document.getElementById('mode-card-fresh').className  = 'import-mode-card'+(mode==='fresh'?' active':'');
+  document.getElementById('mode-card-update').className = 'import-mode-card'+(mode==='update'?' active-green':'');
   document.getElementById('mode-info-fresh').style.display  = mode==='fresh'?'block':'none';
   document.getElementById('mode-info-update').style.display = mode==='update'?'block':'none';
-  document.getElementById('drop-zone-label').textContent = mode==='fresh' ? 'Fresh Import — Upload Excel or CSV' : 'Update / Merge — Upload Excel or CSV';
+  document.getElementById('drop-zone-label').textContent = mode==='fresh'?'Fresh Import — Upload Excel or CSV':'Update / Merge — Upload Excel or CSV';
   if (previewData.length) renderPreview();
+}
+
+function populateUploadCallByFilter() {
+  const vals = [...new Set(allData.map(r=>r.calledBySource).filter(Boolean))];
+  document.getElementById('upload-calledby-filter').innerHTML = '<option value="">All (no filter)</option>' + vals.map(v=>`<option>${v}</option>`).join('');
 }
 
 // ============================================================
@@ -757,10 +900,10 @@ function handleFile(e) {
   const reader = new FileReader();
   reader.onload = ev => {
     try {
-      const wb  = XLSX.read(ev.target.result, {type:'binary', cellDates:false});
+      const wb  = XLSX.read(ev.target.result,{type:'binary',cellDates:false});
       const ws  = wb.Sheets[wb.SheetNames[0]];
-      const raw = XLSX.utils.sheet_to_json(ws, {defval:'', raw:true});
-      previewData = raw.map(r => ({
+      const raw = XLSX.utils.sheet_to_json(ws,{defval:'',raw:true});
+      previewDataRaw = raw.map(r=>({
         acquiredDate:   r['Acquired Date']   ||r['acquired_date']   ||r['AcquiredDate']||'',
         acquiredBy:     r['Acquired By']     ||r['acquired_by']     ||r['Caller Name'] ||'',
         propertyId:     normStr(r['Property ID']||r['property_id']  ||r['PropertyID'] ||''),
@@ -773,149 +916,168 @@ function handleFile(e) {
         preference:     r['Preference']      ||r['preference']      ||'',
         resCom:         r['Res/Com']         ||r['res_com']         ||'',
         city:           r['City']            ||r['city']            ||''
-      })).filter(r => r.mobile); // skip rows with no mobile
+      })).filter(r=>r.mobile);
       renderPreview();
-    } catch(err) { showToast('File error: ' + err.message); }
+    } catch(err) { showToast('File error: '+err.message); }
   };
   reader.readAsBinaryString(file);
 }
 
 function renderPreview() {
-  if (!previewData.length) return;
-  document.getElementById('upload-preview').style.display = 'block';
-  document.getElementById('upload-guide').style.display   = 'none';
-  document.getElementById('confirm-btn').disabled = false;
-  document.getElementById('confirm-btn').textContent = importMode==='fresh' ? 'Confirm Fresh Import →' : 'Confirm Merge & Update →';
+  if (!previewDataRaw.length) return;
+  const cbFilter = document.getElementById('upload-calledby-filter')?.value||'';
+  previewData = cbFilter ? previewDataRaw.filter(r=>r.calledBySource===cbFilter) : previewDataRaw;
 
-  const existingIds = new Set(allData.map(r=>r.propertyId));
-  const modeBadge   = document.getElementById('preview-mode-badge');
-  const mergeSummary= document.getElementById('merge-summary');
+  document.getElementById('upload-preview').style.display='block';
+  document.getElementById('upload-guide').style.display='none';
+  document.getElementById('confirm-btn').disabled=false;
+  document.getElementById('confirm-btn').textContent = importMode==='fresh'?'Confirm Fresh Import →':'Confirm Merge & Update →';
+
+  const existingIds=new Set(allData.map(r=>r.propertyId));
+  const modeBadge=document.getElementById('preview-mode-badge');
+  const mergeSummary=document.getElementById('merge-summary');
 
   if (importMode==='fresh') {
-    document.getElementById('preview-count').textContent = previewData.length + ' records — preview (first 10):';
-    modeBadge.innerHTML = '<span class="tag tag-amber">Fresh Import</span>';
-    mergeSummary.style.display = 'none';
+    document.getElementById('preview-count').textContent=previewData.length+' records'+(cbFilter?' (filtered by: '+cbFilter+')':'')+' — preview (first 10):';
+    modeBadge.innerHTML='<span class="tag tag-amber">Fresh Import</span>';
+    mergeSummary.style.display='none';
   } else {
-    const newIds     = new Set(previewData.map(x=>x.propertyId));
-    const willUpdate = previewData.filter(r=>existingIds.has(r.propertyId)).length;
-    const willAdd    = previewData.filter(r=>!existingIds.has(r.propertyId)).length;
-    const willKeep   = allData.filter(r=>!newIds.has(r.propertyId)).length;
-    document.getElementById('preview-count').textContent = previewData.length + ' rows in file — merge preview:';
-    modeBadge.innerHTML = '<span class="tag tag-blue">Update / Merge</span>';
-    mergeSummary.style.display = 'block';
-    document.getElementById('merge-updated').textContent = willUpdate;
-    document.getElementById('merge-added').textContent   = willAdd;
-    document.getElementById('merge-kept').textContent    = willKeep;
+    const newIds=new Set(previewData.map(x=>x.propertyId));
+    const willUpdate=previewData.filter(r=>existingIds.has(r.propertyId)).length;
+    const willAdd=previewData.filter(r=>!existingIds.has(r.propertyId)).length;
+    const willKeep=allData.filter(r=>!newIds.has(r.propertyId)).length;
+    document.getElementById('preview-count').textContent=previewData.length+' rows in file — merge preview:';
+    modeBadge.innerHTML='<span class="tag tag-blue">Update / Merge</span>';
+    mergeSummary.style.display='block';
+    document.getElementById('merge-updated').textContent=willUpdate;
+    document.getElementById('merge-added').textContent=willAdd;
+    document.getElementById('merge-kept').textContent=willKeep;
   }
 
-  const cols   = ['acquiredDate','acquiredBy','propertyId','mobile','clientName','clientEmail','source','calledBySource','propertyType','resCom','city'];
-  const labels = ['Acquired Date','Acquired By','Property ID','Mobile','Client Name','Client Email','Source','Called By','Type','Res/Com','City'];
-  let html = '<thead><tr>' + labels.map(l=>'<th>'+l+'</th>').join('');
-  if (importMode==='update') html += '<th>Action</th>';
-  html += '</tr></thead><tbody>';
-  previewData.slice(0,10).forEach(r => {
-    const row  = {...r, acquiredDate: formatDate(r.acquiredDate)};
-    const isNew= !existingIds.has(r.propertyId);
-    const rs   = importMode==='update' && isNew ? 'style="background:#F0FBE8"' : '';
-    html += `<tr ${rs}>` + cols.map(c=>'<td>'+(row[c]||'—')+'</td>').join('');
-    if (importMode==='update') html += `<td><span class="tag ${isNew?'tag-green':'tag-blue'}">${isNew?'Add New':'Update'}</span></td>`;
-    html += '</tr>';
+  const cols=['acquiredDate','acquiredBy','propertyId','mobile','clientName','clientEmail','source','calledBySource','propertyType','resCom','city'];
+  const labels=['Acquired Date','Acquired By','Property ID','Mobile','Client Name','Client Email','Source','Called By','Type','Res/Com','City'];
+  let html='<thead><tr>'+labels.map(l=>'<th>'+l+'</th>').join('');
+  if (importMode==='update') html+='<th>Action</th>';
+  html+='</tr></thead><tbody>';
+  previewData.slice(0,10).forEach(r=>{
+    const row={...r,acquiredDate:formatDate(r.acquiredDate)};
+    const isNew=!existingIds.has(r.propertyId);
+    const rs=importMode==='update'&&isNew?'style="background:#F0FBE8"':'';
+    html+=`<tr ${rs}>`+cols.map(c=>'<td>'+(row[c]||'—')+'</td>').join('');
+    if (importMode==='update') html+=`<td><span class="tag ${isNew?'tag-green':'tag-blue'}">${isNew?'Add New':'Update'}</span></td>`;
+    html+='</tr>';
   });
-  document.getElementById('preview-table').innerHTML = html + '</tbody>';
+  document.getElementById('preview-table').innerHTML=html+'</tbody>';
 }
 
 async function confirmUpload() {
-  const btn = document.getElementById('confirm-btn');
-  btn.disabled = true; btn.textContent = 'Uploading...';
-
-  const toSheetRow = r => ({
-    PropertyID:     r.propertyId     || '',
-    Mobile:         r.mobile         || '',
-    AcquiredDate:   formatDate(r.acquiredDate),
-    AcquiredBy:     r.acquiredBy     || '',
-    ClientName:     r.clientName     || '',
-    ClientEmail:    r.clientEmail    || '',
-    Source:         r.source         || '',
-    CalledBySource: r.calledBySource || '',
-    PropertyType:   r.propertyType   || '',
-    Preference:     r.preference     || '',
-    ResCom:         r.resCom         || '',
-    City:           r.city           || ''
+  const btn=document.getElementById('confirm-btn');
+  btn.disabled=true; btn.textContent='Uploading...';
+  const toSheetRow=r=>({
+    PropertyID:r.propertyId||'', Mobile:r.mobile||'',
+    AcquiredDate:formatDate(r.acquiredDate), AcquiredBy:r.acquiredBy||'',
+    ClientName:r.clientName||'', ClientEmail:r.clientEmail||'',
+    Source:r.source||'', CalledBySource:r.calledBySource||'',
+    PropertyType:r.propertyType||'', Preference:r.preference||'',
+    ResCom:r.resCom||'', City:r.city||''
   });
-
   setSyncStatus('saving','Uploading...');
   try {
-    const result = await gsCall({
-      action: 'saveListings',
-      mode:   importMode,
-      data:   previewData.map(toSheetRow)
-    });
-    const msg = importMode==='fresh'
-      ? `✓ Fresh import done — ${result.added} records uploaded`
-      : `✓ Merge done — ${result.updated} updated, ${result.added} added`;
-    showToast(msg);
-    btn.textContent = 'Done ✓';
+    const result=await gsCall({action:'saveListings',mode:importMode,data:previewData.map(toSheetRow)});
+    const msg=importMode==='fresh'
+      ?`✓ Fresh import done — ${result.added} records uploaded`
+      :`✓ Merge done — ${result.updated} updated, ${result.added} added`;
+    showToast(msg); btn.textContent='Done ✓';
     await loadAllData();
   } catch(e) {
     setSyncStatus('error','Upload failed');
-    showToast('⚠ Upload failed: ' + e.message);
-    btn.disabled = false;
-    btn.textContent = importMode==='fresh' ? 'Confirm Fresh Import →' : 'Confirm Merge & Update →';
+    showToast('⚠ Upload failed: '+e.message);
+    btn.disabled=false;
+    btn.textContent=importMode==='fresh'?'Confirm Fresh Import →':'Confirm Merge & Update →';
   }
 }
-
 function clearUpload() {
-  previewData = [];
-  document.getElementById('upload-preview').style.display = 'none';
-  document.getElementById('upload-guide').style.display   = 'block';
-  document.getElementById('file-input').value = '';
-  document.getElementById('confirm-btn').textContent = 'Confirm & Upload →';
-  document.getElementById('confirm-btn').disabled = false;
+  previewData=[]; previewDataRaw=[];
+  document.getElementById('upload-preview').style.display='none';
+  document.getElementById('upload-guide').style.display='block';
+  document.getElementById('file-input').value='';
+  document.getElementById('confirm-btn').textContent='Confirm & Upload →';
+  document.getElementById('confirm-btn').disabled=false;
 }
 
 // ============================================================
 // FILTERS
 // ============================================================
 function populateFilters() {
-  const u = arr => [...new Set(arr.filter(Boolean))];
-  const sources = u(allData.map(r=>r.source));
-  const callbys = u(allData.map(r=>r.calledBySource));
-  const cities  = u(allData.map(r=>r.city));
-  document.getElementById('f-source').innerHTML = '<option value="">All Sources</option>'  + sources.map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('f-callby').innerHTML = '<option value="">All</option>'           + callbys.map(s=>`<option>${s}</option>`).join('');
-  document.getElementById('f-city').innerHTML   = '<option value="">All Cities</option>'   + cities.map(s=>`<option>${s}</option>`).join('');
+  const u=arr=>[...new Set(arr.filter(Boolean))];
+  const sources=u(allData.map(r=>r.source));
+  const callbys=u(allData.map(r=>r.calledBySource));
+  const cities=u(allData.map(r=>r.city));
+  const callerPortal=u(callLogRows.map(r=>r.CalledBy));
+  document.getElementById('f-source').innerHTML='<option value="">All Sources</option>'+sources.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('f-callby').innerHTML='<option value="">All</option>'+callbys.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('f-city').innerHTML='<option value="">All Cities</option>'+cities.map(s=>`<option>${s}</option>`).join('');
+  document.getElementById('f-calledby-portal').innerHTML='<option value="">All Callers</option>'+callerPortal.map(c=>`<option>${c}</option>`).join('');
 }
 function populateReportFilters() {
-  const callers = [...new Set(callLogRows.map(r=>r.CalledBy).filter(Boolean))];
-  const cities  = [...new Set(allData.map(r=>r.city).filter(Boolean))];
-  document.getElementById('report-caller').innerHTML = '<option value="">All Callers</option>' + callers.map(c=>`<option>${c}</option>`).join('');
-  document.getElementById('report-city').innerHTML   = '<option value="">All Cities</option>'  + cities.map(c=>`<option>${c}</option>`).join('');
+  const callers=[...new Set(callLogRows.map(r=>r.CalledBy).filter(Boolean))];
+  const cities=[...new Set(allData.map(r=>r.city).filter(Boolean))];
+  document.getElementById('report-caller').innerHTML='<option value="">All Callers</option>'+callers.map(c=>`<option>${c}</option>`).join('');
+  document.getElementById('report-city').innerHTML='<option value="">All Cities</option>'+cities.map(c=>`<option>${c}</option>`).join('');
 }
 function clearFilters() {
   ['f-mobile','f-propid','f-client'].forEach(id=>document.getElementById(id).value='');
-  ['f-source','f-callby','f-city','f-disp','f-status'].forEach(id=>document.getElementById(id).value='');
+  ['f-source','f-callby','f-city','f-disp','f-status','f-photo','f-calledby-portal'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-date-from').value='';
+  document.getElementById('f-date-to').value='';
   applyFilters();
 }
 
 // ============================================================
-// MOBILE LIST  ← KEY FIX: all comparisons use normMobile/normStr
+// MOBILE STATUS HELPERS
 // ============================================================
 function getMobileStatus(mobile, props) {
-  const called = props.filter(p=>(callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[]).length>0).length;
-  return called===0 ? 'untouched' : called<props.length ? 'partial' : 'done';
+  const called=props.filter(p=>(callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[]).length>0).length;
+  return called===0?'untouched':called<props.length?'partial':'done';
 }
 function getLastDisp(mobile, props) {
-  let lastTs=0, lastDisp=null;
+  let lastTs=0,lastDisp=null;
   props.forEach(p=>{
     const logs=callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[];
-    if(logs.length){ const l=logs[logs.length-1]; if(l.ts>lastTs){lastTs=l.ts;lastDisp=l.disp;} }
+    if(logs.length){const l=logs[logs.length-1];if(l.ts>lastTs){lastTs=l.ts;lastDisp=l.disp;}}
   });
   return lastDisp;
 }
 function getTotalAttempts(mobile, props) {
   return props.reduce((s,p)=>s+(callLog[normStr(p.propertyId)+'_'+normMobile(mobile)]||[]).length,0);
 }
+function getMobilePhotoStatus(mobile, props) {
+  // any prop with photo = yes => show yes; else pending if any pending; else no if any no
+  let hasYes=false, hasPending=false, hasNo=false;
+  props.forEach(p=>{
+    const key=normStr(p.propertyId)+'_'+normMobile(mobile);
+    const ps=photoStatus[key];
+    if (ps==='yes') hasYes=true;
+    else if (ps==='pending') hasPending=true;
+    else if (ps==='no') hasNo=true;
+  });
+  if (hasYes) return 'yes';
+  if (hasPending) return 'pending';
+  if (hasNo) return 'no';
+  return null;
+}
 
+function photoTag(ps) {
+  if (!ps) return '<span class="tag tag-gray">—</span>';
+  if (ps==='yes') return '<span class="photo-badge photo-yes">✅ Uploaded</span>';
+  if (ps==='pending') return '<span class="photo-badge photo-pending">⏳ Pending</span>';
+  if (ps==='no') return '<span class="photo-badge photo-no">❌ Not Uploaded</span>';
+  return '<span class="tag tag-gray">—</span>';
+}
+
+// ============================================================
+// APPLY FILTERS
+// ============================================================
 function applyFilters() {
   if (!allData.length) return;
   const fMob    = normMobile(document.getElementById('f-mobile')?.value||'');
@@ -926,64 +1088,89 @@ function applyFilters() {
   const fCity   = document.getElementById('f-city')?.value||'';
   const fDisp   = document.getElementById('f-disp')?.value||'';
   const fStatus = document.getElementById('f-status')?.value||'';
+  const fPhoto  = document.getElementById('f-photo')?.value||'';
+  const fCallerPortal = document.getElementById('f-calledby-portal')?.value||'';
+  const fDateFrom = document.getElementById('f-date-from')?.value||'';
+  const fDateTo   = document.getElementById('f-date-to')?.value||'';
 
-  // ── FIX: always use normMobile as map key ──
-  const mobileMap = {};
-  allData.forEach(r => {
-    const mob = normMobile(r.mobile);
-    if (!mob) return;
-    if (!mobileMap[mob]) mobileMap[mob] = [];
-    mobileMap[mob].push({...r, mobile: mob, propertyId: normStr(r.propertyId)});
+  const mobileMap={};
+  allData.forEach(r=>{
+    const mob=normMobile(r.mobile); if(!mob) return;
+    if(!mobileMap[mob]) mobileMap[mob]=[];
+    mobileMap[mob].push({...r,mobile:mob,propertyId:normStr(r.propertyId)});
   });
 
-  let mobiles = Object.keys(mobileMap).filter(mob => {
-    const props = mobileMap[mob];
-    if (fMob    && !mob.includes(fMob)) return false;
-    if (fProp   && !props.some(p=>normStr(p.propertyId).toLowerCase().includes(fProp))) return false;
+  let mobiles=Object.keys(mobileMap).filter(mob=>{
+    const props=mobileMap[mob];
+    if (fMob && !mob.includes(fMob)) return false;
+    if (fProp && !props.some(p=>normStr(p.propertyId).toLowerCase().includes(fProp))) return false;
     if (fClient && !props.some(p=>(p.clientName||'').toLowerCase().includes(fClient))) return false;
-    if (fSrc    && !props.some(p=>p.source===fSrc)) return false;
-    if (fCby    && !props.some(p=>p.calledBySource===fCby)) return false;
-    if (fCity   && !props.some(p=>p.city===fCity)) return false;
-    const status = getMobileStatus(mob, props);
-    const lastD  = getLastDisp(mob, props);
-    if (fDisp==='untouched') { if (status!=='untouched') return false; }
+    if (fSrc && !props.some(p=>p.source===fSrc)) return false;
+    if (fCby && !props.some(p=>p.calledBySource===fCby)) return false;
+    if (fCity && !props.some(p=>p.city===fCity)) return false;
+
+    // Date range filter on acquiredDate
+    if (fDateFrom||fDateTo) {
+      const propDates = props.map(p=>parseDateToYMD(p.acquiredDate)).filter(Boolean);
+      if (!propDates.length) return false;
+      const fromYMD = fDateFrom ? parseInt(fDateFrom.replace(/-/g,'')) : 0;
+      const toYMD   = fDateTo   ? parseInt(fDateTo.replace(/-/g,''))   : 99999999;
+      if (!propDates.some(d => d>=fromYMD && d<=toYMD)) return false;
+    }
+
+    // Called By Portal filter
+    if (fCallerPortal) {
+      const mobileCallLogs = props.flatMap(p=>callLog[normStr(p.propertyId)+'_'+mob]||[]);
+      if (!mobileCallLogs.some(l=>l.calledBy===fCallerPortal)) return false;
+    }
+
+    const status=getMobileStatus(mob,props);
+    const lastD=getLastDisp(mob,props);
+    if (fDisp==='untouched') { if(status!=='untouched') return false; }
     else if (fDisp && lastD!==fDisp) return false;
     if (fStatus && status!==fStatus) return false;
+
+    // Photo upload filter
+    if (fPhoto) {
+      const ps=getMobilePhotoStatus(mob,props);
+      if (fPhoto==='none' && ps!==null) return false;
+      if (fPhoto!=='none' && ps!==fPhoto) return false;
+    }
     return true;
   });
 
-  const so = {untouched:0, partial:1, done:2};
-  mobiles.sort((a,b) => {
-    const sa=so[getMobileStatus(a,mobileMap[a])], sb=so[getMobileStatus(b,mobileMap[b])];
-    if (sa!==sb) return sa-sb;
-    return parseForSort(mobileMap[a][0]?.acquiredDate) - parseForSort(mobileMap[b][0]?.acquiredDate);
+  const so={untouched:0,partial:1,done:2};
+  mobiles.sort((a,b)=>{
+    const sa=so[getMobileStatus(a,mobileMap[a])],sb=so[getMobileStatus(b,mobileMap[b])];
+    if(sa!==sb) return sa-sb;
+    return parseForSort(mobileMap[a][0]?.acquiredDate)-parseForSort(mobileMap[b][0]?.acquiredDate);
   });
 
-  document.getElementById('results-info').textContent = mobiles.length+' mobiles · '+allData.length+' total properties';
+  document.getElementById('results-info').textContent=mobiles.length+' mobiles · '+allData.length+' total properties';
 
   function dispTag(d) {
     if (!d) return '<span class="tag tag-gray">—</span>';
-    const cls = d==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(d)?'tag-red':'tag-amber';
+    const cls=d==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out','Invalid Property','Duplicate Property'].includes(d)?'tag-red':d==='Broker on propadmin'?'tag-purple':'tag-amber';
     return `<span class="tag ${cls}">${d}</span>`;
   }
 
-  let rows = '';
-  mobiles.forEach(mob => {
-    const props    = mobileMap[mob];
-    const status   = getMobileStatus(mob, props);
-    const lastDisp = getLastDisp(mob, props);
-    const attempts = getTotalAttempts(mob, props);
-    const calledC  = props.filter(p=>(callLog[normStr(p.propertyId)+'_'+mob]||[]).length>0).length;
-    const acqDate  = formatDate(props.map(p=>p.acquiredDate).filter(x=>x||x===0)[0]);
-    const sources  = [...new Set(props.map(p=>p.source).filter(Boolean))].join(', ')||'—';
-    const callBySrc= [...new Set(props.map(p=>p.calledBySource).filter(Boolean))].join(', ')||'—';
-    const cities   = [...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
-    const acqBy    = [...new Set(props.map(p=>p.acquiredBy).filter(Boolean))].join(', ')||'—';
-    const clientNm = [...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
-    const spCls    = status==='untouched'?'sp-untouched':status==='partial'?'sp-partial':'sp-done';
-    const spTxt    = status==='untouched'?'Untouched':status==='partial'?'In Progress':'Done';
-    // ── FIX: pass mob as data-attribute, not inline string (avoids quote escaping issues) ──
-    rows += `<tr class="mobile-row ${status}" data-mob="${mob}" onclick="openMobile(this.dataset.mob)">
+  let rows='';
+  mobiles.forEach(mob=>{
+    const props=mobileMap[mob];
+    const status=getMobileStatus(mob,props);
+    const lastDisp=getLastDisp(mob,props);
+    const attempts=getTotalAttempts(mob,props);
+    const calledC=props.filter(p=>(callLog[normStr(p.propertyId)+'_'+mob]||[]).length>0).length;
+    const acqDate=formatDate(props.map(p=>p.acquiredDate).filter(x=>x||x===0)[0]);
+    const sources=[...new Set(props.map(p=>p.source).filter(Boolean))].join(', ')||'—';
+    const callBySrc=[...new Set(props.map(p=>p.calledBySource).filter(Boolean))].join(', ')||'—';
+    const cities=[...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
+    const acqBy=[...new Set(props.map(p=>p.acquiredBy).filter(Boolean))].join(', ')||'—';
+    const clientNm=[...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
+    const spCls=status==='untouched'?'sp-untouched':status==='partial'?'sp-partial':'sp-done';
+    const spTxt=status==='untouched'?'Untouched':status==='partial'?'In Progress':'Done';
+    const ps=getMobilePhotoStatus(mob,props);
+    rows+=`<tr class="mobile-row ${status}" data-mob="${mob}" onclick="openMobile(this.dataset.mob)">
       <td><div class="mob-num">${status==='untouched'?'<span class="priority-dot"></span>':''}${mob}</div><div class="mob-sub">${calledC}/${props.length} props called</div></td>
       <td style="font-size:12px;white-space:nowrap">${acqDate}</td>
       <td style="font-size:12px">${clientNm}</td>
@@ -993,97 +1180,85 @@ function applyFilters() {
       <td style="font-size:12px">${acqBy}</td>
       <td><span class="status-pill ${spCls}">${spTxt}</span></td>
       <td>${dispTag(lastDisp)}</td>
+      <td>${photoTag(ps)}</td>
       <td><span class="att-badge">${attempts}</span></td>
       <td style="color:var(--text3);font-size:16px;text-align:right">›</td>
     </tr>`;
   });
-  document.getElementById('mobile-tbody').innerHTML = rows || `<tr><td colspan="11"><div class="empty-state"><div class="empty-icon">🔍</div>No results — clear filters</div></td></tr>`;
+  document.getElementById('mobile-tbody').innerHTML=rows||`<tr><td colspan="12"><div class="empty-state"><div class="empty-icon">🔍</div>No results — clear filters</div></td></tr>`;
 }
 
 // ============================================================
-// DETAIL VIEW  ← KEY FIX: normMobile everywhere
+// DETAIL VIEW
 // ============================================================
 function openMobile(mobile) {
-  const mob = normMobile(mobile);
-  currentMobile = mob;
-
-  // ── FIX: filter using normMobile so type mismatches don't give 0 props ──
-  const props = allData.filter(r => normMobile(r.mobile) === mob);
-
-  if (!props.length) {
-    showToast('⚠ No properties found for this mobile. Try refreshing.');
-    return;
-  }
-
-  document.getElementById('calling-search-view').style.display = 'none';
-  document.getElementById('calling-detail-view').style.display = 'block';
-  document.getElementById('detail-mobile').textContent = '📱 ' + mob;
-
-  const clientNames = [...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
-  const cities      = [...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
-  document.getElementById('detail-owner').textContent = clientNames + ' · ' + cities;
-  document.getElementById('prop-count-label').textContent = props.length;
-
-  // Normalise propertyId in props before rendering
-  const normProps = props.map(p => ({...p, propertyId: normStr(p.propertyId), mobile: mob}));
+  const mob=normMobile(mobile); currentMobile=mob;
+  const props=allData.filter(r=>normMobile(r.mobile)===mob);
+  if (!props.length) { showToast('⚠ No properties found. Try refreshing.'); return; }
+  document.getElementById('calling-search-view').style.display='none';
+  document.getElementById('calling-detail-view').style.display='block';
+  document.getElementById('detail-mobile').textContent='📱 '+mob;
+  const clientNames=[...new Set(props.map(p=>p.clientName).filter(Boolean))].join(', ')||'—';
+  const cities=[...new Set(props.map(p=>p.city).filter(Boolean))].join(', ')||'—';
+  document.getElementById('detail-owner').textContent=clientNames+' · '+cities;
+  document.getElementById('prop-count-label').textContent=props.length;
+  const normProps=props.map(p=>({...p,propertyId:normStr(p.propertyId),mobile:mob}));
   renderPropList(normProps);
 }
 
 function renderPropList(props) {
-  let html = `<div class="panel-header"><span>${props.length} Properties</span><span style="font-size:10px;color:var(--text3)">${currentMobile}</span></div>`;
-  props.forEach(p => {
-    const key     = normStr(p.propertyId) + '_' + normMobile(currentMobile);
-    const logs    = callLog[key] || [];
-    const lastDisp= logs.length ? logs[logs.length-1].disp : null;
-    const resCls  = p.resCom && p.resCom.toLowerCase().includes('com') ? 'tag-amber' : 'tag-green';
-    const pid     = normStr(p.propertyId);
-    html += `<div class="prop-item${normStr(currentPropId)===pid?' active':''}" data-pid="${pid}" onclick="selectProp(this.dataset.pid, this)">
+  let html=`<div class="panel-header"><span>${props.length} Properties</span><span style="font-size:10px;color:var(--text3)">${currentMobile}</span></div>`;
+  props.forEach(p=>{
+    const key=normStr(p.propertyId)+'_'+normMobile(currentMobile);
+    const logs=callLog[key]||[];
+    const lastDisp=logs.length?logs[logs.length-1].disp:null;
+    const resCls=p.resCom&&p.resCom.toLowerCase().includes('com')?'tag-amber':'tag-green';
+    const pid=normStr(p.propertyId);
+    const ps=photoStatus[key];
+    html+=`<div class="prop-item${normStr(currentPropId)===pid?' active':''}" data-pid="${pid}" onclick="selectProp(this.dataset.pid,this)">
       <div class="prop-id-text">${pid||'—'}</div>
       <div class="prop-sub-text">${p.propertyType||'—'} · ${p.preference||'—'}</div>
       <div class="prop-tags">
         <span class="tag ${resCls}">${p.resCom||'Res'}</span>
-        ${lastDisp
-          ? `<span class="tag ${lastDisp==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out'].includes(lastDisp)?'tag-red':'tag-amber'}">${lastDisp}</span>`
-          : '<span class="tag tag-gray">Not Called</span>'}
-        ${logs.length ? `<span class="att-badge">${logs.length} att</span>` : ''}
+        ${lastDisp?`<span class="tag ${lastDisp==='Interested'?'tag-green':['Not Interested','Switch Off','Sold Out','Rented Out','Invalid Property','Duplicate Property'].includes(lastDisp)?'tag-red':lastDisp==='Broker on propadmin'?'tag-purple':'tag-amber'}">${lastDisp}</span>`:'<span class="tag tag-gray">Not Called</span>'}
+        ${logs.length?`<span class="att-badge">${logs.length} att</span>`:''}
+        ${ps?photoTag(ps):''}
       </div>
     </div>`;
   });
-  document.getElementById('prop-list').innerHTML = html;
+  document.getElementById('prop-list').innerHTML=html;
 }
 
 function selectProp(propId, el) {
-  currentPropId = normStr(propId);
-  document.querySelectorAll('.prop-item').forEach(x => x.classList.remove('active'));
+  currentPropId=normStr(propId);
+  document.querySelectorAll('.prop-item').forEach(x=>x.classList.remove('active'));
   if (el) el.classList.add('active');
-
-  // ── FIX: normStr + normMobile on both sides ──
-  const prop = allData.find(r =>
-    normStr(r.propertyId) === normStr(propId) &&
-    normMobile(r.mobile)  === normMobile(currentMobile)
-  );
-  if (prop) renderCallForm({...prop, propertyId: normStr(prop.propertyId), mobile: normMobile(prop.mobile)});
+  const prop=allData.find(r=>normStr(r.propertyId)===normStr(propId)&&normMobile(r.mobile)===normMobile(currentMobile));
+  if (prop) renderCallForm({...prop,propertyId:normStr(prop.propertyId),mobile:normMobile(prop.mobile)});
 }
 
 function renderCallForm(prop) {
-  const key     = normStr(prop.propertyId) + '_' + normMobile(prop.mobile);
-  const history = callLog[key] || [];
+  const key=normStr(prop.propertyId)+'_'+normMobile(prop.mobile);
+  const history=callLog[key]||[];
+  const ps=photoStatus[key];
 
-  let histHtml = history.length
-    ? history.slice().reverse().map(h => {
-        const cls = h.disp==='Interested'?'hdot-g':['Not Interested','Switch Off','Call Disconnected','Language Issue'].includes(h.disp)?'hdot-r':['Ringing','Call Later'].includes(h.disp)?'hdot-a':'hdot-n';
-        return `<div class="history-item"><div class="hdot ${cls}"></div><div><div class="h-text"><strong>${h.disp}</strong>${h.subDisp?' → '+h.subDisp:''}</div><div class="h-meta">${h.date} · By: ${h.calledBy||'—'}${h.notes?' · '+h.notes:''}</div></div></div>`;
+  let histHtml=history.length
+    ?history.slice().reverse().map(h=>{
+        const cls=h.disp==='Interested'?'hdot-g':['Not Interested','Switch Off','Call Disconnected','Language Issue','Invalid Property','Duplicate Property'].includes(h.disp)?'hdot-r':['Ringing','Call Later','Broker on propadmin'].includes(h.disp)?'hdot-a':'hdot-n';
+        const tat=calcTAT(prop.acquiredDate, h.date);
+        return `<div class="history-item"><div class="hdot ${cls}"></div><div><div class="h-text"><strong>${h.disp}</strong>${h.subDisp?' → '+h.subDisp:''}</div><div class="h-meta">${h.date} · TAT: ${tat} · By: ${h.calledBy||'—'}${h.notes?' · '+h.notes:''}</div></div></div>`;
       }).join('')
-    : '<div style="font-size:12px;color:var(--text3);padding:4px 0">No calls logged yet</div>';
+    :'<div style="font-size:12px;color:var(--text3);padding:4px 0">No calls logged yet</div>';
 
-  const dispBtns = DISPOSITIONS.map(d =>
-    `<div class="disp-btn" onclick="selectDisp(this,'${d.label}')" data-color="${d.color}">${d.label}</div>`
-  ).join('');
+  const dispBtns=DISPOSITIONS.map(d=>`<div class="disp-btn" onclick="selectDisp(this,'${d.label}')" data-color="${d.color}">${d.label}</div>`).join('');
+  const pid=normStr(prop.propertyId); const mob=normMobile(prop.mobile);
 
-  const pid = normStr(prop.propertyId);
-  const mob = normMobile(prop.mobile);
+  // Photo status buttons
+  const psSelYes   = ps==='yes'    ? 'sel-yes'    : '';
+  const psSelNo    = ps==='no'     ? 'sel-no'     : '';
+  const psSelPend  = ps==='pending'? 'sel-pending' : '';
 
-  document.getElementById('call-form-area').innerHTML = `
+  document.getElementById('call-form-area').innerHTML=`
   <div class="call-form">
     <div class="call-header">
       <div>
@@ -1112,6 +1287,16 @@ function renderCallForm(prop) {
     <p class="section-label">Disposition</p>
     <div class="disp-grid">${dispBtns}</div>
     <div id="sub-disp-area"></div>
+
+    <div class="photo-toggle-area">
+      <div class="photo-toggle-title">📸 Photo Upload Status</div>
+      <div class="photo-btns">
+        <button class="photo-btn ${psSelYes}"  onclick="selectPhoto(this,'yes')">✅ Uploaded</button>
+        <button class="photo-btn ${psSelPend}" onclick="selectPhoto(this,'pending')">⏳ Pending</button>
+        <button class="photo-btn ${psSelNo}"   onclick="selectPhoto(this,'no')">❌ Not Uploaded</button>
+      </div>
+    </div>
+
     <div class="field-group">
       <label class="field-label">Called By (Your Name) <span style="color:var(--red)">*</span></label>
       <input type="text" id="call-caller" placeholder="Enter your name" style="width:100%">
@@ -1122,94 +1307,94 @@ function renderCallForm(prop) {
     </div>
     <div style="display:flex;gap:8px;justify-content:flex-end">
       <button class="btn" onclick="clearFormState()">Clear</button>
-      <button class="btn btn-primary" id="save-call-btn" data-pid="${pid}" data-mob="${mob}" onclick="saveCall(this.dataset.pid, this.dataset.mob)">✓ Save Call Log</button>
+      <button class="btn btn-primary" id="save-call-btn" data-pid="${pid}" data-mob="${mob}" onclick="saveCall(this.dataset.pid,this.dataset.mob)">✓ Save Call Log</button>
     </div>
   </div>`;
-  selectedDisp = null; selectedSubDisp = null;
+  selectedDisp=null; selectedSubDisp=null;
+  selectedPhoto=ps||null;
 }
 
 function selectDisp(el, disp) {
-  document.querySelectorAll('.disp-btn').forEach(b => b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
-  el.classList.add('sel-' + el.dataset.color);
-  selectedDisp = disp; selectedSubDisp = null;
-  const subs = SUB_DISPOSITIONS[disp] || [];
-  document.getElementById('sub-disp-area').innerHTML = subs.length
-    ? '<label class="field-label" style="margin-bottom:6px">Sub Disposition <span style="font-weight:400;color:var(--text3)">(optional)</span></label><div class="subdisp-grid">'
-      + subs.map(s=>`<div class="disp-btn" onclick="selectSubDisp(this,'${s}')" data-color="blue">${s}</div>`).join('')
-      + '</div>'
-    : '';
+  document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue','sel-purple'));
+  el.classList.add('sel-'+el.dataset.color);
+  selectedDisp=disp; selectedSubDisp=null;
+  const subs=SUB_DISPOSITIONS[disp]||[];
+  document.getElementById('sub-disp-area').innerHTML=subs.length
+    ?'<label class="field-label" style="margin-bottom:6px">Sub Disposition <span style="font-weight:400;color:var(--text3)">(optional)</span></label><div class="subdisp-grid">'+subs.map(s=>`<div class="disp-btn" onclick="selectSubDisp(this,'${s}')" data-color="blue">${s}</div>`).join('')+'</div>'
+    :'';
 }
 function selectSubDisp(el, sub) {
-  document.querySelectorAll('#sub-disp-area .disp-btn').forEach(b => b.classList.remove('sel-blue'));
-  el.classList.add('sel-blue'); selectedSubDisp = sub;
+  document.querySelectorAll('#sub-disp-area .disp-btn').forEach(b=>b.classList.remove('sel-blue'));
+  el.classList.add('sel-blue'); selectedSubDisp=sub;
+}
+function selectPhoto(el, val) {
+  document.querySelectorAll('.photo-btn').forEach(b=>b.classList.remove('sel-yes','sel-no','sel-pending'));
+  el.classList.add('sel-'+val); selectedPhoto=val;
 }
 
 async function saveCall(propId, mobile) {
-  const pid = normStr(propId);
-  const mob = normMobile(mobile);
-
+  const pid=normStr(propId); const mob=normMobile(mobile);
   if (!selectedDisp) { showToast('⚠ Select a disposition first'); return; }
-  const callerVal = (document.getElementById('call-caller')?.value||'').trim();
+  const callerVal=(document.getElementById('call-caller')?.value||'').trim();
   if (!callerVal) { showToast('⚠ Enter your name (Called By)'); return; }
 
-  const btn = document.getElementById('save-call-btn');
-  btn.disabled = true; btn.textContent = 'Saving...';
+  const btn=document.getElementById('save-call-btn');
+  btn.disabled=true; btn.textContent='Saving...';
 
-  const today = new Date();
-  const ds    = String(today.getDate()).padStart(2,'0')+'-'+MONTHS[today.getMonth()]+'-'+today.getFullYear();
-  const entry = {
-    propertyId: pid,
-    mobile:     mob,
-    calledBy:   callerVal,
-    date:       ds,
-    disp:       selectedDisp,
-    subDisp:    selectedSubDisp || '',
-    notes:      document.getElementById('call-notes')?.value || ''
+  const today=new Date();
+  const ds=String(today.getDate()).padStart(2,'0')+'-'+MONTHS[today.getMonth()]+'-'+today.getFullYear();
+  const entry={
+    propertyId:pid, mobile:mob, calledBy:callerVal, date:ds,
+    disp:selectedDisp, subDisp:selectedSubDisp||'',
+    notes:document.getElementById('call-notes')?.value||'',
+    photoStatus:selectedPhoto||''
   };
 
   setSyncStatus('saving','Saving...');
   try {
-    const result = await gsCall({action:'appendCallLog', entry});
-    const key = pid + '_' + mob;
-    if (!callLog[key]) callLog[key] = [];
-    callLog[key].push({...entry, ts: Date.now(), logId: result.logId});
+    const result=await gsCall({action:'appendCallLog',entry});
+    const key=pid+'_'+mob;
+    if (!callLog[key]) callLog[key]=[];
+    callLog[key].push({...entry,ts:Date.now(),logId:result.logId});
     callLogRows.push({
-      LogID: mob+Date.now(), Timestamp: new Date().toISOString(),
-      PropertyID: pid, Mobile: mob, CalledBy: callerVal,
-      Date: ds, Disposition: selectedDisp, SubDisposition: selectedSubDisp||'', Notes: entry.notes
+      LogID:mob+Date.now(),Timestamp:new Date().toISOString(),
+      PropertyID:pid,Mobile:mob,CalledBy:callerVal,Date:ds,
+      Disposition:selectedDisp,SubDisposition:selectedSubDisp||'',
+      Notes:entry.notes,PhotoStatus:selectedPhoto||''
     });
-    setSyncStatus('ok','Saved ' + new Date().toLocaleTimeString());
-    showToast('✓ Call saved for ' + pid);
-    selectedDisp = null; selectedSubDisp = null;
 
-    const props = allData
-      .filter(r => normMobile(r.mobile) === mob)
-      .map(p => ({...p, propertyId: normStr(p.propertyId), mobile: mob}));
+    // Update photo status locally
+    if (selectedPhoto) photoStatus[key]=selectedPhoto;
+
+    setSyncStatus('ok','Saved '+new Date().toLocaleTimeString());
+    showToast('✓ Call saved for '+pid);
+    selectedDisp=null; selectedSubDisp=null;
+
+    const props=allData.filter(r=>normMobile(r.mobile)===mob).map(p=>({...p,propertyId:normStr(p.propertyId),mobile:mob}));
     renderPropList(props);
-
-    const prop = allData.find(r => normStr(r.propertyId)===pid && normMobile(r.mobile)===mob);
-    if (prop) renderCallForm({...prop, propertyId: pid, mobile: mob});
+    const prop=allData.find(r=>normStr(r.propertyId)===pid&&normMobile(r.mobile)===mob);
+    if (prop) renderCallForm({...prop,propertyId:pid,mobile:mob});
   } catch(e) {
     setSyncStatus('error','Save failed');
-    showToast('⚠ Save failed: ' + e.message);
-    btn.disabled = false; btn.textContent = '✓ Save Call Log';
+    showToast('⚠ Save failed: '+e.message);
+    btn.disabled=false; btn.textContent='✓ Save Call Log';
   }
 }
 
 function clearFormState() {
-  selectedDisp = null; selectedSubDisp = null;
-  document.querySelectorAll('.disp-btn').forEach(b => b.classList.remove('sel-red','sel-green','sel-amber','sel-blue'));
-  const s = document.getElementById('sub-disp-area'); if (s) s.innerHTML = '';
-  const n = document.getElementById('call-notes');    if (n) n.value = '';
-  const c = document.getElementById('call-caller');   if (c) c.value = '';
+  selectedDisp=null; selectedSubDisp=null; selectedPhoto=null;
+  document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue','sel-purple'));
+  const s=document.getElementById('sub-disp-area'); if(s) s.innerHTML='';
+  const n=document.getElementById('call-notes'); if(n) n.value='';
+  const c=document.getElementById('call-caller'); if(c) c.value='';
+  document.querySelectorAll('.photo-btn').forEach(b=>b.classList.remove('sel-yes','sel-no','sel-pending'));
 }
-
 function backToList() {
-  currentMobile = null; currentPropId = null;
-  const sv = document.getElementById('calling-search-view');
-  const dv = document.getElementById('calling-detail-view');
-  if (sv) sv.style.display = 'block';
-  if (dv) dv.style.display = 'none';
+  currentMobile=null; currentPropId=null;
+  const sv=document.getElementById('calling-search-view');
+  const dv=document.getElementById('calling-detail-view');
+  if(sv) sv.style.display='block';
+  if(dv) dv.style.display='none';
   applyFilters();
 }
 
@@ -1217,140 +1402,304 @@ function backToList() {
 // REPORTS
 // ============================================================
 function getFilteredLogs() {
-  const cf = document.getElementById('report-caller')?.value||'';
-  const ci = document.getElementById('report-city')?.value||'';
-  const df = document.getElementById('report-date')?.value||'all';
-  const now = new Date();
-  return callLogRows.filter(row => {
-    if (cf && row.CalledBy!==cf) return false;
-    const prop = allData.find(r => normStr(r.propertyId)===normStr(row.PropertyID) && normMobile(r.mobile)===normMobile(row.Mobile)) || {};
-    if (ci && prop.city!==ci) return false;
-    const d = new Date(row.Timestamp);
-    if (df==='today' && d.toDateString()!==now.toDateString()) return false;
-    if (df==='week')  { const w=new Date(now); w.setDate(w.getDate()-7); if(d<w) return false; }
-    if (df==='month') { const m=new Date(now); m.setDate(m.getDate()-30); if(d<m) return false; }
+  const cf=document.getElementById('report-caller')?.value||'';
+  const ci=document.getElementById('report-city')?.value||'';
+  const df=document.getElementById('report-date')?.value||'all';
+  const now=new Date();
+  return callLogRows.filter(row=>{
+    if (cf&&row.CalledBy!==cf) return false;
+    const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile))||{};
+    if (ci&&prop.city!==ci) return false;
+    const d=new Date(row.Timestamp);
+    if (df==='today'&&d.toDateString()!==now.toDateString()) return false;
+    if (df==='week'){const w=new Date(now);w.setDate(w.getDate()-7);if(d<w)return false;}
+    if (df==='month'){const m=new Date(now);m.setDate(m.getDate()-30);if(d<m)return false;}
     return true;
   });
 }
-function pct(n,d){ return d ? Math.round(n/d*100) : 0; }
+function pct(n,d){ return d?Math.round(n/d*100):0; }
 function pbColor(p){ return p>=60?'#639922':p>=30?'#BA7517':'#E24B4A'; }
 
 function renderReport() {
   populateReportFilters();
-  const logs       = getFilteredLogs();
-  const total      = logs.length;
-  const touchedSet = new Set(logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
-  const touched    = touchedSet.size;
-  const totalProps = allData.length || 1;
-  const connected  = logs.filter(r=>!['Ringing','Switch Off'].includes(r.Disposition)).length;
-  const interested = logs.filter(r=>r.Disposition==='Interested').length;
-  const photosAvail= logs.filter(r=>r.SubDisposition==='Photos Available').length;
-  const whatsapp   = logs.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
-  const selfUpload = logs.filter(r=>r.SubDisposition==='Client Will Upload').length;
+  const logs=getFilteredLogs();
+  const total=logs.length;
+  const touchedSet=new Set(logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+  const touched=touchedSet.size;
+  const totalProps=allData.length||1;
+  const connected=logs.filter(r=>!['Ringing','Switch Off'].includes(r.Disposition)).length;
+  const interested=logs.filter(r=>r.Disposition==='Interested').length;
+  const photosAvail=logs.filter(r=>r.SubDisposition==='Photos Available').length;
+  const whatsapp=logs.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
+  const selfUpload=logs.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
 
-  function sc(label,val,sub,pctV,ac) {
+  // Photo status from dedicated tracking
+  const photoUploaded=Object.values(photoStatus).filter(v=>v==='yes').length;
+  const photoPending=Object.values(photoStatus).filter(v=>v==='pending').length;
+  const photoNot=Object.values(photoStatus).filter(v=>v==='no').length;
+
+  // TAT stats
+  const tatVals=[];
+  logs.forEach(row=>{
+    const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
+    if(prop&&prop.acquiredDate&&row.Date){
+      const d1=parseForSort(prop.acquiredDate); const d2=parseForSort(row.Date);
+      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
+        const diff=Math.round((d2-d1)/(1000*60*60*24));
+        if(diff>=0) tatVals.push(diff);
+      }
+    }
+  });
+  const avgTAT=tatVals.length?Math.round(tatVals.reduce((a,b)=>a+b,0)/tatVals.length):0;
+  const minTAT=tatVals.length?Math.min(...tatVals):'—';
+  const maxTAT=tatVals.length?Math.max(...tatVals):'—';
+
+  function sc(label,val,sub,pctV,ac){
     return `<div class="stat-card ${ac}"><div class="stat-label">${label}</div><div class="stat-val">${val}</div><div class="stat-pct">${sub}</div><div class="progress-bar"><div class="pb-fill" style="width:${pctV}%;background:${pbColor(pctV)}"></div></div></div>`;
   }
-  document.getElementById('report-stats').innerHTML =
-    sc('Total Attempts',total,touched+' unique props',pct(touched,totalProps),'')+
-    sc('Touched',touched,pct(touched,totalProps)+'% of all',pct(touched,totalProps),'accent-amber')+
+  document.getElementById('report-stats').innerHTML=
+    sc('Total Data',totalProps,'all listings',100,'')+
+    sc('Attempted',touched,pct(touched,totalProps)+'% of data',pct(touched,totalProps),'accent-amber')+
     sc('Connected',connected,pct(connected,total)+'% of attempts',pct(connected,total),'accent-blue')+
     sc('Interested',interested,pct(interested,connected)+'% connected',pct(interested,connected),'accent-amber')+
-    sc('Photos Available',photosAvail,pct(photosAvail,interested)+'% interested',pct(photosAvail,interested),'accent-green')+
+    sc('Photos Uploaded',photoUploaded,pct(photoUploaded,totalProps)+'% of data',pct(photoUploaded,totalProps),'accent-green')+
+    sc('Photo Pending',photoPending,pct(photoPending,totalProps)+'%',pct(photoPending,totalProps),'')+
     sc('WhatsApp Share',whatsapp,pct(whatsapp,interested)+'%',pct(whatsapp,interested),'accent-green')+
-    sc('Self Upload',selfUpload,pct(selfUpload,interested)+'%',pct(selfUpload,interested),'accent-blue');
+    sc('Self Upload',selfUpload,pct(selfUpload,interested)+'%',pct(selfUpload,interested),'accent-blue')+
+    sc('Avg TAT',avgTAT?avgTAT+'d':'—','min: '+minTAT+' max: '+maxTAT,0,'accent-purple');
 
-  // Date-wise
-  const byDate = {};
-  logs.forEach(r => {
-    const d = r.Date||'Unknown';
-    if (!byDate[d]) byDate[d]={date:d,attempts:0,connected:0,interested:0,photos:0,whatsapp:0};
+  // Date-wise table (no time)
+  const byDate={};
+  logs.forEach(r=>{
+    const d=r.Date||'Unknown';
+    if(!byDate[d]) byDate[d]={date:d,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0,tatSum:0,tatCount:0};
     byDate[d].attempts++;
-    if (!['Ringing','Switch Off'].includes(r.Disposition)) byDate[d].connected++;
-    if (r.Disposition==='Interested') byDate[d].interested++;
-    if (r.SubDisposition==='Photos Available') byDate[d].photos++;
-    if (r.SubDisposition==='Sharing on WhatsApp') byDate[d].whatsapp++;
+    if(!['Ringing','Switch Off'].includes(r.Disposition)) byDate[d].connected++;
+    if(r.Disposition==='Interested') byDate[d].interested++;
+    if(r.SubDisposition==='Photos Available') byDate[d].photos++;
+    if(r.SubDisposition==='Sharing on WhatsApp') byDate[d].whatsapp++;
+    if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byDate[d].self++;
+    const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
+    if(prop&&prop.acquiredDate&&r.Date){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
+        const diff=Math.round((d2-d1)/(1000*60*60*24));
+        if(diff>=0){byDate[d].tatSum+=diff;byDate[d].tatCount++;}
+      }
+    }
   });
-  const dr = Object.values(byDate).sort((a,b) => b.date.localeCompare(a.date));
-  document.getElementById('report-table').innerHTML = dr.length
-    ? '<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Connect%</th><th>Photo%</th></tr></thead><tbody>'
-      + dr.map(r=>`<tr><td><strong>${r.date}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td><td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td></tr>`).join('')
-      + '</tbody>'
-    : '<thead><tr><th>Date</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data yet</td></tr></tbody>';
+  const dr=Object.values(byDate).sort((a,b)=>b.date.localeCompare(a.date));
+  document.getElementById('report-table').innerHTML=dr.length
+    ?'<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Connect%</th><th>Photo%</th><th>Avg TAT</th></tr></thead><tbody>'
+      +dr.map(r=>`<tr><td><strong>${r.date}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.connected,r.attempts))};font-weight:600">${pct(r.connected,r.attempts)}%</td><td style="color:${pbColor(pct(r.photos,r.interested))};font-weight:600">${pct(r.photos,r.interested)}%</td><td>${r.tatCount?Math.round(r.tatSum/r.tatCount)+'d':'—'}</td></tr>`).join('')
+      +'</tbody>'
+    :'<thead><tr><th>Date</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data yet</td></tr></tbody>';
 
   // Caller-wise
-  const byCaller = {};
-  logs.forEach(r => {
-    const c = r.CalledBy||'Unknown';
-    if (!byCaller[c]) byCaller[c]={name:c,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0};
+  const byCaller={};
+  logs.forEach(r=>{
+    const c=r.CalledBy||'Unknown';
+    if(!byCaller[c]) byCaller[c]={name:c,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0,tatSum:0,tatCount:0};
     byCaller[c].attempts++;
-    if (!['Ringing','Switch Off'].includes(r.Disposition)) byCaller[c].connected++;
-    if (r.Disposition==='Interested') byCaller[c].interested++;
-    if (r.SubDisposition==='Photos Available') byCaller[c].photos++;
-    if (r.SubDisposition==='Sharing on WhatsApp') byCaller[c].whatsapp++;
-    if (r.SubDisposition==='Client Will Upload') byCaller[c].self++;
+    if(!['Ringing','Switch Off'].includes(r.Disposition)) byCaller[c].connected++;
+    if(r.Disposition==='Interested') byCaller[c].interested++;
+    if(r.SubDisposition==='Photos Available') byCaller[c].photos++;
+    if(r.SubDisposition==='Sharing on WhatsApp') byCaller[c].whatsapp++;
+    if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byCaller[c].self++;
+    const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
+    if(prop&&prop.acquiredDate&&r.Date){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
+        const diff=Math.round((d2-d1)/(1000*60*60*24));
+        if(diff>=0){byCaller[c].tatSum+=diff;byCaller[c].tatCount++;}
+      }
+    }
   });
-  const cr = Object.values(byCaller).sort((a,b) => b.photos-a.photos);
-  document.getElementById('caller-table').innerHTML = cr.length
-    ? '<thead><tr><th>Caller</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Photo%</th></tr></thead><tbody>'
-      + cr.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.photos,r.attempts))};font-weight:600">${pct(r.photos,r.attempts)}%</td></tr>`).join('')
-      + '</tbody>'
-    : '<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+  const cr=Object.values(byCaller).sort((a,b)=>b.photos-a.photos);
+  document.getElementById('caller-table').innerHTML=cr.length
+    ?'<thead><tr><th>Caller</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Photo%</th><th>Avg TAT</th></tr></thead><tbody>'
+      +cr.map(r=>`<tr><td><strong>${r.name}</strong></td><td>${r.attempts}</td><td>${r.connected}</td><td>${r.interested}</td><td>${r.photos}</td><td>${r.whatsapp}</td><td>${r.self}</td><td style="color:${pbColor(pct(r.photos,r.attempts))};font-weight:600">${pct(r.photos,r.attempts)}%</td><td>${r.tatCount?Math.round(r.tatSum/r.tatCount)+'d':'—'}</td></tr>`).join('')
+      +'</tbody>'
+    :'<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+
+  // Caller × Date pivot
+  const callerDates={};
+  const allDates=new Set(); const allCallers=new Set();
+  logs.forEach(r=>{
+    const c=r.CalledBy||'Unknown'; const d=r.Date||'Unknown';
+    allCallers.add(c); allDates.add(d);
+    const k=c+'__'+d;
+    if(!callerDates[k]) callerDates[k]={attempts:0,photos:0};
+    callerDates[k].attempts++;
+    if(r.SubDisposition==='Photos Available') callerDates[k].photos++;
+  });
+  const sortedDates=[...allDates].sort((a,b)=>b.localeCompare(a)).slice(0,14);
+  const sortedCallers=[...allCallers];
+  if(sortedCallers.length&&sortedDates.length){
+    document.getElementById('caller-date-table').innerHTML=
+      '<thead><tr><th>Caller</th>'+sortedDates.map(d=>`<th>${d}</th>`).join('')+'</tr></thead><tbody>'
+      +sortedCallers.map(c=>'<tr><td><strong>'+c+'</strong></td>'+sortedDates.map(d=>{
+        const k=c+'__'+d; const v=callerDates[k];
+        return v?`<td>${v.attempts} att / ${v.photos} 📸</td>`:'<td style="color:var(--text3)">—</td>';
+      }).join('')+'</tr>').join('')+'</tbody>';
+  } else {
+    document.getElementById('caller-date-table').innerHTML='<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+  }
 
   // Disposition breakdown
-  const byDisp = {};
-  logs.forEach(r => {
-    if (!byDisp[r.Disposition]) byDisp[r.Disposition]={d:r.Disposition,c:0};
-    byDisp[r.Disposition].c++;
-  });
-  const dispRows = Object.values(byDisp).sort((a,b) => b.c-a.c);
-  document.getElementById('disp-table').innerHTML = dispRows.length
-    ? '<thead><tr><th>Disposition</th><th>Count</th><th>% of Attempts</th></tr></thead><tbody>'
-      + dispRows.map(r=>`<tr><td><strong>${r.d}</strong></td><td>${r.c}</td><td style="font-weight:600">${pct(r.c,total)}%</td></tr>`).join('')
-      + '</tbody>'
-    : '<thead><tr><th>Disposition</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+  const byDisp={};
+  logs.forEach(r=>{if(!byDisp[r.Disposition])byDisp[r.Disposition]={d:r.Disposition,c:0};byDisp[r.Disposition].c++;});
+  const dispRows=Object.values(byDisp).sort((a,b)=>b.c-a.c);
+  document.getElementById('disp-table').innerHTML=dispRows.length
+    ?'<thead><tr><th>Disposition</th><th>Count</th><th>% of Attempts</th></tr></thead><tbody>'
+      +dispRows.map(r=>`<tr><td><strong>${r.d}</strong></td><td>${r.c}</td><td style="font-weight:600">${pct(r.c,total)}%</td></tr>`).join('')+'</tbody>'
+    :'<thead><tr><th>Disposition</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
+
+  // Photo upload status table
+  const photoKeys=Object.keys(photoStatus);
+  const photoByStatus={yes:0,pending:0,no:0};
+  photoKeys.forEach(k=>{const v=photoStatus[k];if(photoByStatus[v]!==undefined)photoByStatus[v]++;});
+  document.getElementById('photo-table').innerHTML=
+    '<thead><tr><th>Photo Status</th><th>Count</th><th>% of All Props</th></tr></thead><tbody>'
+    +`<tr><td>✅ Uploaded</td><td>${photoByStatus.yes}</td><td style="color:var(--green);font-weight:600">${pct(photoByStatus.yes,totalProps)}%</td></tr>`
+    +`<tr><td>⏳ Pending</td><td>${photoByStatus.pending}</td><td style="color:var(--amber);font-weight:600">${pct(photoByStatus.pending,totalProps)}%</td></tr>`
+    +`<tr><td>❌ Not Uploaded</td><td>${photoByStatus.no}</td><td style="color:var(--red-dark);font-weight:600">${pct(photoByStatus.no,totalProps)}%</td></tr>`
+    +`<tr><td style="color:var(--text3)">— Not Tracked</td><td>${totalProps-photoByStatus.yes-photoByStatus.pending-photoByStatus.no}</td><td style="color:var(--text3)">${pct(totalProps-photoByStatus.yes-photoByStatus.pending-photoByStatus.no,totalProps)}%</td></tr>`
+    +'</tbody>';
 }
 
+// ============================================================
+// EXPORT REPORT (Raw + Summary)
+// ============================================================
 function exportReport() {
-  const rows = callLogRows.map(r => {
-    const prop = allData.find(x => normStr(x.propertyId)===normStr(r.PropertyID) && normMobile(x.mobile)===normMobile(r.Mobile)) || {};
+  const logs=getFilteredLogs();
+  if (!logs.length) { showToast('No data to export'); return; }
+
+  const wb=XLSX.utils.book_new();
+
+  // --- Sheet 1: Raw Call Logs ---
+  const rawRows=logs.map(r=>{
+    const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile))||{};
+    const tatVal=calcTAT(prop.acquiredDate||'', r.Date||'');
     return {
-      'Mobile': r.Mobile, 'Property ID': r.PropertyID,
-      'Client Name': prop.clientName||'', 'Client Email': prop.clientEmail||'',
-      'Called By': r.CalledBy, 'Date': r.Date,
-      'Disposition': r.Disposition, 'Sub Disposition': r.SubDisposition||'',
-      'Notes': r.Notes||'', 'City': prop.city||'',
-      'Property Type': prop.propertyType||'', 'Preference': prop.preference||'',
-      'Res/Com': prop.resCom||'', 'Source': prop.source||'',
-      'Called By Source': prop.calledBySource||'',
-      'Acquired By': prop.acquiredBy||'', 'Acquired Date': prop.acquiredDate||''
+      'Mobile':r.Mobile,'Property ID':r.PropertyID,
+      'Client Name':prop.clientName||'','Client Email':prop.clientEmail||'',
+      'Called By':r.CalledBy,'Date':r.Date,
+      'Disposition':r.Disposition,'Sub Disposition':r.SubDisposition||'',
+      'Photo Status':r.PhotoStatus||photoStatus[normStr(r.PropertyID)+'_'+normMobile(r.Mobile)]||'',
+      'Notes':r.Notes||'','City':prop.city||'',
+      'Property Type':prop.propertyType||'','Preference':prop.preference||'',
+      'Res/Com':prop.resCom||'','Source':prop.source||'',
+      'Called By Source':prop.calledBySource||'',
+      'Acquired By':prop.acquiredBy||'','Acquired Date':formatDate(prop.acquiredDate||''),
+      'TAT (days)':tatVal
     };
   });
-  if (!rows.length) { showToast('No data to export'); return; }
-  const ws = XLSX.utils.json_to_sheet(rows);
-  const wb = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(wb, ws, 'Call Report');
-  XLSX.writeFile(wb, '99acres_report_'+new Date().toISOString().slice(0,10)+'.xlsx');
-  showToast('✓ Report exported');
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(rawRows),'Raw Call Logs');
+
+  // --- Sheet 2: Summary KPIs ---
+  const total=logs.length;
+  const touchedSet=new Set(logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+  const connected=logs.filter(r=>!['Ringing','Switch Off'].includes(r.Disposition)).length;
+  const interested=logs.filter(r=>r.Disposition==='Interested').length;
+  const photosAvail=logs.filter(r=>r.SubDisposition==='Photos Available').length;
+  const photoUp=Object.values(photoStatus).filter(v=>v==='yes').length;
+  const photoPend=Object.values(photoStatus).filter(v=>v==='pending').length;
+  const tatVals=[];
+  logs.forEach(row=>{
+    const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
+    if(prop&&prop.acquiredDate&&row.Date){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(row.Date);
+      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0)tatVals.push(diff);}
+    }
+  });
+  const avgTAT=tatVals.length?Math.round(tatVals.reduce((a,b)=>a+b,0)/tatVals.length):0;
+  const summaryRows=[
+    {Metric:'Total Properties',Value:allData.length,Notes:'All listings in DB'},
+    {Metric:'Total Attempts',Value:total,Notes:'Call log entries'},
+    {Metric:'Unique Props Touched',Value:touchedSet.size,Notes:'Distinct prop+mobile touched'},
+    {Metric:'Touch Rate',Value:pct(touchedSet.size,allData.length)+'%',Notes:'Touched / Total Properties'},
+    {Metric:'Connected',Value:connected,Notes:'Excl. Ringing & Switch Off'},
+    {Metric:'Connect Rate',Value:pct(connected,total)+'%',Notes:'Connected / Attempts'},
+    {Metric:'Interested',Value:interested,Notes:'Disposition = Interested'},
+    {Metric:'Interest Rate',Value:pct(interested,connected)+'%',Notes:'Interested / Connected'},
+    {Metric:'Photos Available',Value:photosAvail,Notes:'SubDisp = Photos Available'},
+    {Metric:'Photos Uploaded (tracked)',Value:photoUp,Notes:'Photo status = Yes'},
+    {Metric:'Photo Pending',Value:photoPend,Notes:'Photo status = Pending'},
+    {Metric:'Photo Upload Rate',Value:pct(photoUp,allData.length)+'%',Notes:'Uploaded / Total Properties'},
+    {Metric:'Avg TAT (days)',Value:avgTAT,Notes:'Acquired Date → Call Date'},
+    {Metric:'Min TAT (days)',Value:tatVals.length?Math.min(...tatVals):'—',Notes:''},
+    {Metric:'Max TAT (days)',Value:tatVals.length?Math.max(...tatVals):'—',Notes:''},
+  ];
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(summaryRows),'Summary');
+
+  // --- Sheet 3: Date-wise ---
+  const byDate={};
+  logs.forEach(r=>{
+    const d=r.Date||'Unknown';
+    if(!byDate[d]) byDate[d]={Date:d,Attempts:0,Connected:0,Interested:0,Photos:0,WhatsApp:0,SelfUpload:0,TatSum:0,TatCnt:0};
+    byDate[d].Attempts++;
+    if(!['Ringing','Switch Off'].includes(r.Disposition)) byDate[d].Connected++;
+    if(r.Disposition==='Interested') byDate[d].Interested++;
+    if(r.SubDisposition==='Photos Available') byDate[d].Photos++;
+    if(r.SubDisposition==='Sharing on WhatsApp') byDate[d].WhatsApp++;
+    if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byDate[d].SelfUpload++;
+    const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
+    if(prop&&prop.acquiredDate&&r.Date){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0){byDate[d].TatSum+=diff;byDate[d].TatCnt++;}}
+    }
+  });
+  const dateSheet=Object.values(byDate).sort((a,b)=>b.Date.localeCompare(a.Date)).map(r=>({
+    'Date':r.Date,'Attempts':r.Attempts,'Connected':r.Connected,'Interested':r.Interested,
+    'Photos':r.Photos,'WhatsApp':r.WhatsApp,'Self Upload':r.SelfUpload,
+    'Connect%':pct(r.Connected,r.Attempts)+'%','Photo%':pct(r.Photos,r.Interested)+'%',
+    'Avg TAT':r.TatCnt?Math.round(r.TatSum/r.TatCnt)+'d':'—'
+  }));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(dateSheet),'Date-wise');
+
+  // --- Sheet 4: Caller-wise ---
+  const byCaller={};
+  logs.forEach(r=>{
+    const c=r.CalledBy||'Unknown';
+    if(!byCaller[c]) byCaller[c]={Caller:c,Attempts:0,Connected:0,Interested:0,Photos:0,WhatsApp:0,SelfUpload:0,TatSum:0,TatCnt:0};
+    byCaller[c].Attempts++;
+    if(!['Ringing','Switch Off'].includes(r.Disposition)) byCaller[c].Connected++;
+    if(r.Disposition==='Interested') byCaller[c].Interested++;
+    if(r.SubDisposition==='Photos Available') byCaller[c].Photos++;
+    if(r.SubDisposition==='Sharing on WhatsApp') byCaller[c].WhatsApp++;
+    if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byCaller[c].SelfUpload++;
+    const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
+    if(prop&&prop.acquiredDate&&r.Date){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0){byCaller[c].TatSum+=diff;byCaller[c].TatCnt++;}}
+    }
+  });
+  const callerSheet=Object.values(byCaller).sort((a,b)=>b.Photos-a.Photos).map(r=>({
+    'Caller':r.Caller,'Attempts':r.Attempts,'Connected':r.Connected,'Interested':r.Interested,
+    'Photos':r.Photos,'WhatsApp':r.WhatsApp,'Self Upload':r.SelfUpload,
+    'Photo%':pct(r.Photos,r.Attempts)+'%','Avg TAT':r.TatCnt?Math.round(r.TatSum/r.TatCnt)+'d':'—'
+  }));
+  XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(callerSheet),'Caller-wise');
+
+  XLSX.writeFile(wb,'99acres_report_'+new Date().toISOString().slice(0,10)+'.xlsx');
+  showToast('✓ Report exported (Raw + Summary + Date-wise + Caller-wise)');
 }
 
 // ============================================================
 // UTILS
 // ============================================================
-function showToast(msg, dur=3000) {
-  const t = document.getElementById('toast');
-  t.textContent = msg; t.classList.add('show');
-  setTimeout(() => t.classList.remove('show'), dur);
+function showToast(msg,dur=3500){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),dur);
 }
-
-const dz = document.getElementById('drop-zone');
-if (dz) {
-  dz.addEventListener('dragover', e => { e.preventDefault(); dz.classList.add('drag-over'); });
-  dz.addEventListener('dragleave', () => dz.classList.remove('drag-over'));
-  dz.addEventListener('drop', e => {
-    e.preventDefault(); dz.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0];
-    if (f) handleFile({target:{files:[f]}});
+const dz=document.getElementById('drop-zone');
+if(dz){
+  dz.addEventListener('dragover',e=>{e.preventDefault();dz.classList.add('drag-over');});
+  dz.addEventListener('dragleave',()=>dz.classList.remove('drag-over'));
+  dz.addEventListener('drop',e=>{
+    e.preventDefault();dz.classList.remove('drag-over');
+    const f=e.dataTransfer.files[0]; if(f) handleFile({target:{files:[f]}});
   });
 }
 </script>
