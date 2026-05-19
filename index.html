@@ -666,33 +666,61 @@ function excelSerialToDate(s) {
   const d = new Date(Date.UTC(1900,0,1)+(s-1)*86400000);
   if (s>59) d.setUTCDate(d.getUTCDate()-1); return d;
 }
+
+// Normalize a date value to DD-Mon-YYYY string (handles ISO timestamps from Google Sheets)
+// Google Sheets may return Date columns as ISO UTC strings like "2026-05-17T18:30:00.000Z"
+// which is actually 2026-05-18 00:00:00 in IST (UTC+5:30) — so we must use local time, not UTC
+function normalizeToDateStr(val) {
+  if (!val && val!==0) return null;
+  const str = String(val).trim();
+  // Already in DD-Mon-YYYY format
+  if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(str)) return str;
+  // ISO timestamp (from Google Sheets date cells) — parse as local time to get correct IST date
+  if (/^\d{4}-\d{2}-\d{2}T/.test(str)) {
+    const d = new Date(str); // JS parses ISO as UTC, then toLocaleDateString uses local TZ
+    if (!isNaN(d)) return String(d.getDate()).padStart(2,'0')+'-'+MONTHS[d.getMonth()]+'-'+d.getFullYear();
+  }
+  // YYYY-MM-DD plain
+  if (/^\d{4}-\d{2}-\d{2}$/.test(str)) {
+    const parts = str.split('-');
+    return String(parseInt(parts[2])).padStart(2,'0')+'-'+MONTHS[parseInt(parts[1])-1]+'-'+parts[0];
+  }
+  // Excel serial number
+  if (/^\d{4,6}$/.test(str)) {
+    const d = excelSerialToDate(Number(str));
+    if (d) return String(d.getUTCDate()).padStart(2,'0')+'-'+MONTHS[d.getUTCMonth()]+'-'+d.getUTCFullYear();
+  }
+  // Try generic parse
+  const d = new Date(str);
+  if (!isNaN(d)) return String(d.getDate()).padStart(2,'0')+'-'+MONTHS[d.getMonth()]+'-'+d.getFullYear();
+  return str; // return as-is if nothing matched
+}
+
 function formatDate(val) {
   if (!val && val!==0) return '—';
+  // Excel serial
   if (typeof val==='number'||(typeof val==='string'&&/^\d{4,6}$/.test(String(val).trim()))) {
     const d=excelSerialToDate(Number(val));
     if (d) return String(d.getUTCDate()).padStart(2,'0')+'-'+MONTHS[d.getUTCMonth()]+'-'+d.getUTCFullYear();
   }
   const str=String(val).trim();
   if (!str||str==='—') return '—';
-  if (/^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(str)) return str;
-  const d=new Date(str); if(!isNaN(d)) return String(d.getDate()).padStart(2,'0')+'-'+MONTHS[d.getMonth()]+'-'+d.getFullYear();
-  return str;
+  const norm = normalizeToDateStr(str);
+  return norm || str;
 }
 function parseForSort(val) {
   if (!val&&val!==0) return new Date(9999,0,1);
+  // Excel serial
   if (typeof val==='number'||(typeof val==='string'&&/^\d{4,6}$/.test(String(val).trim()))) {
     const d=excelSerialToDate(Number(val)); return d||new Date(9999,0,1);
   }
   const str=String(val).trim();
-  // FIX #3: Handle DD-Mon-YYYY format properly (e.g. "15-Apr-2025")
-  const m=str.match(/^(\d{1,2})[-\/]([A-Za-z]{3})[-\/](\d{2,4})$/);
-  if(m){
-    const mo=MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());
-    if(mo>=0){const yr=parseInt(m[3]);return new Date(yr<100?2000+yr:yr,mo,parseInt(m[1]));}
+  // Normalize to DD-Mon-YYYY first (handles ISO timestamps with IST correction)
+  const norm = normalizeToDateStr(str);
+  if (norm && /^\d{1,2}-[A-Za-z]{3}-\d{4}$/.test(norm)) {
+    const m=norm.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+    if(m){const mo=MONTHS.findIndex(x=>x.toLowerCase()===m[2].toLowerCase());if(mo>=0)return new Date(parseInt(m[3]),mo,parseInt(m[1]));}
   }
-  // Handle YYYY-MM-DD format
-  const iso=str.match(/^(\d{4})-(\d{2})-(\d{2})$/);
-  if(iso) return new Date(parseInt(iso[1]),parseInt(iso[2])-1,parseInt(iso[3]));
   const d=new Date(str); return isNaN(d)?new Date(9999,0,1):d;
 }
 function parseDateToYMD(val) {
@@ -846,11 +874,14 @@ function rebuildCallLog() {
   callLogRows.forEach(row=>{
     const key = normStr(row.PropertyID)+'_'+normMobile(row.Mobile);
     if (!callLog[key]) callLog[key]=[];
+    // Normalize Date field — Google Sheets may return ISO timestamps; convert to DD-Mon-YYYY
+    const rawDate = row.Date || '';
+    const cleanDate = rawDate ? (normalizeToDateStr(String(rawDate)) || String(rawDate)) : '';
     callLog[key].push({
       disp:      row.Disposition    ||'',
       subDisp:   row.SubDisposition ||'',
-      photoSt:   normStr(row.PhotoStatus||'').toLowerCase(), // FIX #1: read PhotoStatus column
-      date:      row.Date           ||'',
+      photoSt:   normStr(row.PhotoStatus||'').toLowerCase(),
+      date:      cleanDate,
       calledBy:  row.CalledBy       ||'',
       notes:     row.Notes          ||'',
       ts:        row.Timestamp ? new Date(row.Timestamp).getTime() : 0,
@@ -1320,18 +1351,13 @@ function renderCallForm(prop) {
     <div class="disp-grid">${dispBtns}</div>
     <div id="sub-disp-area"></div>
 
-    <!-- FIX #1: Photo Status now saved directly into CallLog row -->
+    <!-- Photo Status: READ-ONLY — synced from PhotoStatus column in Google Sheet CallLogs tab -->
     <div class="photo-toggle-area">
-      <div class="photo-toggle-title">📸 Photo Upload Status</div>
-      <div style="font-size:11px;color:var(--text3);margin-bottom:8px">
-        Select below — this saves directly to the CallLogs sheet in the <strong>PhotoStatus</strong> column of your Google Sheet
+      <div class="photo-toggle-title">📸 Photo Upload Status <span style="font-size:10px;font-weight:400;color:var(--text3);text-transform:none;letter-spacing:0">(auto-synced from Google Sheet)</span></div>
+      <div style="margin-top:4px;display:flex;align-items:center;gap:10px">
+        ${photoTag(ps)}
+        <span style="font-size:11px;color:var(--text3)">Update the <strong>PhotoStatus</strong> column directly in your Google Sheet CallLogs tab — portal will sync on next refresh.</span>
       </div>
-      <div class="photo-btns">
-        <button class="photo-btn${ps==='yes'?' sel-yes':''}" onclick="selectPhoto(this,'yes')">✅ Uploaded</button>
-        <button class="photo-btn${ps==='pending'?' sel-pending':''}" onclick="selectPhoto(this,'pending')">⏳ Pending</button>
-        <button class="photo-btn${ps==='no'?' sel-no':''}" onclick="selectPhoto(this,'no')">❌ Not Uploaded</button>
-      </div>
-      ${ps?`<div style="margin-top:8px;font-size:11px;color:var(--text3)">Current: ${photoTag(ps)}</div>`:''}
     </div>
 
     <div class="field-group">
@@ -1383,8 +1409,7 @@ async function saveCall(propId, mobile) {
   const entry={
     propertyId:pid, mobile:mob, calledBy:callerVal, date:ds,
     disp:selectedDisp, subDisp:selectedSubDisp||'',
-    // FIX #1: PhotoStatus saved in same row as call log
-    photoStatus: selectedPhoto||'',
+    photoStatus: '', // PhotoStatus is set directly in Google Sheet by admin — not by caller
     notes:document.getElementById('call-notes')?.value||''
   };
 
@@ -1403,11 +1428,10 @@ async function saveCall(propId, mobile) {
       LogID:mob+Date.now(),Timestamp:new Date().toISOString(),
       PropertyID:pid,Mobile:mob,CalledBy:callerVal,Date:ds,
       Disposition:selectedDisp,SubDisposition:selectedSubDisp||'',
-      PhotoStatus:selectedPhoto||'',
+      PhotoStatus:'',
       Notes:entry.notes
     });
-    // Update photoStatus map immediately
-    if (selectedPhoto) photoStatus[key]=selectedPhoto;
+    // photoStatus is NOT updated here — it comes from Google Sheet only
 
     setSyncStatus('ok','Saved '+new Date().toLocaleTimeString());
     showToast('✓ Call saved for '+pid);
@@ -1425,12 +1449,11 @@ async function saveCall(propId, mobile) {
 }
 
 function clearFormState() {
-  selectedDisp=null; selectedSubDisp=null; selectedPhoto=null;
+  selectedDisp=null; selectedSubDisp=null;
   document.querySelectorAll('.disp-btn').forEach(b=>b.classList.remove('sel-red','sel-green','sel-amber','sel-blue','sel-purple'));
   const s=document.getElementById('sub-disp-area'); if(s) s.innerHTML='';
   const n=document.getElementById('call-notes'); if(n) n.value='';
   const c=document.getElementById('call-caller'); if(c) c.value='';
-  document.querySelectorAll('.photo-btn').forEach(b=>b.classList.remove('sel-yes','sel-no','sel-pending'));
 }
 function backToList() {
   currentMobile=null; currentPropId=null;
@@ -1462,6 +1485,12 @@ function getFilteredLogs() {
 }
 function pct(n,d){ return d?Math.round(n/d*100):0; }
 function pbColor(p){ return p>=60?'#639922':p>=30?'#BA7517':'#E24B4A'; }
+// Normalize Date field from a raw callLogRow (Google Sheets may return ISO timestamps)
+function getRowDate(row) {
+  const raw = row.Date || '';
+  if (!raw) return '';
+  return normalizeToDateStr(String(raw)) || String(raw);
+}
 
 function renderReport() {
   populateReportFilters();
@@ -1483,8 +1512,9 @@ function renderReport() {
   const tatVals=[];
   logs.forEach(row=>{
     const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
-    if(prop&&prop.acquiredDate&&row.Date){
-      const d1=parseForSort(prop.acquiredDate); const d2=parseForSort(row.Date);
+    const rd=getRowDate(row);
+    if(prop&&prop.acquiredDate&&rd){
+      const d1=parseForSort(prop.acquiredDate); const d2=parseForSort(rd);
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
         const diff=Math.round((d2-d1)/(1000*60*60*24));
         if(diff>=0) tatVals.push(diff);
@@ -1509,10 +1539,10 @@ function renderReport() {
     sc('Self Upload',selfUpload,pct(selfUpload,interested)+'%',pct(selfUpload,interested),'accent-blue')+
     sc('Avg TAT',avgTAT?avgTAT+'d':'—','min: '+minTAT+' max: '+maxTAT,0,'accent-purple');
 
-  // FIX #3: Date-wise table — sort correctly using parseForSort on DD-Mon-YYYY dates
+  // Date-wise table — use getRowDate() to normalize ISO timestamps from Google Sheets to correct IST dates
   const byDate={};
   logs.forEach(r=>{
-    const d=r.Date||'Unknown';
+    const d=getRowDate(r)||'Unknown';
     if(!byDate[d]) byDate[d]={date:d,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0,tatSum:0,tatCount:0};
     byDate[d].attempts++;
     if(!['Ringing','Switch Off'].includes(r.Disposition)) byDate[d].connected++;
@@ -1521,18 +1551,18 @@ function renderReport() {
     if(r.SubDisposition==='Sharing on WhatsApp') byDate[d].whatsapp++;
     if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byDate[d].self++;
     const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
-    if(prop&&prop.acquiredDate&&r.Date){
-      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+    if(prop&&prop.acquiredDate&&d&&d!=='Unknown'){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(d);
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
         const diff=Math.round((d2-d1)/(1000*60*60*24));
         if(diff>=0){byDate[d].tatSum+=diff;byDate[d].tatCount++;}
       }
     }
   });
-  // FIX #3: Sort by actual parsed date descending (newest first)
+  // Sort by actual parsed date descending (newest first)
   const dr=Object.values(byDate).sort((a,b)=>{
     const da=parseForSort(a.date); const db=parseForSort(b.date);
-    return db-da; // descending = newest first
+    return db-da;
   });
   document.getElementById('report-table').innerHTML=dr.length
     ?'<thead><tr><th>Date</th><th>Attempts</th><th>Connected</th><th>Interested</th><th>Photos</th><th>WhatsApp</th><th>Self Upload</th><th>Connect%</th><th>Photo%</th><th>Avg TAT</th></tr></thead><tbody>'
@@ -1544,6 +1574,7 @@ function renderReport() {
   const byCaller={};
   logs.forEach(r=>{
     const c=r.CalledBy||'Unknown';
+    const rd=getRowDate(r)||'';
     if(!byCaller[c]) byCaller[c]={name:c,attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0,tatSum:0,tatCount:0};
     byCaller[c].attempts++;
     if(!['Ringing','Switch Off'].includes(r.Disposition)) byCaller[c].connected++;
@@ -1552,8 +1583,8 @@ function renderReport() {
     if(r.SubDisposition==='Sharing on WhatsApp') byCaller[c].whatsapp++;
     if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byCaller[c].self++;
     const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
-    if(prop&&prop.acquiredDate&&r.Date){
-      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+    if(prop&&prop.acquiredDate&&rd){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(rd);
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
         const diff=Math.round((d2-d1)/(1000*60*60*24));
         if(diff>=0){byCaller[c].tatSum+=diff;byCaller[c].tatCount++;}
@@ -1567,11 +1598,12 @@ function renderReport() {
       +'</tbody>'
     :'<thead><tr><th>Caller</th></tr></thead><tbody><tr><td style="color:var(--text3)">No data</td></tr></tbody>';
 
-  // FIX #3: Caller × Date — also sort dates properly
+  // Caller × Date — normalize dates for correct grouping and sorting
   const callerDates={};
   const allDatesSet=new Set(); const allCallersSet=new Set();
   logs.forEach(r=>{
-    const c=r.CalledBy||'Unknown'; const d=r.Date||'Unknown';
+    const c=r.CalledBy||'Unknown';
+    const d=getRowDate(r)||'Unknown';
     allCallersSet.add(c); allDatesSet.add(d);
     const k=c+'__'+d;
     if(!callerDates[k]) callerDates[k]={attempts:0,connected:0,interested:0,photos:0,whatsapp:0,self:0};
@@ -1582,7 +1614,7 @@ function renderReport() {
     if(r.SubDisposition==='Sharing on WhatsApp') callerDates[k].whatsapp++;
     if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) callerDates[k].self++;
   });
-  // FIX #3: Sort dates using parseForSort so DD-Mon-YYYY sorts correctly
+  // Sort dates using parseForSort so DD-Mon-YYYY sorts correctly
   const sortedDates=[...allDatesSet].sort((a,b)=>parseForSort(b)-parseForSort(a)).slice(0,14);
   const sortedCallers=[...allCallersSet].sort();
   let cdHtml='';
@@ -1652,13 +1684,13 @@ function exportReport() {
 
   const rawRows=logs.map(r=>{
     const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile))||{};
-    const tatVal=calcTAT(prop.acquiredDate||'', r.Date||'');
+    const rd=getRowDate(r);
+    const tatVal=calcTAT(prop.acquiredDate||'', rd||'');
     return {
       'Mobile':r.Mobile,'Property ID':r.PropertyID,
       'Client Name':prop.clientName||'','Client Email':prop.clientEmail||'',
-      'Called By':r.CalledBy,'Date':r.Date,
+      'Called By':r.CalledBy,'Date':rd,
       'Disposition':r.Disposition,'Sub Disposition':r.SubDisposition||'',
-      // FIX #1: PhotoStatus from CallLogs row
       'Photo Status':r.PhotoStatus||photoStatus[normStr(r.PropertyID)+'_'+normMobile(r.Mobile)]||'',
       'Notes':r.Notes||'','City':prop.city||'',
       'Property Type':prop.propertyType||'','Preference':prop.preference||'',
@@ -1680,8 +1712,9 @@ function exportReport() {
   const tatVals=[];
   logs.forEach(row=>{
     const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
-    if(prop&&prop.acquiredDate&&row.Date){
-      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(row.Date);
+    const rd=getRowDate(row);
+    if(prop&&prop.acquiredDate&&rd){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(rd);
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0)tatVals.push(diff);}
     }
   });
@@ -1707,7 +1740,7 @@ function exportReport() {
 
   const byDate={};
   logs.forEach(r=>{
-    const d=r.Date||'Unknown';
+    const d=getRowDate(r)||'Unknown';
     if(!byDate[d]) byDate[d]={Date:d,Attempts:0,Connected:0,Interested:0,Photos:0,WhatsApp:0,SelfUpload:0,TatSum:0,TatCnt:0};
     byDate[d].Attempts++;
     if(!['Ringing','Switch Off'].includes(r.Disposition)) byDate[d].Connected++;
@@ -1716,12 +1749,11 @@ function exportReport() {
     if(r.SubDisposition==='Sharing on WhatsApp') byDate[d].WhatsApp++;
     if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byDate[d].SelfUpload++;
     const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
-    if(prop&&prop.acquiredDate&&r.Date){
-      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+    if(prop&&prop.acquiredDate&&d&&d!=='Unknown'){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(d);
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0){byDate[d].TatSum+=diff;byDate[d].TatCnt++;}}
     }
   });
-  // FIX #3: Sort export dates correctly too
   const dateSheet=Object.values(byDate).sort((a,b)=>parseForSort(b.Date)-parseForSort(a.Date)).map(r=>({
     'Date':r.Date,'Attempts':r.Attempts,'Connected':r.Connected,'Interested':r.Interested,
     'Photos':r.Photos,'WhatsApp':r.WhatsApp,'Self Upload':r.SelfUpload,
@@ -1733,6 +1765,7 @@ function exportReport() {
   const byCaller={};
   logs.forEach(r=>{
     const c=r.CalledBy||'Unknown';
+    const rd=getRowDate(r)||'';
     if(!byCaller[c]) byCaller[c]={Caller:c,Attempts:0,Connected:0,Interested:0,Photos:0,WhatsApp:0,SelfUpload:0,TatSum:0,TatCnt:0};
     byCaller[c].Attempts++;
     if(!['Ringing','Switch Off'].includes(r.Disposition)) byCaller[c].Connected++;
@@ -1741,8 +1774,8 @@ function exportReport() {
     if(r.SubDisposition==='Sharing on WhatsApp') byCaller[c].WhatsApp++;
     if(['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)) byCaller[c].SelfUpload++;
     const prop=allData.find(x=>normStr(x.propertyId)===normStr(r.PropertyID)&&normMobile(x.mobile)===normMobile(r.Mobile));
-    if(prop&&prop.acquiredDate&&r.Date){
-      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(r.Date);
+    if(prop&&prop.acquiredDate&&rd){
+      const d1=parseForSort(prop.acquiredDate);const d2=parseForSort(rd);
       if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0){byCaller[c].TatSum+=diff;byCaller[c].TatCnt++;}}
     }
   });
