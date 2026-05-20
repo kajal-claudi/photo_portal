@@ -1355,8 +1355,53 @@ function renderReport(){
   populateReportFilters();
   const logs=getFilteredLogs();
   const totalProps=allData.length||1;
+  const now=new Date();
 
-  // Core unique sets
+  // ── Period-filtered sub-logs for comparison rows ──
+  const monthStart=new Date(now.getFullYear(),now.getMonth(),1);
+  const last7Start=new Date(now); last7Start.setDate(now.getDate()-6); last7Start.setHours(0,0,0,0);
+
+  // Apply same caller/city filters but override date to month / last7
+  const cf=document.getElementById('report-caller')?.value||'';
+  const ci=document.getElementById('report-city')?.value||'';
+  function filterByPeriod(start){
+    return callLogRows.filter(row=>{
+      if(cf&&row.CalledBy!==cf) return false;
+      const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile))||{};
+      if(ci&&prop.city!==ci) return false;
+      const d=new Date(row.Timestamp);
+      return d>=start;
+    });
+  }
+  const logsMonth=filterByPeriod(monthStart);
+  const logs7=filterByPeriod(last7Start);
+
+  // ── Helper: compute all metrics from a log set ──
+  function computeMetrics(lg){
+    const udS=uniqueDialedSet(lg);
+    const ucS=uniqueConnectedSet(lg);
+    const uiS=uniqueInterestedSet(lg);
+    const uDial=udS.size, uConn=ucS.size, uInt=uiS.size, tDial=lg.length;
+    // photos from photoStatus for keys in this log set
+    const gk=new Set(lg.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+    let pUp=0,pPend=0; gk.forEach(k=>{ if(photoStatus[k]==='yes') pUp++; else if(photoStatus[k]==='pending') pPend++; });
+    // TAT
+    const tv=[]; lg.forEach(row=>{
+      const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
+      const rd=getRowDate(row);
+      if(prop&&prop.acquiredDate&&rd){const d1=parseForSort(prop.acquiredDate),d2=parseForSort(rd);if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0)tv.push(diff);}}
+    });
+    const avgTAT=tv.length?Math.round(tv.reduce((a,b)=>a+b,0)/tv.length):null;
+    // Avg attempts
+    const am={}; lg.forEach(r=>{ const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile); am[k]=(am[k]||0)+1; });
+    const av=Object.values(am);
+    const avgAtt=av.length?Math.round((av.reduce((a,b)=>a+b,0)/av.length)*10)/10:null;
+    return {tDial,uDial,uConn,uInt,pUp,pPend,avgTAT,avgAtt,
+      connPct:pct(uConn,uDial), intPct:pct(uInt,uConn),
+      upPct:pct(pUp,uInt), pendPct:pct(pPend,uInt)};
+  }
+
+  // All-time (filtered)
   const udSet=uniqueDialedSet(logs);
   const ucSet=uniqueConnectedSet(logs);
   const uiSet=uniqueInterestedSet(logs);
@@ -1365,54 +1410,77 @@ function renderReport(){
   const uniqueDialedCnt=udSet.size;
   const uniqueConnCnt=ucSet.size;
   const uniqueIntCnt=uiSet.size;
-
-  // Photos
   const photoUploaded=Object.values(photoStatus).filter(v=>v==='yes').length;
   const photoPending=Object.values(photoStatus).filter(v=>v==='pending').length;
-  const whatsapp=logs.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
-  const selfUpload=logs.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
-
-  // TAT
   const tatVals=[];
   logs.forEach(row=>{
     const prop=allData.find(r=>normStr(r.propertyId)===normStr(row.PropertyID)&&normMobile(r.mobile)===normMobile(row.Mobile));
     const rd=getRowDate(row);
-    if(prop&&prop.acquiredDate&&rd){
-      const d1=parseForSort(prop.acquiredDate),d2=parseForSort(rd);
-      if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){
-        const diff=Math.round((d2-d1)/(1000*60*60*24)); if(diff>=0) tatVals.push(diff);
-      }
-    }
+    if(prop&&prop.acquiredDate&&rd){const d1=parseForSort(prop.acquiredDate),d2=parseForSort(rd);if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0)tatVals.push(diff);}}
   });
   const avgTAT=tatVals.length?Math.round(tatVals.reduce((a,b)=>a+b,0)/tatVals.length):0;
   const minTAT=tatVals.length?Math.min(...tatVals):'—';
   const maxTAT=tatVals.length?Math.max(...tatVals):'—';
-
-  // Avg Attempts per unique dialed prop
   const attemptsByKey={};
-  logs.forEach(r=>{
-    const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile);
-    attemptsByKey[k]=(attemptsByKey[k]||0)+1;
-  });
+  logs.forEach(r=>{ const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile); attemptsByKey[k]=(attemptsByKey[k]||0)+1; });
   const attVals=Object.values(attemptsByKey);
   const avgAttempts=attVals.length?Math.round((attVals.reduce((a,b)=>a+b,0)/attVals.length)*10)/10:0;
   const maxAttempts=attVals.length?Math.max(...attVals):'—';
 
-  function sc(label,val,sub,pctV,ac){
-    return `<div class="stat-card ${ac}"><div class="stat-label">${label}</div><div class="stat-val">${val}</div><div class="stat-pct">${sub}</div><div class="progress-bar"><div class="pb-fill" style="width:${Math.min(pctV,100)}%;background:${pbColor(pctV)}"></div></div></div>`;
+  const mM=computeMetrics(logsMonth);
+  const m7=computeMetrics(logs7);
+
+  // ── Stat card builder with comparison rows ──
+  // compFn(metrics) => {val, sub, pctV}
+  function sc(label, val, sub, pctV, ac, compFn){
+    const mVal=compFn?compFn(mM):null;
+    const wVal=compFn?compFn(m7):null;
+    const compHtml=compFn?`
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:4px">
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px">
+          <span style="color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">This Month</span>
+          <span style="font-weight:700;color:${pbColor(mVal.pctV||0)}">${mVal.val}</span>
+        </div>
+        <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="height:100%;border-radius:2px;width:${Math.min(mVal.pctV||0,100)}%;background:${pbColor(mVal.pctV||0)}"></div>
+        </div>
+        <div style="display:flex;justify-content:space-between;align-items:center;font-size:10px;margin-top:2px">
+          <span style="color:var(--text3);font-weight:600;text-transform:uppercase;letter-spacing:.04em">Last 7 Days</span>
+          <span style="font-weight:700;color:${pbColor(wVal.pctV||0)}">${wVal.val}</span>
+        </div>
+        <div style="height:3px;background:var(--surface2);border-radius:2px;overflow:hidden">
+          <div style="height:100%;border-radius:2px;width:${Math.min(wVal.pctV||0,100)}%;background:${pbColor(wVal.pctV||0)}"></div>
+        </div>
+      </div>`:'';
+    return `<div class="stat-card ${ac}">
+      <div class="stat-label">${label}</div>
+      <div class="stat-val">${val}</div>
+      <div class="stat-pct">${sub}</div>
+      <div class="progress-bar"><div class="pb-fill" style="width:${Math.min(pctV,100)}%;background:${pbColor(pctV)}"></div></div>
+      ${compHtml}
+    </div>`;
   }
 
   document.getElementById('report-stats').innerHTML=
-    sc('Total Data',       totalProps,       'all listings',                                                  100,                                '')+
-    sc('Touched (Unique)', touchedCnt,       pct(touchedCnt,totalProps)+'% of total data',                   pct(touchedCnt,totalProps),         'accent-amber')+
-    sc('Total Dialed',     totalDialed,      'all attempts incl. repeats',                                    pct(totalDialed,totalProps),        'accent-amber')+
-    sc('Unique Dialed',    uniqueDialedCnt,  pct(uniqueDialedCnt,totalProps)+'% of total data',               pct(uniqueDialedCnt,totalProps),    'accent-blue')+
-    sc('Unique Connected', uniqueConnCnt,    pct(uniqueConnCnt,uniqueDialedCnt)+'% of unique dialed',         pct(uniqueConnCnt,uniqueDialedCnt), 'accent-blue')+
-    sc('Interested',       uniqueIntCnt,     pct(uniqueIntCnt,uniqueConnCnt)+'% of unique connected',         pct(uniqueIntCnt,uniqueConnCnt),    'accent-amber')+
-    sc('Photos Uploaded',  photoUploaded,    pct(photoUploaded,uniqueIntCnt)+'% of interested',               pct(photoUploaded,uniqueIntCnt),    'accent-green')+
-    sc('Photo Pending',    photoPending,     pct(photoPending,uniqueIntCnt)+'% of interested',                pct(photoPending,uniqueIntCnt),     '')+
-    sc('Avg TAT',          avgTAT?avgTAT+'d':'—', 'min: '+minTAT+' · max: '+maxTAT,                         0,                                  'accent-purple')+
-    sc('Avg Attempts',     avgAttempts?avgAttempts:'—', 'max: '+maxAttempts+' per property',                  0,                                  'accent-purple');
+    sc('Total Data',       totalProps,       'all listings',                                                  100,                                '', null)+
+    sc('Touched (Unique)', touchedCnt,       pct(touchedCnt,totalProps)+'% of total data',                   pct(touchedCnt,totalProps),         'accent-amber',
+       m=>({val:m.uDial, pctV:pct(m.uDial,totalProps), sub:''}))+
+    sc('Total Dialed',     totalDialed,      'all attempts incl. repeats',                                    pct(totalDialed,totalProps),        'accent-amber',
+       m=>({val:m.tDial, pctV:pct(m.tDial,totalProps), sub:''}))+
+    sc('Unique Dialed',    uniqueDialedCnt,  pct(uniqueDialedCnt,totalProps)+'% of total data',               pct(uniqueDialedCnt,totalProps),    'accent-blue',
+       m=>({val:m.uDial, pctV:pct(m.uDial,totalProps), sub:''}))+
+    sc('Unique Connected', uniqueConnCnt,    pct(uniqueConnCnt,uniqueDialedCnt)+'% of unique dialed',         pct(uniqueConnCnt,uniqueDialedCnt), 'accent-blue',
+       m=>({val:m.uConn+' ('+m.connPct+'%)', pctV:m.connPct, sub:''}))+
+    sc('Interested',       uniqueIntCnt,     pct(uniqueIntCnt,uniqueConnCnt)+'% of unique connected',         pct(uniqueIntCnt,uniqueConnCnt),    'accent-amber',
+       m=>({val:m.uInt+' ('+m.intPct+'%)', pctV:m.intPct, sub:''}))+
+    sc('Photos Uploaded',  photoUploaded,    pct(photoUploaded,uniqueIntCnt)+'% of interested',               pct(photoUploaded,uniqueIntCnt),    'accent-green',
+       m=>({val:m.pUp+' ('+m.upPct+'%)', pctV:m.upPct, sub:''}))+
+    sc('Photo Pending',    photoPending,     pct(photoPending,uniqueIntCnt)+'% of interested',                pct(photoPending,uniqueIntCnt),     '',
+       m=>({val:m.pPend+' ('+m.pendPct+'%)', pctV:m.pendPct, sub:''}))+
+    sc('Avg TAT',          avgTAT?avgTAT+'d':'—', 'min: '+minTAT+' · max: '+maxTAT,                         0,                                  'accent-purple',
+       m=>({val:m.avgTAT!=null?m.avgTAT+'d':'—', pctV:0, sub:''}))+
+    sc('Avg Attempts',     avgAttempts?avgAttempts:'—', 'max: '+maxAttempts+' per property',                  0,                                  'accent-purple',
+       m=>({val:m.avgAtt!=null?m.avgAtt:'—', pctV:0, sub:''}));
 
   // ── Date-wise table ──
   const byDate={};
