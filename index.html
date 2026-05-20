@@ -1388,6 +1388,16 @@ function renderReport(){
   const minTAT=tatVals.length?Math.min(...tatVals):'—';
   const maxTAT=tatVals.length?Math.max(...tatVals):'—';
 
+  // Avg Attempts per unique dialed prop
+  const attemptsByKey={};
+  logs.forEach(r=>{
+    const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile);
+    attemptsByKey[k]=(attemptsByKey[k]||0)+1;
+  });
+  const attVals=Object.values(attemptsByKey);
+  const avgAttempts=attVals.length?Math.round((attVals.reduce((a,b)=>a+b,0)/attVals.length)*10)/10:0;
+  const maxAttempts=attVals.length?Math.max(...attVals):'—';
+
   function sc(label,val,sub,pctV,ac){
     return `<div class="stat-card ${ac}"><div class="stat-label">${label}</div><div class="stat-val">${val}</div><div class="stat-pct">${sub}</div><div class="progress-bar"><div class="pb-fill" style="width:${Math.min(pctV,100)}%;background:${pbColor(pctV)}"></div></div></div>`;
   }
@@ -1400,8 +1410,9 @@ function renderReport(){
     sc('Unique Connected', uniqueConnCnt,    pct(uniqueConnCnt,uniqueDialedCnt)+'% of unique dialed',         pct(uniqueConnCnt,uniqueDialedCnt), 'accent-blue')+
     sc('Interested',       uniqueIntCnt,     pct(uniqueIntCnt,uniqueConnCnt)+'% of unique connected',         pct(uniqueIntCnt,uniqueConnCnt),    'accent-amber')+
     sc('Photos Uploaded',  photoUploaded,    pct(photoUploaded,uniqueIntCnt)+'% of interested',               pct(photoUploaded,uniqueIntCnt),    'accent-green')+
-    sc('Photo Pending',    photoPending,     pct(photoPending,totalProps)+'% of total data',                  pct(photoPending,totalProps),       '')+
-    sc('Avg TAT',          avgTAT?avgTAT+'d':'—', 'min: '+minTAT+' · max: '+maxTAT,                         0,                                  'accent-purple');
+    sc('Photo Pending',    photoPending,     pct(photoPending,uniqueIntCnt)+'% of interested',                pct(photoPending,uniqueIntCnt),     '')+
+    sc('Avg TAT',          avgTAT?avgTAT+'d':'—', 'min: '+minTAT+' · max: '+maxTAT,                         0,                                  'accent-purple')+
+    sc('Avg Attempts',     avgAttempts?avgAttempts:'—', 'max: '+maxAttempts+' per property',                  0,                                  'accent-purple');
 
   // ── Date-wise table ──
   const byDate={};
@@ -1417,12 +1428,19 @@ function renderReport(){
     const uDial=uniqueDialedSet(lg).size;
     const uConn=uniqueConnectedSet(lg).size;
     const uInt=uniqueInterestedSet(lg).size;
-    const photos=lg.filter(r=>r.SubDisposition==='Photos Available').length;
     const wa=lg.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
     const su=lg.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
     const connPct=pct(uConn,uDial);
     const intPct=pct(uInt,uConn);
-    const photoPct=pct(photos,uInt);
+
+    // Photos Uploaded & Pending — from photoStatus map for keys touched by this group
+    const groupKeys=new Set(lg.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+    let photosUp=0, photosPend=0;
+    groupKeys.forEach(k=>{ if(photoStatus[k]==='yes') photosUp++; else if(photoStatus[k]==='pending') photosPend++; });
+    const photoUpPct=pct(photosUp,uInt);
+    const photoPendPct=pct(photosPend,uInt);
+
+    // TAT
     const tv=[];
     lg.forEach(rl=>{
       const prop=allData.find(x=>normStr(x.propertyId)===normStr(rl.PropertyID)&&normMobile(x.mobile)===normMobile(rl.Mobile));
@@ -1433,6 +1451,13 @@ function renderReport(){
       }
     });
     const avgT=tv.length?Math.round(tv.reduce((a,b)=>a+b,0)/tv.length)+'d':'—';
+
+    // Avg Attempts per unique dialed in this group
+    const attMap={};
+    lg.forEach(r=>{ const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile); attMap[k]=(attMap[k]||0)+1; });
+    const attVals2=Object.values(attMap);
+    const avgAtt=attVals2.length?(Math.round((attVals2.reduce((a,b)=>a+b,0)/attVals2.length)*10)/10):'—';
+
     return `<tr>
       <td><strong>${label}</strong></td>
       <td>${tDial}</td><td>${uDial}</td>
@@ -1440,9 +1465,11 @@ function renderReport(){
       <td style="color:${pbColor(connPct)};font-weight:600">${connPct}%</td>
       <td>${uInt}</td>
       <td style="color:${pbColor(intPct)};font-weight:600">${intPct}%</td>
-      <td>${photos}</td>
-      <td style="color:${pbColor(photoPct)};font-weight:600">${photoPct}%</td>
-      <td>${wa}</td><td>${su}</td><td>${avgT}</td>
+      <td>${photosUp}</td>
+      <td style="color:${pbColor(photoUpPct)};font-weight:600">${photoUpPct}%</td>
+      <td>${photosPend}</td>
+      <td style="color:${photoPendPct>0?'#BA7517':'var(--text3)'};font-weight:600">${photoPendPct}%</td>
+      <td>${wa}</td><td>${su}</td><td>${avgT}</td><td>${avgAtt}</td>
     </tr>`;
   }
 
@@ -1450,13 +1477,14 @@ function renderReport(){
     '<th>Date</th><th>Total Dialed</th><th>Unique Dialed</th>'+
     '<th>Uniq Connected</th><th>Connected%</th>'+
     '<th>Interested</th><th>Interested%</th>'+
-    '<th>Photos (SubDisp)</th><th>Photos%</th>'+
-    '<th>WhatsApp</th><th>Self Upload</th><th>Avg TAT</th>'+
+    '<th>Photos Uploaded</th><th>Uploaded%</th>'+
+    '<th>Photo Pending</th><th>Pending%</th>'+
+    '<th>WhatsApp</th><th>Self Upload</th><th>Avg TAT</th><th>Avg Attempts</th>'+
     '</tr></thead>';
 
   document.getElementById('report-table').innerHTML=dr.length
     ?tableHead+'<tbody>'+dr.map(row=>buildTableRow(row.logs,row.date)).join('')+'</tbody>'
-    :tableHead+'<tbody><tr><td colspan="12" style="color:var(--text3)">No data yet</td></tr></tbody>';
+    :tableHead+'<tbody><tr><td colspan="15" style="color:var(--text3)">No data yet</td></tr></tbody>';
 
   // ── Caller-wise table ──
   const byCaller={};
@@ -1469,13 +1497,22 @@ function renderReport(){
     '<th>Caller</th><th>Total Dialed</th><th>Unique Dialed</th>'+
     '<th>Uniq Connected</th><th>Connected%</th>'+
     '<th>Interested</th><th>Interested%</th>'+
-    '<th>Photos (SubDisp)</th><th>Photos%</th>'+
-    '<th>WhatsApp</th><th>Self Upload</th><th>Avg TAT</th>'+
+    '<th>Photos Uploaded</th><th>Uploaded%</th>'+
+    '<th>Photo Pending</th><th>Pending%</th>'+
+    '<th>WhatsApp</th><th>Self Upload</th><th>Avg TAT</th><th>Avg Attempts</th>'+
     '</tr></thead>';
-  const cr=Object.values(byCaller).sort((a,b)=>b.logs.filter(r=>r.SubDisposition==='Photos Available').length-a.logs.filter(r=>r.SubDisposition==='Photos Available').length);
+  const cr=Object.values(byCaller).sort((a,b)=>{
+    // sort by photos uploaded desc
+    const aKeys=new Set(a.logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+    const bKeys=new Set(b.logs.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+    let aUp=0,bUp=0;
+    aKeys.forEach(k=>{ if(photoStatus[k]==='yes') aUp++; });
+    bKeys.forEach(k=>{ if(photoStatus[k]==='yes') bUp++; });
+    return bUp-aUp;
+  });
   document.getElementById('caller-table').innerHTML=cr.length
     ?callerTableHead+'<tbody>'+cr.map(row=>buildTableRow(row.logs,row.name)).join('')+'</tbody>'
-    :callerTableHead+'<tbody><tr><td colspan="12" style="color:var(--text3)">No data</td></tr></tbody>';
+    :callerTableHead+'<tbody><tr><td colspan="15" style="color:var(--text3)">No data</td></tr></tbody>';
 
   // ── Caller × Date cards ──
   const callerDates={};
@@ -1502,21 +1539,29 @@ function renderReport(){
         const uDial=uniqueDialedSet(lg).size;
         const uConn=uniqueConnectedSet(lg).size;
         const uInt=uniqueInterestedSet(lg).size;
-        const photos=lg.filter(r=>r.SubDisposition==='Photos Available').length;
         const wa=lg.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
         const su=lg.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
         const connPct=pct(uConn,uDial);
         const intPct=pct(uInt,uConn);
-        const photoPct=pct(photos,uInt);
+        const groupKeys2=new Set(lg.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+        let photosUp2=0,photosPend2=0;
+        groupKeys2.forEach(k=>{ if(photoStatus[k]==='yes') photosUp2++; else if(photoStatus[k]==='pending') photosPend2++; });
+        const photoUpPct2=pct(photosUp2,uInt);
+        const attMap2={};
+        lg.forEach(r=>{ const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile); attMap2[k]=(attMap2[k]||0)+1; });
+        const attVals3=Object.values(attMap2);
+        const avgAtt2=attVals3.length?(Math.round((attVals3.reduce((a,b)=>a+b,0)/attVals3.length)*10)/10):'—';
         cdHtml+=`<div class="stat-card" style="border-top:3px solid ${pbColor(connPct)}">
           <div class="stat-label">${d}</div>
           <div class="stat-val" style="font-size:18px">${lg.length}</div>
           <div class="stat-pct" style="display:flex;flex-direction:column;gap:2px">
             <span>🔗 ${uConn}/${uDial} <strong style="color:${pbColor(connPct)}">${connPct}%</strong></span>
             <span>⭐ ${uInt} int <strong style="color:${pbColor(intPct)}">${intPct}%</strong></span>
-            <span>📸 ${photos} <strong style="color:${pbColor(photoPct)}">${photoPct}%</strong></span>
+            <span>📸 ${photosUp2} uploaded <strong style="color:${pbColor(photoUpPct2)}">${photoUpPct2}%</strong></span>
+            ${photosPend2?`<span>⏳ ${photosPend2} pending</span>`:''}
             ${wa?`<span>💬 ${wa} WA</span>`:''}
             ${su?`<span>☁ ${su} upload</span>`:''}
+            <span>🔄 avg ${avgAtt2} att</span>
           </div>
           <div class="progress-bar" style="margin-top:6px"><div class="pb-fill" style="width:${connPct}%;background:${pbColor(connPct)}"></div></div>
         </div>`;
@@ -1621,7 +1666,8 @@ function exportReport(){
   const dateSheet=Object.values(byDate).sort((a,b)=>parseForSort(b.date)-parseForSort(a.date)).map(row=>{
     const lg=row.logs;
     const uDial=uniqueDialedSet(lg).size,uConn=uniqueConnectedSet(lg).size,uInt=uniqueInterestedSet(lg).size;
-    const photos=lg.filter(r=>r.SubDisposition==='Photos Available').length;
+    const gk=new Set(lg.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+    let pUp=0,pPend=0; gk.forEach(k=>{ if(photoStatus[k]==='yes') pUp++; else if(photoStatus[k]==='pending') pPend++; });
     const wa=lg.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
     const su=lg.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
     const tv=[];
@@ -1630,7 +1676,9 @@ function exportReport(){
       const rd=getRowDate(rl);
       if(prop&&prop.acquiredDate&&rd){const d1=parseForSort(prop.acquiredDate),d2=parseForSort(rd);if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0)tv.push(diff);}}
     });
-    return {'Date':row.date,'Total Dialed':lg.length,'Unique Dialed':uDial,'Unique Connected':uConn,'Connected%':pct(uConn,uDial)+'%','Interested':uInt,'Interested%':pct(uInt,uConn)+'%','Photos (SubDisp)':photos,'Photos%':pct(photos,uInt)+'%','WhatsApp':wa,'Self Upload':su,'Avg TAT':tv.length?Math.round(tv.reduce((a,b)=>a+b,0)/tv.length)+'d':'—'};
+    const am={}; lg.forEach(r=>{ const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile); am[k]=(am[k]||0)+1; });
+    const av=Object.values(am); const avgA=av.length?Math.round((av.reduce((a,b)=>a+b,0)/av.length)*10)/10:'—';
+    return {'Date':row.date,'Total Dialed':lg.length,'Unique Dialed':uDial,'Unique Connected':uConn,'Connected%':pct(uConn,uDial)+'%','Interested':uInt,'Interested%':pct(uInt,uConn)+'%','Photos Uploaded':pUp,'Uploaded%':pct(pUp,uInt)+'%','Photo Pending':pPend,'Pending%':pct(pPend,uInt)+'%','WhatsApp':wa,'Self Upload':su,'Avg TAT':tv.length?Math.round(tv.reduce((a,b)=>a+b,0)/tv.length)+'d':'—','Avg Attempts':avgA};
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(dateSheet),'Date-wise');
 
@@ -1644,7 +1692,8 @@ function exportReport(){
   const callerSheet=Object.values(byCaller).sort((a,b)=>b.logs.length-a.logs.length).map(row=>{
     const lg=row.logs;
     const uDial=uniqueDialedSet(lg).size,uConn=uniqueConnectedSet(lg).size,uInt=uniqueInterestedSet(lg).size;
-    const photos=lg.filter(r=>r.SubDisposition==='Photos Available').length;
+    const gk=new Set(lg.map(r=>normStr(r.PropertyID)+'_'+normMobile(r.Mobile)));
+    let pUp=0,pPend=0; gk.forEach(k=>{ if(photoStatus[k]==='yes') pUp++; else if(photoStatus[k]==='pending') pPend++; });
     const wa=lg.filter(r=>r.SubDisposition==='Sharing on WhatsApp').length;
     const su=lg.filter(r=>['Client Will Upload','Client Will Upload via Email'].includes(r.SubDisposition)).length;
     const tv=[];
@@ -1653,7 +1702,9 @@ function exportReport(){
       const rd=getRowDate(rl);
       if(prop&&prop.acquiredDate&&rd){const d1=parseForSort(prop.acquiredDate),d2=parseForSort(rd);if(d1&&d2&&d1.getFullYear()!==9999&&d2.getFullYear()!==9999){const diff=Math.round((d2-d1)/(1000*60*60*24));if(diff>=0)tv.push(diff);}}
     });
-    return {'Caller':row.name,'Total Dialed':lg.length,'Unique Dialed':uDial,'Unique Connected':uConn,'Connected%':pct(uConn,uDial)+'%','Interested':uInt,'Interested%':pct(uInt,uConn)+'%','Photos (SubDisp)':photos,'Photos%':pct(photos,uInt)+'%','WhatsApp':wa,'Self Upload':su,'Avg TAT':tv.length?Math.round(tv.reduce((a,b)=>a+b,0)/tv.length)+'d':'—'};
+    const am={}; lg.forEach(r=>{ const k=normStr(r.PropertyID)+'_'+normMobile(r.Mobile); am[k]=(am[k]||0)+1; });
+    const av=Object.values(am); const avgA=av.length?Math.round((av.reduce((a,b)=>a+b,0)/av.length)*10)/10:'—';
+    return {'Caller':row.name,'Total Dialed':lg.length,'Unique Dialed':uDial,'Unique Connected':uConn,'Connected%':pct(uConn,uDial)+'%','Interested':uInt,'Interested%':pct(uInt,uConn)+'%','Photos Uploaded':pUp,'Uploaded%':pct(pUp,uInt)+'%','Photo Pending':pPend,'Pending%':pct(pPend,uInt)+'%','WhatsApp':wa,'Self Upload':su,'Avg TAT':tv.length?Math.round(tv.reduce((a,b)=>a+b,0)/tv.length)+'d':'—','Avg Attempts':avgA};
   });
   XLSX.utils.book_append_sheet(wb,XLSX.utils.json_to_sheet(callerSheet),'Caller-wise');
 
